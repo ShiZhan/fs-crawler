@@ -25,7 +25,7 @@ object trigram {
     OptionBuilder.withLongOpt("address")
     OptionBuilder.withDescription("connect/create server on specified ip address")
     OptionBuilder.hasArg
-    OptionBuilder.withArgName("IP")
+    OptionBuilder.withArgName("IP_ADDRESS")
 
     options.addOption(OptionBuilder.create("a"))
 
@@ -52,11 +52,9 @@ object trigram {
     options.addOption(OptionBuilder.create("m"))
 
 
-    //val args: Array[String] = Array("--block-size=10")
-
     try {
       // parse the command line arguments
-      val line: CommandLine = parser.parse( options, args )
+      val line: CommandLine = parser.parse(options, args)
       
       if(line.hasOption("h")) {
         // automatically generate the help statement
@@ -64,10 +62,20 @@ object trigram {
         formatter.printHelp("trigram", options);
       }
 
-      // validate that block-size has been set
-      if(line.hasOption("block-size")) {
-        // print the value of block-size
-        System.out.println( line.getOptionValue( "block-size" ) )
+      if(line.hasOption("a")) {
+        System.out.println("IP address: " + line.getOptionValue("a"))
+      }
+
+      if(line.hasOption("p")) {
+        System.out.println(line.getOptionValue("p"))
+      }
+
+      if(line.hasOption("r")) {
+        System.out.println(line.getOptionValue("r"))
+      }
+
+      if(line.hasOption("m")) {
+        System.out.println(line.getOptionValue("m"))
       }
 
     }
