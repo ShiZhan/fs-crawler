@@ -1,67 +1,58 @@
-import org.apache.commons.cli._
-//import org.apache.commons.cli.CommandLine;
-//import org.apache.commons.cli.CommandLineParser;
-//import org.apache.commons.cli.HelpFormatter;
-//import org.apache.commons.cli.OptionBuilder;
-//import org.apache.commons.cli.Options;
-//import org.apache.commons.cli.ParseException;
-//import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.CommandLineParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.OptionBuilder
+import org.apache.commons.cli.Options
+import org.apache.commons.cli.ParseException
+import org.apache.commons.cli.PosixParser
 
 object trigram {
 
   def main(args: Array[String]) {
     println("Triple Graph based Metadata storage - TriGraM")    
 
-    Options opt = new Options();
-    opt.addOption("p", false, "no error if existing, " +
-            "make parent directories as needed.");
-    opt.addOption("v", "verbose", false, "explain what is being done.");
-    opt.addOption(OptionBuilder.withArgName("file")
-            .hasArg()
-            .withDescription("search for buildfile towards the root of the filesystem and use it")
-            .create("O"));
-    opt.addOption(OptionBuilder.withLongOpt("block-size")
-            .withDescription("use SIZE-byte blocks")
-            .withValueSeparator('=')
-            .hasArg()
-            .create() );
-    opt.addOption("h", "help",  false, "print help for the command.");
+    // create the command line parser
+    val parser: CommandLineParser = new PosixParser()
+
+    // create the Options
+    val options: Options = new Options()
+    options.addOption( "a", "all", false, "do not hide entries starting with ." )
+    options.addOption( "A", "almost-all", false, "do not list implied . and .." )
+    options.addOption( "b", "escape", false, "print octal escapes for nongraphic "
+                                         + "characters" )
+
+    OptionBuilder.withLongOpt( "block-size" )
+    OptionBuilder.withDescription( "use SIZE-byte blocks" )
+    OptionBuilder.hasArg
+    OptionBuilder.withArgName("SIZE")
     
-    String formatstr = "gmkdir [-p][-v/--verbose][--block-size][-h/--help] DirectoryName";
-    
-    HelpFormatter formatter = new HelpFormatter();
-    CommandLineParser parser = new PosixParser();
-    CommandLine cl = null;
+    options.addOption(OptionBuilder.create())
+
+    options.addOption( "B", "ignore-backups", false, "do not list implied entried "
+                                                 + "ending with ~")
+    options.addOption( "c", false, "with -lt: sort by, and show, ctime (time of last " 
+                               + "modification of file status information) with "
+                               + "-l:show ctime and sort by name otherwise: sort "
+                               + "by ctime" )
+    options.addOption( "C", false, "list entries by columns" )
+
+    val args: Array[String] = Array("--block-size=10")
+
     try {
-        // 处理Options和参数
-        cl = parser.parse( opt, args );
-    } catch (ParseException e) {
-        formatter.printHelp( formatstr, opt ); // 如果发生异常，则打印出帮助信息
+        // parse the command line arguments
+        val line: CommandLine = parser.parse( options, args )
+
+        // validate that block-size has been set
+        if( line.hasOption( "block-size" ) ) {
+            // print the value of block-size
+            System.out.println( line.getOptionValue( "block-size" ) )
+        }
     }
-    // 如果包含有-h或--help，则打印出帮助信息
-    if (cl.hasOption("h")) {
-        HelpFormatter hf = new HelpFormatter();
-        hf.printHelp(formatstr, "", opt, "");
-        return;
+    catch {
+      case exp: ParseException =>
+        System.out.println( "Unexpected exception:" + exp.getMessage())
     }
-    // 判断是否有-p参数
-    if (cl.hasOption("p")) {
-        System.out.println("has p");
-    }
-     // 判断是否有-v或--verbose参数
-    if (cl.hasOption("v")) {
-        System.out.println("has v");
-    }
-    // 获取参数值，这里主要是DirectoryName
-    String[] str = cl.getArgs();
-    int length = str.length;
-    System.out.println("length="+length);
-    System.out.println("Str[0]="+str[0]);
-    //判断是否含有block-size参数
-    if( cl.hasOption( "block-size" ) ) {
-        // print the value of block-size
-        System.out.println("block-size=" + cl.getOptionValue("block-size"));
-    }  
-  
+
+
   }
 }
