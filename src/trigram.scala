@@ -8,60 +8,74 @@ import org.apache.commons.cli.PosixParser
 
 object trigram {
 
-    def main(args: Array[String]) {
-        println("Triple Graph based Metadata storage - TriGraM")    
+  def main(args: Array[String]) {
+    println("Triple Graph based Metadata storage - TriGraM")    
 
-        // create the command line parser
-        val parser: CommandLineParser = new PosixParser()
+    // create the command line parser
+    val parser: CommandLineParser = new PosixParser()
 
-        // create the Options
-        val options = new Options()
-        options.addOption("h", "help", false, "print this message" );
-        options.addOption("v", "version", false, "print the version information and exit")
-        options.addOption("a", "all", false, "do not hide entries starting with .")
-        options.addOption("A", "almost-all", false, "do not list implied . and ..")
-        options.addOption("b", "escape", false, "print octal escapes for nongraphic "
-                                             + "characters")
+    // create the Options
+    val options = new Options()
+    options.addOption("h", "help", false, "print this message" );
+    options.addOption("v", "version", false, "print the version information and exit")
+    options.addOption("s", "server", false, "start server on specified ip and port")
+    options.addOption("c", "client", false, "open command line interface on specified server")
+    options.addOption("i", "initialize", false, "initialize models")
 
-        OptionBuilder.withLongOpt("block-size")
-        OptionBuilder.withDescription("use SIZE-byte blocks")
-        OptionBuilder.hasArg
-        OptionBuilder.withArgName("SIZE")
+    OptionBuilder.withLongOpt("address")
+    OptionBuilder.withDescription("connect/create server on specified ip address")
+    OptionBuilder.hasArg
+    OptionBuilder.withArgName("IP")
 
-        options.addOption(OptionBuilder.create())
+    options.addOption(OptionBuilder.create("a"))
 
-        options.addOption("B", "ignore-backups", false, "do not list implied entried "
-                                                     + "ending with ~")
-        options.addOption("c", false, "with -lt: sort by, and show, ctime (time of last " 
-                                   + "modification of file status information) with "
-                                   + "-l:show ctime and sort by name otherwise: sort "
-                                   + "by ctime")
-        options.addOption("C", false, "list entries by columns")
+    OptionBuilder.withLongOpt("port")
+    OptionBuilder.withDescription("connect/listen to specified port")
+    OptionBuilder.hasArg
+    OptionBuilder.withArgName("PORT")
 
-        //val args: Array[String] = Array("--block-size=10")
+    options.addOption(OptionBuilder.create("p"))
 
-        try {
-            // parse the command line arguments
-            val line: CommandLine = parser.parse( options, args )
-            
-            if(line.hasOption("help")) {
-                // automatically generate the help statement
-                val formatter = new HelpFormatter();
-                formatter.printHelp("trigram", options);
-            }
-    
-            // validate that block-size has been set
-            if(line.hasOption("block-size")) {
-                // print the value of block-size
-                System.out.println( line.getOptionValue( "block-size" ) )
-            }
-    
-        }
-        catch {
-            case exp: ParseException =>
-                System.out.println( "Unexpected exception:" + exp.getMessage())
-        }
+    OptionBuilder.withLongOpt("root")
+    OptionBuilder.withDescription("specify root directory" +
+    		" (use current directory as default) for creating node model")
+    OptionBuilder.hasArg
+    OptionBuilder.withArgName("ROOT_DIR")
 
+    options.addOption(OptionBuilder.create("r"))
+
+    OptionBuilder.withLongOpt("model")
+    OptionBuilder.withDescription("load server on specified model file (default: node.owl)")
+    OptionBuilder.hasArg
+    OptionBuilder.withArgName("MODEL_FILE")
+
+    options.addOption(OptionBuilder.create("m"))
+
+
+    //val args: Array[String] = Array("--block-size=10")
+
+    try {
+      // parse the command line arguments
+      val line: CommandLine = parser.parse( options, args )
+      
+      if(line.hasOption("h")) {
+        // automatically generate the help statement
+        val formatter = new HelpFormatter();
+        formatter.printHelp("trigram", options);
+      }
+
+      // validate that block-size has been set
+      if(line.hasOption("block-size")) {
+        // print the value of block-size
+        System.out.println( line.getOptionValue( "block-size" ) )
+      }
 
     }
+    catch {
+      case exp: ParseException =>
+        System.out.println( "Unexpected exception:" + exp.getMessage())
+    }
+
+
+  }
 }
