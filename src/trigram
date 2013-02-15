@@ -1,0 +1,3 @@
+#!/bin/sh
+# trigram launcher script
+scala -cp "d:/java/cli/commons-cli-1.2.jar;d:/java/jena/lib/jena-tdb-0.9.4.jar" trigram.scala "$@" 
