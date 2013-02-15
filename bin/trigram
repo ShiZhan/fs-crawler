@@ -2,4 +2,4 @@
 # trigram launcher script
 UDIR=`dirname "$0"`
 WDIR=`cygpath -alm "$UDIR"` 
-scala -cp "d:/java/cli/commons-cli-1.2.jar;d:/java/jena/lib/jena-tdb-0.9.4.jar;$WDIR" trigram "$@" 
+scala -cp "d:/java/cli/commons-cli-1.2.jar;d:/java/jena/lib/jena-tdb-0.9.4.jar;$WDIR" Trigram "$@" 
