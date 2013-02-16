@@ -1,20 +1,27 @@
 /**
  *
  */
+package model
+
 import java.io._
 import jena._
 import com.hp.hpl.jena.sparql.core._
 import com.hp.hpl.jena.tdb.{TDB, TDBFactory}
+
+import util.Logging
+
 /**
  * @author ShiZhan
  * 2013
  * model functions
+ *
  */
-package object model {
+object Model extends Logging {
 
-	def importModel(rootDir: String) = {
+  def importModel(rootDir: String) = {
     val absolutePathOfRoot = (new File(rootDir)).getAbsolutePath()
 
-    println("initializing model with root directory: " + absolutePathOfRoot)
-	}
+    logger.info("initializing model with root directory: " + absolutePathOfRoot)
+  }
+
 }

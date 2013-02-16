@@ -4,7 +4,7 @@
  * TriGraM main program
  */
 import org.apache.commons.cli._
-import model._
+import model.Model.importModel
 import util._
 
 object trigram extends Logging {
