@@ -4,13 +4,16 @@
  * TriGraM main program
  */
 import org.apache.commons.cli._
-import model.Model.importModel
+import server.Server
+import client.Console
+import model.Model
 import util._
 
 object trigram extends Logging {
 
   def main(args: Array[String]) {
-    println("Triple Graph based Metadata storage - TriGraM")    
+
+  	println("Triple Graph based Metadata storage - TriGraM")    
 
     // create the command line parser
     val parser: CommandLineParser = new PosixParser()
@@ -35,44 +38,29 @@ object trigram extends Logging {
     OptionBuilder.withArgName("ROOT_DIR")
     options.addOption(OptionBuilder.create("i"))
 
-    var address = "127.0.0.1:10001"
-
     try {
       // parse the command line arguments
       val line: CommandLine = parser.parse(options, args)
-      
+
       if(line.hasOption("h")) {
         // automatically generate the help statement
-        val formatter = new HelpFormatter();
-        formatter.printHelp("trigram", options);
+        (new HelpFormatter()).printHelp("trigram", options)
       }
 
-      if(line.hasOption("v")) {
-        // get version information
-        println(Version.getVersion())
-      }
+      if(line.hasOption("v")) println(Version.getVersion())
 
-      if(line.hasOption("a")) {
-        address = line.getOptionValue("a")
-      }
+      if(line.hasOption("i")) Model.importFromRoot(line.getOptionValue("i"))
 
-      if(line.hasOption("i")) {
-      	importModel(line.getOptionValue("i"))
-      }
+      val address = if(line.hasOption("a")) line.getOptionValue("a")
+                    else "127.0.0.1:10001"
 
-      if(line.hasOption("s")) {
-        // get version information
-        logger.info("Starting server on " + address)
-      }
-      else if(line.hasOption("c")) {
-        // get version information
-        logger.info("Opening CLI on " + address)
-      }
-
+      if(line.hasOption("s")) Server.run(address)
+      else if(line.hasOption("c")) Console.run(address)
     }
     catch {
       case exp: ParseException =>
         logger.warn( "Unexpected exception:" + exp.getMessage())
     }
   }
+
 }

@@ -18,10 +18,12 @@ import util.Logging
  */
 object Model extends Logging {
 
-  def importModel(rootDir: String) = {
+  def importFromRoot(rootDir: String) = {
     val absolutePathOfRoot = (new File(rootDir)).getAbsolutePath()
 
     logger.info("initializing model with root directory: " + absolutePathOfRoot)
+
+
   }
 
 }
