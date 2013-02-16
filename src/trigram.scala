@@ -1,12 +1,13 @@
-import java.io._
+/**
+ * @author ShiZhan
+ * 2013
+ * TriGraM main program
+ */
 import org.apache.commons.cli._
-import com.hp.hpl.jena.sparql.core._
-import jena._
-import com.hp.hpl.jena.tdb.{ TDB, TDBFactory }
-
+import model._
 import util._
 
-object Trigram {
+object trigram extends Logging {
 
   def main(args: Array[String]) {
     println("Triple Graph based Metadata storage - TriGraM")    
@@ -48,7 +49,7 @@ object Trigram {
 
       if(line.hasOption("v")) {
         // get version information
-        println(getVersion())
+        println(Version.getVersion())
       }
 
       if(line.hasOption("a")) {
@@ -56,25 +57,22 @@ object Trigram {
       }
 
       if(line.hasOption("i")) {
-      	val rootDir = line.getOptionValue("i")
-      	val handleOfRoot = new File(rootDir)
-      	val absolutePathOfRoot = handleOfRoot.getAbsolutePath()
-        println("initialize model with root directory: " + absolutePathOfRoot)
+      	importModel(line.getOptionValue("i"))
       }
 
       if(line.hasOption("s")) {
         // get version information
-        println("Starting server on " + address)
+        logger.info("Starting server on " + address)
       }
       else if(line.hasOption("c")) {
         // get version information
-        println("Opening CLI on " + address)
+        logger.info("Opening CLI on " + address)
       }
 
     }
     catch {
       case exp: ParseException =>
-        println( "Unexpected exception:" + exp.getMessage())
+        logger.warn( "Unexpected exception:" + exp.getMessage())
     }
   }
 }

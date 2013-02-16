@@ -1,22 +1,24 @@
 /**
  *
  */
+package util
+
 import java.io._
 /**
  * @author ShiZhan
  * 2013
- * supporting functions
+ * getting program version from git repository
  */
-package object util {
+object Version {
 
 	def getVersion(): String = {
-		// get version information
+    // get version information
     var version = "not available"
     val masterHashFile = new File("../.git/refs/heads/master")
     if(masterHashFile.exists()) {
-      val reader = new BufferedReader(new FileReader(masterHashFile))
-      version = reader.readLine()
+      version = (new BufferedReader(new FileReader(masterHashFile))).readLine()
     }
     return version
-	}
+  }
+
 }
