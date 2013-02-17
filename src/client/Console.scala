@@ -3,44 +3,59 @@
  */
 package client
 
-import org.apache.commons.cli._
-
-import util.Logging
+import util.{Logging, Version}
 
 /**
  * @author ShiZhan
- *
+ * 2013
+ * Program console
  */
 object Console extends Logging {
+	
+	val consoleUsage = 
+		"[Console Usage]\n" +
+		"help:                 print this message\n" +
+		"version:              show program version\n" +
+    "put <file>:           upload a file\n" +
+    "get <file>:           download a file\n" +
+    "mv <origin> <target>: move/rename a file/directory\n" +
+    "                      target directory must end with '/'\n" +
+    "mk <directory>:       create a directory\n" +
+    "cd <directory>:       change current directory\n" +
+    "ls <directory>:       list directory content\n" +
+    "rm <target>:          remove file or directory\n" +
+		"exit:                 exit console\n"
+
+  val consoleTitle = "TriGraM console"
+  val consolePrompt = " > "
 
 	def run(address: String) {
 		logger.info("Opening CLI on " + address)
-		
-		println("TriGraM shell")
 
-		val parser: CommandLineParser = new PosixParser()
-		val options = new Options()
-    options.addOption("h", "help", false, "print this message" );
-    options.addOption("v", "version", false, "show program version")
+		println(consoleTitle)
+		println(address + consolePrompt)
 
-		var runningFlag = true
+  	for(line <- io.Source.stdin.getLines) {
+      line.split(' ') match {
+        case Array("exit") => return
 
-//		do {
-//      try {
-//        // parse the command line arguments
-//        val line: CommandLine = parser.parse(options, System.in.read())
-//  
-//        if(line.hasOption("h")) {
-//        }
-//  
-//        if(line.hasOption("exit")) runningFlag = false
-//
-//      }
-//      catch {
-//        case exp: ParseException =>
-//          logger.warn( "Unrecognized command:" + exp.getMessage())
-//      }
-//		} while (runningFlag)
+        case Array("help") => println(consoleUsage)
+        case Array("version") => println(Version.getVersion)
+
+        case Array("put", file) => println("Uploading: " + file)
+        case Array("get", file) => println("Downloading: " + file)
+        case Array("mv", origin, target) => println("Move: " + origin + " to: " + target)
+        case Array("mk", directory) => println("Create directory: " + directory)
+        case Array("cd", directory) => println("Change to: " + directory)
+        case Array("ls", directory) => println("Content of: " + directory)
+        case Array("rm", target) => println("Removing: " + target)
+
+        case _ => println("Unrecognized command: " + line +
+                          "\nUse 'help' to list available commands")
+      }
+
+    	println(address + consolePrompt)
+    }
 	}
 
 }

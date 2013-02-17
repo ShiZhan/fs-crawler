@@ -47,7 +47,7 @@ object trigram extends Logging {
         (new HelpFormatter()).printHelp("trigram", options)
       }
 
-      if(line.hasOption("v")) println(Version.getVersion())
+      if(line.hasOption("v")) println(Version.getVersion)
 
       if(line.hasOption("i")) Model.importFromRoot(line.getOptionValue("i"))
 
