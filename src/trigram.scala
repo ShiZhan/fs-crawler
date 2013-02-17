@@ -11,6 +11,8 @@ import util._
 
 object trigram extends Logging {
 
+	val defaultAddress = "127.0.0.1:10001"
+
   def main(args: Array[String]) {
 
   	println("Triple Graph based Metadata storage - TriGraM")    
@@ -20,10 +22,10 @@ object trigram extends Logging {
 
     // create the Options
     val options = new Options()
-    options.addOption("h", "help", false, "print this message" );
-    options.addOption("v", "version", false, "show program version")
-    options.addOption("s", "server", false, "start server on specified address")
-    options.addOption("c", "client", false, "open console on specified address")
+      .addOption("h", "help", false, "print this message" )
+      .addOption("v", "version", false, "show program version")
+      .addOption("s", "server", false, "start server on specified address")
+      .addOption("c", "client", false, "open console on specified address")
 
     OptionBuilder.withLongOpt("address")
     OptionBuilder.withDescription("connect/create server on specified address [ip:port]")
@@ -52,7 +54,7 @@ object trigram extends Logging {
       if(line.hasOption("i")) Model.importFromRoot(line.getOptionValue("i"))
 
       val address = if(line.hasOption("a")) line.getOptionValue("a")
-                    else "127.0.0.1:10001"
+                    else defaultAddress
 
       if(line.hasOption("s")) Server.run(address)
       else if(line.hasOption("c")) Console.run(address)

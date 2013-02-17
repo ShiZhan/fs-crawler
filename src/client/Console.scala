@@ -14,17 +14,16 @@ object Console extends Logging {
 	
 	val consoleUsage = 
 		"[Console Usage]\n" +
-		"help:                 print this message\n" +
-		"version:              show program version\n" +
-    "put <file>:           upload a file\n" +
-    "get <file>:           download a file\n" +
-    "mv <origin> <target>: move/rename a file/directory\n" +
-    "                      target directory must end with '/'\n" +
-    "mk <directory>:       create a directory\n" +
-    "cd <directory>:       change current directory\n" +
-    "ls <directory>:       list directory content\n" +
-    "rm <target>:          remove file or directory\n" +
-		"exit:                 exit console\n"
+		" help                  print this message\n" +
+		" version               show program version\n" +
+    " put <file>            upload a file\n" +
+    " get <file>            download a file\n" +
+    " mv <origin> <target>  move/rename a file/directory (end with '/')\n" +
+    " mk <directory>        create a directory\n" +
+    " cd <directory>        change current directory\n" +
+    " ls <directory>        list directory content\n" +
+    " rm <target>           remove file or directory\n" +
+		" exit                  exit console\n"
 
   val consoleTitle = "TriGraM console"
   val consolePrompt = " > "
@@ -33,7 +32,7 @@ object Console extends Logging {
 		logger.info("Opening CLI on " + address)
 
 		println(consoleTitle)
-		println(address + consolePrompt)
+		System.out.print(address + consolePrompt)
 
   	for(line <- io.Source.stdin.getLines) {
       line.split(' ') match {
@@ -54,7 +53,7 @@ object Console extends Logging {
                           "\nUse 'help' to list available commands")
       }
 
-    	println(address + consolePrompt)
+    	System.out.print(address + consolePrompt)
     }
 	}
 
