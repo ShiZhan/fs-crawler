@@ -32,7 +32,7 @@ object Console extends Logging {
     logger.info("Opening CLI on " + address)
 
     println(consoleTitle)
-    System.out.print(address + consolePrompt)
+    print(address + consolePrompt)
 
     for (line <- io.Source.stdin.getLines) {
       line.split(' ') match {
@@ -53,7 +53,7 @@ object Console extends Logging {
           "\nUse 'help' to list available commands")
       }
 
-      System.out.print(address + consolePrompt)
+      print(address + consolePrompt)
     }
   }
 
