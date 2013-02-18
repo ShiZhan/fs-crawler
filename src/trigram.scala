@@ -11,21 +11,21 @@ import util._
 
 object trigram extends Logging {
 
-	val defaultAddress = "127.0.0.1:10001"
+  val defaultAddress = "127.0.0.1:10001"
 
   def main(args: Array[String]) {
 
-  	println("Triple Graph based Metadata storage - TriGraM")    
+    println("Triple Graph based Metadata storage - TriGraM")
 
     // create the command line parser
     val parser: CommandLineParser = new PosixParser()
 
     // create the Options
     val options = new Options()
-      .addOption("h", "help", false, "print this message" )
+      .addOption("h", "help", false, "print this message")
       .addOption("v", "version", false, "show program version")
       .addOption("s", "server", false, "start server on specified address")
-      .addOption("c", "client", false, "open console on specified address")
+      .addOption("c", "console", false, "open console on specified address")
 
     OptionBuilder.withLongOpt("address")
     OptionBuilder.withDescription("connect/create server on specified address [ip:port]")
@@ -44,24 +44,23 @@ object trigram extends Logging {
       // parse the command line arguments
       val line: CommandLine = parser.parse(options, args)
 
-      if(line.hasOption("h")) {
+      if (line.hasOption("h")) {
         // automatically generate the help statement
         (new HelpFormatter()).printHelp("trigram", options)
       }
 
-      if(line.hasOption("v")) println(Version.getVersion)
+      if (line.hasOption("v")) println(Version.getVersion)
 
-      if(line.hasOption("i")) Model.importFromRoot(line.getOptionValue("i"))
+      if (line.hasOption("i")) Model.importFromRoot(line.getOptionValue("i"))
 
-      val address = if(line.hasOption("a")) line.getOptionValue("a")
-                    else defaultAddress
+      val address = if (line.hasOption("a")) line.getOptionValue("a")
+      else defaultAddress
 
-      if(line.hasOption("s")) Server.run(address)
-      else if(line.hasOption("c")) Console.run(address)
-    }
-    catch {
+      if (line.hasOption("s")) Server.run(address)
+      else if (line.hasOption("c")) Console.run(address)
+    } catch {
       case exp: ParseException =>
-        logger.warn( "Unexpected exception:" + exp.getMessage())
+        logger.warn("Unexpected exception:" + exp.getMessage())
     }
   }
 

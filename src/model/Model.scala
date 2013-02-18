@@ -6,7 +6,7 @@ package model
 import java.io._
 import jena._
 import com.hp.hpl.jena.sparql.core._
-import com.hp.hpl.jena.tdb.{TDB, TDBFactory}
+import com.hp.hpl.jena.tdb.{ TDB, TDBFactory }
 
 import util.Logging
 
@@ -22,7 +22,6 @@ object Model extends Logging {
     val absolutePathOfRoot = (new File(rootDir)).getAbsolutePath()
 
     logger.info("initializing model with root directory: " + absolutePathOfRoot)
-
 
   }
 

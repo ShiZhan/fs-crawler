@@ -3,7 +3,7 @@
  */
 package util
 
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 /**
  * @author ShiZhan
  * wrap slf4j for use with object

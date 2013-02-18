@@ -11,8 +11,8 @@ import util.Logging
  */
 object Server extends Logging {
 
-	def run(address: String) {
-		logger.info("Starting server on " + address)
-	}
+  def run(address: String) {
+    logger.info("Starting server on " + address)
+  }
 
 }
