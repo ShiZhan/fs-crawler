@@ -11,7 +11,7 @@ import util.Logging
 
 /**
  * @author ShiZhan
- *
+ * Server loop
  */
 
 case object Ping

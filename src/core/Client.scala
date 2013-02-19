@@ -13,10 +13,12 @@ import util.Logging
 
 /**
  * @author ShiZhan
- *
+ * 2013
+ * Client classes and APIs
  */
 
-class RemotePing(port: Int, peer: Node, count: Int) extends Actor { trapExit = true
+class RemotePing(port: Int, peer: Node, count: Int) extends Actor {
+  trapExit = true
 
   def act() {
     alive(port)
