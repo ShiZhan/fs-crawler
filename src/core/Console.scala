@@ -1,7 +1,7 @@
 /**
  *
  */
-package client
+package core
 
 import util.{ Logging, Version }
 

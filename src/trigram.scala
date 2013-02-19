@@ -4,9 +4,7 @@
  * TriGraM main program
  */
 import org.apache.commons.cli._
-
-import server.Server
-import client.Console
+import core.{Server, Console}
 import model.Model
 import util._
 
@@ -46,10 +44,7 @@ object trigram extends Logging {
       // parse the command line arguments
       val line: CommandLine = parser.parse(options, args)
 
-      if (line.hasOption("h")) {
-        // automatically generate the help statement
-        (new HelpFormatter()).printHelp("trigram", options)
-      }
+      if (line.hasOption("h")) (new HelpFormatter()).printHelp("trigram", options)
 
       if (line.hasOption("v")) println(Version.getVersion)
 
