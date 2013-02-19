@@ -5,6 +5,7 @@ package core
 
 import scala.actors.Actor
 import scala.actors.Actor._
+import scala.actors.remote.RemoteActor
 import scala.actors.remote.RemoteActor._
 
 import util.Logging
@@ -14,24 +15,20 @@ import util.Logging
  * Server loop
  */
 
-case object Ping
-case object Pong
-case object Quit
+class ServerSink(port: Int) extends Actor {
 
-class RemotePong(port: Int) extends Actor {
+  RemoteActor.classLoader = getClass().getClassLoader()
 
   def act() {
     alive(port)
-    register('Pong, self)
+    register('TrigramService, self)
 
     while (true) {
       receive {
-        case Ping =>
-          println("Pong: ping")
-          sender ! Pong
-        case Quit =>
-          println("Pong: stop")
-          exit()
+        case msg => {
+          println(msg)
+          reply("Thanks: " + msg)
+        }
       }
     }
   }
@@ -43,9 +40,7 @@ object Server extends Logging {
   def run(address: Array[String]): Unit = {
     logger.info("Starting server on " + address.mkString(":"))
 
-    val pong = new RemotePong(address(1).toInt)
-
-    pong.start()
+    (new ServerSink(address(1).toInt)).start()
   }
 
 }

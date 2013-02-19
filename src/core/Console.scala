@@ -31,12 +31,12 @@ object Console extends Logging {
   def run(address: Array[String]) {
     logger.info("Opening CLI on " + address.mkString(":"))
     
-    val connection = new Connection(address)
-
     val consolePrompt = address.mkString(":") + consolePromptChar
 
     println(consoleTitle)
     print(consolePrompt)
+
+    val connection = new Connection(address)
 
     for (line <- io.Source.stdin.getLines) {
       line.split(' ') match {
@@ -44,6 +44,8 @@ object Console extends Logging {
 
         case Array("help") => println(consoleUsage)
         case Array("version") => println(Version.getVersion)
+
+        case Array("test") => println(connection.doQuery(line))
 
         case Array("put", file) => println("Uploading: " + file)
         case Array("get", file) => println("Downloading: " + file)

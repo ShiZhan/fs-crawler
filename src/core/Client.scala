@@ -4,8 +4,7 @@
 package core
 
 import scala.actors.Actor
-import scala.actors.Actor._
-import scala.actors.Exit
+import scala.actors.remote.RemoteActor
 import scala.actors.remote.RemoteActor._
 import scala.actors.remote.Node
 
@@ -17,33 +16,17 @@ import util.Logging
  * Client classes and APIs
  */
 
-class RemotePing(port: Int, peer: Node, count: Int) extends Actor {
-  trapExit = true
+class ServerSource(peer: Node) extends Actor {
 
   def act() {
-    alive(port)
-    register('Ping, self)
-    
-    val pong = select(peer, 'Pong)
-    link(pong)
-    
-    var pingsLeft = count - 1
-    pong ! Ping
-    while (true) {
-      receive {
-        case Pong =>
-          println("Ping: pong")
-          if (pingsLeft > 0) {
-            pong ! Ping
-            pingsLeft -= 1
-          } else {
-            println("Ping: start termination")
-            pong ! Quit
-          }
-        case Exit(pong, 'normal) =>
-            println("Ping: stop")
-            exit()
-      }
+    RemoteActor.classLoader = getClass().getClassLoader()
+  }
+
+  def send(msg: String): String = {
+    val sink = select(peer, 'TrigramService)
+//    link(sink)
+    sink !? msg match {
+      case response => return "Server's response is [" + response + "]"
     }
   }
 
@@ -51,9 +34,15 @@ class RemotePing(port: Int, peer: Node, count: Int) extends Actor {
 
 class Connection(address: Array[String]) extends Logging {
 
-  val port = address(1).toInt
-  val remoteNode = Node(address(0), port)
-  val ping = new RemotePing(port, remoteNode, 16)
+  val remotePort = address(1).toInt
+  val remoteNode = Node(address(0), remotePort)
+  val serverSource = new ServerSource(remoteNode)
 
-  def test() = {}
+  serverSource.start()
+
+  def doQuery(queryString: String): String = {
+    logger.info("enter doQuery")
+
+    return serverSource.send(queryString)
+  }
 }
