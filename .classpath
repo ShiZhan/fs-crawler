@@ -7,6 +7,7 @@
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/jena-arq-2.9.4.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/jena-core-2.7.4.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/jena-tdb-0.9.4.jar"/>
+	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/banana-rdf_2.10-x14-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/slf4j-api-1.7.2.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/slf4j-simple-1.7.2.jar"/>
 	<classpathentry kind="output" path="bin"/>

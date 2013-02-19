@@ -12,7 +12,7 @@ import util.{ Logging, Version }
  */
 object Console extends Logging {
 
-  val consoleUsage =
+  private val consoleUsage =
     "[Console Usage]\n" +
       " help                  print this message\n" +
       " version               show program version\n" +
@@ -25,14 +25,18 @@ object Console extends Logging {
       " rm <target>           remove file or directory\n" +
       " exit                  exit console\n"
 
-  val consoleTitle = "TriGraM console"
-  val consolePrompt = " > "
+  private val consoleTitle = "TriGraM Console"
+  private val consolePromptChar = " > "
 
-  def run(address: String) {
-    logger.info("Opening CLI on " + address)
+  def run(address: Array[String]) {
+    logger.info("Opening CLI on " + address.mkString(":"))
+    
+    val connection = new Connection(address)
+
+    val consolePrompt = address.mkString(":") + consolePromptChar
 
     println(consoleTitle)
-    print(address + consolePrompt)
+    print(consolePrompt)
 
     for (line <- io.Source.stdin.getLines) {
       line.split(' ') match {
@@ -53,7 +57,7 @@ object Console extends Logging {
           "\nUse 'help' to list available commands")
       }
 
-      print(address + consolePrompt)
+      print(consolePrompt)
     }
   }
 

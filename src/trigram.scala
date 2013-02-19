@@ -4,6 +4,7 @@
  * TriGraM main program
  */
 import org.apache.commons.cli._
+
 import server.Server
 import client.Console
 import model.Model
@@ -11,7 +12,7 @@ import util._
 
 object trigram extends Logging {
 
-  val defaultAddress = "127.0.0.1:10001"
+  val defaultAddress = Array("localhost", "10001")
 
   def main(args: Array[String]) {
 
@@ -29,7 +30,8 @@ object trigram extends Logging {
 
     OptionBuilder.withLongOpt("address")
     OptionBuilder.withDescription("connect/create server on specified address [ip:port]")
-    OptionBuilder.hasArg
+    OptionBuilder.hasArgs(2)
+    OptionBuilder.withValueSeparator(':')
     OptionBuilder.withArgName("IP_ADDRESS:PORT")
     options.addOption(OptionBuilder.create("a"))
 
@@ -53,7 +55,7 @@ object trigram extends Logging {
 
       if (line.hasOption("i")) Model.importFromRoot(line.getOptionValue("i"))
 
-      val address = if (line.hasOption("a")) line.getOptionValue("a")
+      val address = if (line.hasOption("a")) line.getOptionValues("a")
       else defaultAddress
 
       if (line.hasOption("s")) Server.run(address)
