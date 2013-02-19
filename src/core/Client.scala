@@ -8,41 +8,30 @@ import scala.actors.remote.RemoteActor
 import scala.actors.remote.RemoteActor._
 import scala.actors.remote.Node
 
-import util.Logging
-
 /**
  * @author ShiZhan
  * 2013
  * Client classes and APIs
  */
 
-class ServerSource(peer: Node) extends Actor {
+class ServerActor(peer: Node) extends Actor {
 
-  def act() {
-    RemoteActor.classLoader = getClass().getClassLoader()
-  }
+  private val remoteActor = select(peer, 'TrigramService)
+  trapExit = true
 
-  def send(msg: String): String = {
-    val sink = select(peer, 'TrigramService)
-//    link(sink)
-    sink !? msg match {
-      case response => return "Server's response is [" + response + "]"
-    }
+  def act() = {/* must implement here */}
+
+  def deliver(msg: String): String = remoteActor !? msg match {
+    case response => return "Server's response is [" + response + "]"
   }
 
 }
 
-class Connection(address: Array[String]) extends Logging {
+class Connection(address: Array[String]) {
 
-  val remotePort = address(1).toInt
-  val remoteNode = Node(address(0), remotePort)
-  val serverSource = new ServerSource(remoteNode)
+  private val serverActor = new ServerActor(Node(address(0), address(1).toInt))
 
-  serverSource.start()
+  def doQuery(queryString: String): String =
+    return serverActor.deliver(queryString)
 
-  def doQuery(queryString: String): String = {
-    logger.info("enter doQuery")
-
-    return serverSource.send(queryString)
-  }
 }

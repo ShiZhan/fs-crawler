@@ -30,7 +30,7 @@ object Console extends Logging {
 
   def run(address: Array[String]) {
     logger.info("Opening CLI on " + address.mkString(":"))
-    
+
     val consolePrompt = address.mkString(":") + consolePromptChar
 
     println(consoleTitle)

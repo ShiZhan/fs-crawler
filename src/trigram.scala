@@ -4,7 +4,7 @@
  * TriGraM main program
  */
 import org.apache.commons.cli._
-import core.{Server, Console}
+import core.{ Server, Console }
 import model.Model.importFromRoot
 import util._
 
