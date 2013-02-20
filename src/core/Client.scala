@@ -17,13 +17,14 @@ import scala.actors.remote.Node
 class ServerActor(peer: Node) extends Actor {
 
   private val remoteActor = select(peer, 'TrigramService)
-  trapExit = true
 
   def act() = {/* must implement here */}
 
   def deliver(msg: String): String = remoteActor !? msg match {
     case response => return "Server's response is [" + response + "]"
   }
+
+  def stop() = exit
 
 }
 
@@ -33,5 +34,7 @@ class Connection(address: Array[String]) {
 
   def doQuery(queryString: String): String =
     return serverActor.deliver(queryString)
+
+  def close() = serverActor.stop
 
 }
