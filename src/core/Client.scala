@@ -4,7 +4,6 @@
 package core
 
 import scala.actors.Actor
-import scala.actors.remote.RemoteActor
 import scala.actors.remote.RemoteActor._
 import scala.actors.remote.Node
 
@@ -14,27 +13,28 @@ import scala.actors.remote.Node
  * Client classes and APIs
  */
 
-class ServerActor(peer: Node) extends Actor {
+class RemoteTrigramActor(n: Node) extends Actor {
 
-  private val remoteActor = select(peer, 'TrigramService)
+  private val remoteActor = select(n, 'TrigramService)
 
-  def act() = {/* must implement here */}
+  def act = {/* must implement */}
 
-  def deliver(msg: String): String = remoteActor !? msg match {
-    case response => return "Server's response is [" + response + "]"
+  def deliver(msg: String): String = {
+    remoteActor !? Query(msg) match {
+      case QueryResult(result) => return result
+      case _ => return "unexpected result"
+    }
   }
-
-  def stop() = exit
 
 }
 
 class Connection(address: Array[String]) {
 
-  private val serverActor = new ServerActor(Node(address(0), address(1).toInt))
+  private val port = address(1).toInt
+  private val node = Node(address(0), port)
+  private val trigramActor = new RemoteTrigramActor(node)
+  trigramActor.start
 
-  def doQuery(queryString: String): String =
-    return serverActor.deliver(queryString)
-
-  def close() = serverActor.stop
+  def doQuery(query: String): String = return trigramActor.deliver(query)
 
 }
