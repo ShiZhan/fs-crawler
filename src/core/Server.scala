@@ -24,8 +24,9 @@ class TrigramActor(port: Int) extends Actor with Logging {
       receive {
         case Query(q) =>
           reply(QueryResult("Result: " + q))
-        case QuitOp() =>
-          logger.info("Client [%s] quit".format(sender.toString))
+        case QuitOp(reason) =>
+          logger.info("Client [%s] quit for [%s]".format(sender, reason))
+
           reply(QuitConfirm())
         case _ =>
           reply(QueryResult("Not supported"))

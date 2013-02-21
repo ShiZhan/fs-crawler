@@ -7,13 +7,15 @@ import scala.actors.Actor
 import scala.actors.remote.RemoteActor._
 import scala.actors.remote.Node
 
+import util.Logging
+
 /**
  * @author ShiZhan
  * 2013
  * Client classes and APIs
  */
 
-class RemoteTrigramActor(n: Node) extends Actor {
+class RemoteTrigramActor(n: Node) extends Actor with Logging {
 
   private val remoteActor = select(n, 'TrigramService)
 
@@ -38,6 +40,6 @@ class Connection(address: Array[String]) {
 
   def doQuery(q: String): String = return trigramActor.deliver(Query(q))
 
-  def doQuit = trigramActor.deliver(QuitOp())
+  def doQuit = trigramActor.deliver(QuitOp("Normal"))
 
 }

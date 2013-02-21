@@ -3,7 +3,7 @@ package core
 trait TOperation
 
 case class Query(q: String) extends TOperation
-case class QuitOp extends TOperation
+case class QuitOp(reason: String) extends TOperation
 
 trait TResult
 
