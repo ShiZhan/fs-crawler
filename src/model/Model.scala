@@ -14,7 +14,6 @@ import util.Logging
  * @author ShiZhan
  * 2013
  * model functions
- *
  */
 object Model extends Logging {
 
@@ -23,6 +22,10 @@ object Model extends Logging {
 
     logger.info("initializing model with root directory: " + absolutePathOfRoot)
 
+  }
+  
+  def queryStore(q: String): String = {
+    return "work in progess"
   }
 
 }

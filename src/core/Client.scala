@@ -40,6 +40,6 @@ class Connection(address: Array[String]) {
 
   def doQuery(q: String): String = return trigramActor.deliver(Query(q))
 
-  def doQuit = trigramActor.deliver(QuitOp("Normal"))
+  def doQuit(reason: String) = trigramActor.deliver(QuitOp(reason))
 
 }
