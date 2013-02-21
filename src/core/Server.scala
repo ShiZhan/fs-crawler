@@ -14,7 +14,7 @@ import util.Logging
  * TriGraM Server
  */
 
-class TrigramActor(port: Int) extends Actor {
+class TrigramActor(port: Int) extends Actor with Logging {
 
   def act() {
     alive(port)
@@ -24,6 +24,9 @@ class TrigramActor(port: Int) extends Actor {
       receive {
         case Query(q) =>
           reply(QueryResult("Result: " + q))
+        case QuitOp() =>
+          logger.info("Client [%s] quit".format(sender.toString))
+          reply(QuitConfirm())
         case _ =>
           reply(QueryResult("Not supported"))
       }

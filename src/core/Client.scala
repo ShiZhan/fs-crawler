@@ -17,12 +17,13 @@ class RemoteTrigramActor(n: Node) extends Actor {
 
   private val remoteActor = select(n, 'TrigramService)
 
-  def act = {/* must implement */}
+  def act = { /* must implement */ }
 
-  def deliver(msg: String): String = {
-    remoteActor !? Query(msg) match {
+  def deliver(op: TOperation): String = {
+    remoteActor !? op match {
       case QueryResult(result) => return result
-      case _ => return "unexpected result"
+      case QuitConfirm() => exit
+      case _ => return "unexpected reply"
     }
   }
 
@@ -35,6 +36,8 @@ class Connection(address: Array[String]) {
   private val trigramActor = new RemoteTrigramActor(node)
   trigramActor.start
 
-  def doQuery(query: String): String = return trigramActor.deliver(query)
+  def doQuery(q: String): String = return trigramActor.deliver(Query(q))
+
+  def doQuit = trigramActor.deliver(QuitOp())
 
 }

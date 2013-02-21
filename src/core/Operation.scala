@@ -2,8 +2,10 @@ package core
 
 trait TOperation
 
-case class Query(queryString: String) extends TOperation
+case class Query(q: String) extends TOperation
+case class QuitOp extends TOperation
 
 trait TResult
 
-case class QueryResult(resultString: String) extends TResult
+case class QueryResult(r: String) extends TResult
+case class QuitConfirm extends TResult
