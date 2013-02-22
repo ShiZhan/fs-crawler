@@ -4,9 +4,12 @@
 package model
 
 import java.io._
+import concurrent.Future
 import jena._
 import com.hp.hpl.jena.sparql.core._
 import com.hp.hpl.jena.tdb.{ TDB, TDBFactory }
+import org.w3.banana._
+import org.w3.banana.jena.JenaOperations._
 
 import util.Logging
 

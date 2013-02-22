@@ -24,8 +24,14 @@ class RemoteTrigramActor(n: Node) extends Actor with Logging {
   def deliver(op: TOperation): String = {
     remoteActor !? op match {
       case QueryResult(result) => return result
+      case _ => return "unexpected deliver reply"
+    }
+  }
+
+  def close(reason: String): Unit = {
+    remoteActor !? QuitOp(reason) match {
       case QuitConfirm() => exit
-      case _ => return "unexpected reply"
+      case _ => throw new Exception("unexpected quit reply")
     }
   }
 
@@ -40,6 +46,6 @@ class Connection(address: Array[String]) {
 
   def doQuery(q: String): String = return trigramActor.deliver(Query(q))
 
-  def doQuit(reason: String) = trigramActor.deliver(QuitOp(reason))
+  def doQuit(reason: String) = trigramActor.close(reason)
 
 }

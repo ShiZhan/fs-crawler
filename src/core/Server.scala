@@ -42,7 +42,7 @@ class Server(address: Array[String]) extends Logging {
   def run = {
     logger.info("Starting server on " + address.mkString(":"))
 
-    (new TrigramActor(address(1).toInt)).start()
+    (new TrigramActor(address(1).toInt)).start
   }
 
 }
