@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/banana-rdf_2.10-x14-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/slf4j-api-1.7.2.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/slf4j-simple-1.7.2.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/jena-arq-2.10.0-SNAPSHOT.jar"/>

@@ -7,6 +7,7 @@ import scala.actors.Actor
 import scala.actors.Actor._
 import scala.actors.remote.RemoteActor._
 
+import model.Model.queryStore
 import util.Logging
 
 /**
@@ -23,7 +24,7 @@ class TrigramActor(port: Int) extends Actor with Logging {
     loop {
       receive {
         case Query(q) =>
-          reply(QueryResult("Result: " + q))
+          reply(QueryResult(queryStore(q)))
         case QuitOp(reason) =>
           logger.info("Client [%s] quit for [%s]".format(sender, reason))
 
@@ -36,9 +37,9 @@ class TrigramActor(port: Int) extends Actor with Logging {
 
 }
 
-object Server extends Logging {
+class Server(address: Array[String]) extends Logging {
 
-  def run(address: Array[String]): Unit = {
+  def run = {
     logger.info("Starting server on " + address.mkString(":"))
 
     (new TrigramActor(address(1).toInt)).start()

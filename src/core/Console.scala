@@ -10,7 +10,7 @@ import util.{ Logging, Version }
  * 2013
  * Program console
  */
-object Console extends Logging {
+class Console(address: Array[String]) extends Logging {
 
   private val consoleUsage =
     "[Console Usage]\n" +
@@ -28,7 +28,7 @@ object Console extends Logging {
   private val consoleTitle = "TriGraM Console"
   private val consolePromptChar = " > "
 
-  def run(address: Array[String]) {
+  def run: Unit = {
     logger.info("Opening CLI on " + address.mkString(":"))
 
     val consolePrompt = address.mkString(":") + consolePromptChar
