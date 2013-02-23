@@ -3,9 +3,14 @@
  */
 package core
 
-import scala.actors.Actor
-import scala.actors.remote.RemoteActor._
-import scala.actors.remote.Node
+import akka.actor.{ Actor, ActorRef, ActorSystem, Props }
+import akka.actor.ActorDSL._
+import akka.pattern.ask
+import scala.concurrent.Await
+import akka.util.Timeout
+import scala.concurrent.duration.Duration
+import com.typesafe.config.ConfigFactory
+import com.typesafe.config.ConfigFactory.parseString
 
 import util.Logging
 
@@ -15,26 +20,57 @@ import util.Logging
  * Client classes and APIs
  */
 
-class Connection(address: Array[String]) extends Actor with Logging {
+object Client {
 
-  private val port = address(1).toInt
-  private val node = Node(address(0), port)
-  private val remoteActor = select(node, 'TrigramService)
-//  trigramActor.start
+  private val clientTemplate =
+"""
+akka {
+  actor {
+    provider = "akka.remote.RemoteActorRefProvider"
+  }
 
-  def act = { /* must implement */ }
-
-  def doQuery(q: String): String = {
-    remoteActor !? Query(q) match {
-      case QueryResult(result) => return result
-      case _ => return "unexpected deliver reply"
+  remote {
+    netty.tcp {
+      hostname = "localhost"
+      port = 0
     }
   }
 
-  def doQuit(reason: String): Unit = {
-    remoteActor !? QuitOp(reason) match {
-      case QuitConfirm() => exit
-      case _ => throw new Exception("unexpected quit reply")
+  loglevel = ERROR
+} 
+"""
+
+  private implicit val timeout = Timeout(10000)
+  private val config = ConfigFactory.load(parseString(clientTemplate))
+  private val system = ActorSystem("TrigramClient", config)
+  private val client = actor(system, "Client")(new Act {
+    become {
+      case (actor: ActorRef, op: TOperation) =>
+        Await.result(actor ? op, Duration.Inf) match {
+          case QueryResult(result) => sender ! QueryResult(result)
+          case _ => sender ! QueryResult("Unknown Result")
+        }
+
+      case QuitOp(reason) =>
+        context.stop(self)
+    }
+  })
+
+  def shutdown(reason: String) = {
+    client ! QuitOp(reason)
+    system.shutdown
+  }
+
+  class Connect(address: Array[String]) {
+    private val serverURL = "akka://TrigramServer@%s:%s/user/Server".
+                            format(address(0), address(1))
+    private val server = system.actorFor(serverURL)
+
+    def doQuery(q: String): String = {
+      Await.result(client ? (server, Query(q)), Duration.Inf) match {
+        case QueryResult(result) => return result
+        case _ => return "Unknown Result"
+      }
     }
   }
 

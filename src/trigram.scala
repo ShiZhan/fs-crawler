@@ -53,8 +53,8 @@ object trigram extends Logging {
       val address = if (line.hasOption("a")) line.getOptionValues("a")
       else defaultAddress
 
-      if (line.hasOption("s")) new Server(address).run
-      else if (line.hasOption("c")) new Console(address).run
+      if (line.hasOption("s")) Server.run(address)
+      else if (line.hasOption("c")) Console.run(address)
     } catch {
       case exp: ParseException =>
         logger.warn("Unexpected exception:" + exp.getMessage())

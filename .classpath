@@ -11,5 +11,8 @@
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/jena-tdb-0.10.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/banana-jena_2.10-x14-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/banana-rdf_2.10-x14-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/akka-actor_2.10-2.1.0.jar"/>
+	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/akka-remote_2.10-2.1.0.jar"/>
+	<classpathentry kind="lib" path="E:/Works/hive/trigram/bin/config-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

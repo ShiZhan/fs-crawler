@@ -10,7 +10,7 @@ import util.{ Logging, Version }
  * 2013
  * Program console
  */
-class Console(address: Array[String]) extends Logging {
+object Console extends Logging {
 
   private val consoleUsage =
     "[Console Usage]\n" +
@@ -28,7 +28,7 @@ class Console(address: Array[String]) extends Logging {
   private val consoleTitle = "TriGraM Console"
   private val consolePromptChar = " > "
 
-  def run: Unit = {
+  def run(address: Array[String]): Unit = {
     logger.info("Opening CLI on " + address.mkString(":"))
 
     val consolePrompt = address.mkString(":") + consolePromptChar
@@ -36,11 +36,11 @@ class Console(address: Array[String]) extends Logging {
     println(consoleTitle)
     print(consolePrompt)
 
-    val connection = new Connection(address)
+    val connection = new Client.Connect(address)
 
     for (line <- io.Source.stdin.getLines) {
       line.split(' ') match {
-        case Array("exit") => { connection.doQuit("Console exit"); return }
+        case Array("exit") => { Client.shutdown("Console exit"); return }
 
         case Array("help") => println(consoleUsage)
         case Array("version") => println(Version.getVersion)

@@ -3,9 +3,10 @@
  */
 package core
 
-import scala.actors.Actor
-import scala.actors.Actor._
-import scala.actors.remote.RemoteActor._
+import akka.actor.{ Props, Actor, ActorSystem }
+import akka.actor.ActorDSL._
+import com.typesafe.config.ConfigFactory
+import com.typesafe.config.ConfigFactory.parseString
 
 import model.Model.queryStore
 import util.Logging
@@ -15,32 +16,40 @@ import util.Logging
  * TriGraM Server
  */
 
-class Server(address: Array[String]) extends Actor with Logging {
+object Server extends Logging {
 
-  private val port = address(1).toInt
+  private val serverTemplate =
+"""
+akka {
+  actor {
+    provider = "akka.remote.RemoteActorRefProvider"
+  }
 
-  def act() {
-    alive(port)
-    register('TrigramService, self)
-
-    loop {
-      receive {
-        case Query(q) =>
-          reply(QueryResult(queryStore(q)))
-        case QuitOp(reason) =>
-          logger.info("Client [%s] quit for [%s]".format(sender, reason))
-
-          reply(QuitConfirm())
-        case _ =>
-          reply(QueryResult("Not supported"))
-      }
+  remote {
+    netty {
+      port = %s
     }
   }
 
-  def run = {
-    logger.info("Starting server on " + address.mkString(":"))
+  loglevel = ERROR
+}
+"""
 
-    start
+  def run(address: Array[String]) = {
+  logger.info("Starting server on " + address.mkString(":"))
+
+    val config = ConfigFactory.load(parseString(serverTemplate.format(address(1))))
+    val system = ActorSystem("TrigramServer", config)
+    val serverActor = actor(system, "Server")(new Act {
+      become {
+        case Query(q) =>
+          sender ! QueryResult(queryStore(q))
+        case QuitOp(reason) =>
+          logger.info("Client [%s] quit for [%s]".format(sender, reason))
+        case _ =>
+          sender ! QueryResult("Not supported")
+      }
+    })
   }
 
 }
