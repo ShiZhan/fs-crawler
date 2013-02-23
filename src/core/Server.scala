@@ -15,7 +15,9 @@ import util.Logging
  * TriGraM Server
  */
 
-class TrigramActor(port: Int) extends Actor with Logging {
+class Server(address: Array[String]) extends Actor with Logging {
+
+  private val port = address(1).toInt
 
   def act() {
     alive(port)
@@ -35,14 +37,10 @@ class TrigramActor(port: Int) extends Actor with Logging {
     }
   }
 
-}
-
-class Server(address: Array[String]) extends Logging {
-
   def run = {
     logger.info("Starting server on " + address.mkString(":"))
 
-    (new TrigramActor(address(1).toInt)).start
+    start
   }
 
 }
