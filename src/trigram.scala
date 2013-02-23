@@ -6,7 +6,7 @@
 import org.apache.commons.cli._
 import core.{ Server, Console }
 import model.Model.importFromRoot
-import util._
+import util.{ Logging, Version }
 
 object trigram extends Logging {
 

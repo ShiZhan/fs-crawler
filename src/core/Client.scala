@@ -1,13 +1,13 @@
 /**
- *
+ * Client classes and APIs
  */
 package core
 
-import akka.actor.{ Actor, ActorRef, ActorSystem, Props }
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.actor.ActorDSL._
 import akka.pattern.ask
-import scala.concurrent.Await
 import akka.util.Timeout
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigFactory.parseString
@@ -17,13 +17,13 @@ import util.Logging
 /**
  * @author ShiZhan
  * 2013
- * Client classes and APIs
+ * Client singleton
  */
 
-object Client {
+object Client extends Logging {
 
   private val clientTemplate =
-"""
+    """
 akka {
   actor {
     provider = "akka.remote.RemoteActorRefProvider"
@@ -62,8 +62,10 @@ akka {
   }
 
   class Connect(address: Array[String]) {
+    logger.info("Connecting server on " + address.mkString(":"))
+
     private val serverURL = "akka://TrigramServer@%s:%s/user/Server".
-                            format(address(0), address(1))
+      format(address(0), address(1))
     private val server = system.actorFor(serverURL)
 
     def doQuery(q: String): String = {

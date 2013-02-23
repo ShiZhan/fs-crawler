@@ -1,5 +1,5 @@
 /**
- *
+ * TriGraM Server
  */
 package core
 
@@ -13,13 +13,14 @@ import util.Logging
 
 /**
  * @author ShiZhan
- * TriGraM Server
+ * 2013
+ * Server singleton
  */
 
 object Server extends Logging {
 
   private val serverTemplate =
-"""
+    """
 akka {
   actor {
     provider = "akka.remote.RemoteActorRefProvider"
@@ -36,7 +37,7 @@ akka {
 """
 
   def run(address: Array[String]) = {
-  logger.info("Starting server on " + address.mkString(":"))
+    logger.info("Starting server on " + address.mkString(":"))
 
     val config = ConfigFactory.load(parseString(serverTemplate.format(address(1))))
     val system = ActorSystem("TrigramServer", config)

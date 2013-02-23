@@ -1,5 +1,5 @@
 /**
- *
+ * model functions
  */
 package model
 
@@ -16,17 +16,20 @@ import util.Logging
 /**
  * @author ShiZhan
  * 2013
- * model functions
+ * Model object
  */
 object Model extends Logging {
 
-  def importFromRoot(rootDir: String) = {
-    val absolutePathOfRoot = (new File(rootDir)).getAbsolutePath()
+  def importFromRoot(rootDirName: String) = {
+    val input = new File(rootDirName)
+    val rootDir = if(input.isDirectory()) input else new File(input.getParent())
+    val absolutePathOfRoot = rootDir.getAbsolutePath()
 
     logger.info("initializing model with root directory: " + absolutePathOfRoot)
 
+    println(rootDir.list().mkString("\n"))
   }
-  
+
   def queryStore(q: String): String = {
     return "work in progess"
   }
