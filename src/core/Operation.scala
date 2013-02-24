@@ -8,4 +8,4 @@ case class QuitOp(reason: String) extends TOperation
 trait TResult
 
 case class QueryResult(r: String) extends TResult
-//case class QuitConfirm extends TResult
+case class QuitConfirm extends TResult

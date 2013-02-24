@@ -32,7 +32,7 @@ akka {
     }
   }
 
-  loglevel = ERROR
+  loglevel = INFO
 }
 """
 
@@ -46,6 +46,7 @@ akka {
         case Query(q) =>
           sender ! QueryResult(queryStore(q))
         case QuitOp(reason) =>
+          sender ! QuitConfirm
           logger.info("Client [%s] quit for [%s]".format(sender, reason))
         case _ =>
           sender ! QueryResult("Not supported")

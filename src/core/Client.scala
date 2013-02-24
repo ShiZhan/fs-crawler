@@ -43,35 +43,26 @@ akka {
   private implicit val timeout = Timeout(10000)
   private val config = ConfigFactory.load(parseString(clientTemplate))
   private val system = ActorSystem("TrigramClient", config)
-  private val client = actor(system, "Client")(new Act {
-    become {
-      case (actor: ActorRef, op: TOperation) =>
-        Await.result(actor ? op, Duration.Inf) match {
-          case QueryResult(result) => sender ! QueryResult(result)
-          case _ => sender ! QueryResult("Unknown Result")
-        }
 
-      case QuitOp(reason) =>
-        context.stop(self)
-    }
-  })
-
-  def shutdown(reason: String) = {
-    client ! QuitOp(reason)
-    system.shutdown
-  }
+  def shutdown = system.shutdown
 
   class Connect(address: Array[String]) {
-    logger.info("Connecting server on " + address.mkString(":"))
 
     private val serverURL = "akka://TrigramServer@%s:%s/user/Server".
       format(address(0), address(1))
     private val server = system.actorFor(serverURL)
 
-    def doQuery(q: String): String = {
-      Await.result(client ? (server, Query(q)), Duration.Inf) match {
+    def deliver(q: String): String = {
+      Await.result(server ? Query(q), Duration.Inf) match {
         case QueryResult(result) => return result
         case _ => return "Unknown Result"
+      }
+    }
+    
+    def close(reason: String): Unit = {
+      Await.result(server ? QuitOp(reason), Duration.Inf) match {
+        case QuitConfirm => return
+        case _ => throw new Exception("close error")
       }
     }
   }

@@ -40,12 +40,12 @@ object Console extends Logging {
 
     for (line <- io.Source.stdin.getLines) {
       line.split(' ') match {
-        case Array("exit") => { Client.shutdown("Console exit"); return }
+        case Array("exit") => { connection.close("Console exit"); Client.shutdown; return }
 
         case Array("help") => println(consoleUsage)
         case Array("version") => println(Version.getVersion)
 
-        case Array("test") => println(connection.doQuery(line))
+        case Array("test") => println(connection.deliver(line))
 
         case Array("put", file) => println("Uploading: " + file)
         case Array("get", file) => println("Downloading: " + file)
