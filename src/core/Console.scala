@@ -40,7 +40,7 @@ object Console extends Logging {
 
     for (line <- io.Source.stdin.getLines) {
       line.split(' ') match {
-        case Array("exit") => { connection.close("Console exit"); Client.shutdown; return }
+        case Array("exit") => { Client.shutdown; return }
 
         case Array("help") => println(consoleUsage)
         case Array("version") => println(Version.getVersion)

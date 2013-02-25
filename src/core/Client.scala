@@ -58,13 +58,7 @@ akka {
         case _ => return "Unknown Result"
       }
     }
-    
-    def close(reason: String): Unit = {
-      Await.result(server ? QuitOp(reason), Duration.Inf) match {
-        case QuitConfirm => return
-        case _ => throw new Exception("close error")
-      }
-    }
+
   }
 
 }
