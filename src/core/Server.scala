@@ -20,7 +20,7 @@ import util.Logging
 object Server extends Logging {
 
   private val serverTemplate =
-    """
+"""
 akka {
   actor {
     provider = "akka.remote.RemoteActorRefProvider"

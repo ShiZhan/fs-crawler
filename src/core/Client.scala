@@ -3,8 +3,7 @@
  */
 package core
 
-import akka.actor.{ ActorRef, ActorSystem, Props }
-import akka.actor.ActorDSL._
+import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.Await
@@ -23,7 +22,7 @@ import util.Logging
 object Client extends Logging {
 
   private val clientTemplate =
-    """
+"""
 akka {
   actor {
     provider = "akka.remote.RemoteActorRefProvider"
