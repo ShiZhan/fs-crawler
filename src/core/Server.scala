@@ -3,12 +3,8 @@
  */
 package core
 
-import akka.actor.{ Props, Actor, ActorSystem }
-import akka.actor.ActorDSL._
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigFactory.parseString
-
 import model.Model.queryStore
+import LinkFactory._
 import util.Logging
 
 /**
@@ -19,36 +15,12 @@ import util.Logging
 
 object Server extends Logging {
 
-  private val serverTemplate =
-"""
-akka {
-  actor {
-    provider = "akka.remote.RemoteActorRefProvider"
-  }
-
-  remote {
-    netty {
-      port = %s
-    }
-  }
-
-  loglevel = INFO
-}
-"""
-
   def run(address: Array[String]) = {
-    logger.info("Starting server on " + address.mkString(":"))
+    logger.info("Starting server on port: " + address(1))
 
-    val config = ConfigFactory.load(parseString(serverTemplate.format(address(1))))
-    val system = ActorSystem("TrigramServer", config)
-    val serverActor = actor(system, "Server")(new Act {
-      become {
-        case Query(q) =>
-          sender ! QueryResult(queryStore(q))
-        case _ =>
-          sender ! QueryResult("Not supported")
-      }
-    })
+    val serviceActor = createLocal(
+      createActorSystem("TrigramServer", address(1)),
+      "Server", queryStore)
   }
 
 }

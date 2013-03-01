@@ -3,14 +3,12 @@
  */
 package core
 
-import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigFactory.parseString
 
+import LinkFactory._
 import util.Logging
 
 /**
@@ -19,41 +17,22 @@ import util.Logging
  * Client singleton
  */
 
-object Client extends Logging {
+object Client {
 
-  private val clientTemplate =
-"""
-akka {
-  actor {
-    provider = "akka.remote.RemoteActorRefProvider"
-  }
-
-  remote {
-    netty.tcp {
-      hostname = "localhost"
-      port = 0
-    }
-  }
-
-  loglevel = ERROR
-} 
-"""
-
-  private implicit val timeout = Timeout(10000)
-  private val config = ConfigFactory.load(parseString(clientTemplate))
-  private val system = ActorSystem("TrigramClient", config)
+  private val system = createActorSystem("TrigramClient", "0")
 
   def shutdown = system.shutdown
 
   class Connect(address: Array[String]) {
 
-    private val serverURL = "akka://TrigramServer@%s:%s/user/Server".
-      format(address(0), address(1))
-    private val server = system.actorFor(serverURL)
+    private val remoteActor = createRemote(system,
+      "TrigramServer", address(0), address(1), "Server")
+
+    private implicit val timeout = Timeout(10000)
 
     def deliver(q: String): String = {
-      Await.result(server ? Query(q), Duration.Inf) match {
-        case QueryResult(result) => return result
+      Await.result(remoteActor ? Request(q), Duration.Inf) match {
+        case Response(result) => return result
         case _ => return "Unknown Result"
       }
     }

@@ -22,7 +22,7 @@ object Model extends Logging {
 
   def importFromRoot(rootDirName: String) = {
     val input = new File(rootDirName)
-    val rootDir = if(input.isDirectory()) input else new File(input.getParent())
+    val rootDir = if (input.isDirectory()) input else new File(input.getParent())
     val absolutePathOfRoot = rootDir.getAbsolutePath()
 
     logger.info("initializing model with root directory: " + absolutePathOfRoot)

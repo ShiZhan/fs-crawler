@@ -26,7 +26,7 @@ case class Response(rsp: String) extends TResponse
 object LinkFactory extends Logging {
 
   private val configTemplate =
-"""
+    """
 akka {
   actor {
     provider = "akka.remote.RemoteActorRefProvider"
@@ -41,30 +41,26 @@ akka {
   loglevel = ERROR
 }
 """
-    
-  private val akkaURLTemplate = "akka://TrigramServer@%s:%s/user/%s"
 
-  def createActorSystem(port: String): ActorSystem = {
-    logger.info("starting actor system on port: " + port)
-
-    val config = ConfigFactory.load(parseString(configTemplate.format(port)))
-    return ActorSystem("TrigramServer", config)
-  }
+  def createActorSystem(name: String, port: String): ActorSystem =
+    ActorSystem(name,
+      ConfigFactory.load(parseString(configTemplate.format(port))))
 
   def createLocal(system: ActorSystem,
-    name: String, handler: String => String): ActorRef = {
-    return actor(system, name)(new Act {
-        become {
-          case Request(req) =>
-            sender ! Response(handler(req))
-          case _ =>
-            sender ! Response("Unhandled request!")
-        }
-      })
-  }
+    name: String, handler: String => String): ActorRef =
+    actor(system, name)(new Act {
+      become {
+        case Request(req) =>
+          sender ! Response(handler(req))
+        case _ =>
+          sender ! Response("Unhandled request!")
+      }
+    })
+
+  private val akkaURLTemplate = "akka://%s@%s:%s/user/%s"
 
   def createRemote(system: ActorSystem,
-    ip: String, port: String, name: String): ActorRef =
-    return system.actorFor(akkaURLTemplate.format(ip, port, name))
+    systemname: String, ip: String, port: String, name: String): ActorRef =
+    system.actorFor(akkaURLTemplate.format(systemname, ip, port, name))
 
 }
