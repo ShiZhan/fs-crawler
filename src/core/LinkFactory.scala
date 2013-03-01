@@ -41,6 +41,8 @@ akka {
   loglevel = ERROR
 }
 """
+    
+  private val akkaURLTemplate = "akka://TrigramServer@%s:%s/user/%s"
 
   def createActorSystem(port: String): ActorSystem = {
     logger.info("starting actor system on port: " + port)
@@ -49,19 +51,20 @@ akka {
     return ActorSystem("TrigramServer", config)
   }
 
-  def createLocal(system: ActorSystem, name: String): ActorRef = {
-      return actor(system, name)(new Act {
-          become {
-            case Request("Hello") =>
-              sender ! Response("World!")
-            case _ =>
-              sender ! Response("Not supported")
-          }
-        })
+  def createLocal(system: ActorSystem,
+    name: String, handler: String => String): ActorRef = {
+    return actor(system, name)(new Act {
+        become {
+          case Request(req) =>
+            sender ! Response(handler(req))
+          case _ =>
+            sender ! Response("Unhandled request!")
+        }
+      })
   }
 
-  def createRemote(system: ActorSystem, ip: String, port: String, name: String): ActorRef =
-    return system.actorFor("akka://TrigramServer@%s:%s/user/%s".
-      format(ip, port, name))
+  def createRemote(system: ActorSystem,
+    ip: String, port: String, name: String): ActorRef =
+    return system.actorFor(akkaURLTemplate.format(ip, port, name))
 
 }
