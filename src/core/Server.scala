@@ -12,7 +12,6 @@ import util.Logging
  * 2013
  * Server singleton
  */
-
 object Server extends Logging {
 
   def run(address: Array[String]) = {

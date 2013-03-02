@@ -9,14 +9,12 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 import LinkFactory._
-import util.Logging
 
 /**
  * @author ShiZhan
  * 2013
  * Client singleton
  */
-
 object Client {
 
   private val system = createActorSystem("TrigramClient", "0")

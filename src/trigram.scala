@@ -5,7 +5,7 @@
  */
 import org.apache.commons.cli._
 import core.{ Server, Console }
-import model.Model.importFromRoot
+import model.Model.importDirToModel
 import util.{ Logging, Version }
 
 object trigram extends Logging {
@@ -48,7 +48,7 @@ object trigram extends Logging {
 
       if (line.hasOption("v")) println(Version.getVersion)
 
-      if (line.hasOption("i")) importFromRoot(line.getOptionValue("i"))
+      if (line.hasOption("i")) importDirToModel(line.getOptionValue("i"))
 
       val address = if (line.hasOption("a")) line.getOptionValues("a")
       else defaultAddress

@@ -8,8 +8,6 @@ import akka.actor.ActorDSL._
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigFactory.parseString
 
-import util.Logging
-
 /**
  * @author ShiZhan
  * 2013
@@ -23,7 +21,7 @@ trait TResponse
 
 case class Response(rsp: String) extends TResponse
 
-object LinkFactory extends Logging {
+object LinkFactory {
 
   private val configTemplate =
     """
@@ -60,7 +58,7 @@ akka {
   private val akkaURLTemplate = "akka://%s@%s:%s/user/%s"
 
   def createRemote(system: ActorSystem,
-    systemname: String, ip: String, port: String, name: String): ActorRef =
-    system.actorFor(akkaURLTemplate.format(systemname, ip, port, name))
+    systemName: String, ip: String, port: String, name: String): ActorRef =
+    system.actorFor(akkaURLTemplate.format(systemName, ip, port, name))
 
 }

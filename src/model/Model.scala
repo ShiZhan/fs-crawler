@@ -20,14 +20,20 @@ import util.Logging
  */
 object Model extends Logging {
 
-  def importFromRoot(rootDirName: String) = {
+  def recursiveListFiles(f: File): Array[File] = {
+    val all = f.listFiles
+    all ++ all.filter(_.isDirectory).flatMap(recursiveListFiles)
+  }
+
+  def importDirToModel(rootDirName: String) = {
     val input = new File(rootDirName)
-    val rootDir = if (input.isDirectory()) input else new File(input.getParent())
-    val absolutePathOfRoot = rootDir.getAbsolutePath()
+    val rootDir = if (input.isDirectory) input else new File(input.getParent)
+    val absolutePathOfRoot = rootDir.getAbsolutePath
 
     logger.info("initializing model with root directory: " + absolutePathOfRoot)
 
-    println(rootDir.list().mkString("\n"))
+    val dirTree = recursiveListFiles(rootDir)
+    dirTree.foreach(item => println(item.getName + " (in) " + item.getParent))
   }
 
   def queryStore(q: String): String = {
