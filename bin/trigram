@@ -1,5 +1,5 @@
 #!/bin/sh
 # trigram launcher script
-UDIR=`dirname "$0"`
-WDIR=`cygpath -alm "$UDIR"`
-scala -cp "*.jar;$WDIR" trigram "$@" 
+# use relative directory to load compiled classes
+CLASSLIB=`cat ../.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s;",$2}'`
+scala -cp "$CLASSLIB;../target/scala-2.10/classes" trigram "$@" 
