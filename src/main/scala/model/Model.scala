@@ -8,8 +8,6 @@ import concurrent.Future
 import jena._
 import com.hp.hpl.jena.sparql.core._
 import com.hp.hpl.jena.tdb.{ TDB, TDBFactory }
-import org.w3.banana._
-import org.w3.banana.jena.JenaOperations._
 
 import util.Logging
 
@@ -34,6 +32,8 @@ object Model extends Logging {
 
     val dirTree = recursiveListFiles(rootDir)
     dirTree.foreach(item => println(item.getName + " (in) " + item.getParent))
+    
+    println("object total: " + dirTree.length)
   }
 
   def queryStore(q: String): String = {
