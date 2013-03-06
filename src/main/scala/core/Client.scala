@@ -6,7 +6,7 @@ package core
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
 import LinkFactory._
 
@@ -26,7 +26,7 @@ object Client {
     private val remoteActor = createRemote(system,
       "TrigramServer", address(0), address(1), "Server")
 
-    private implicit val timeout = Timeout(10000)
+    private implicit val timeout = Timeout(2 seconds)
 
     def deliver(q: String): String = {
       Await.result(remoteActor ? Request(q), Duration.Inf) match {
