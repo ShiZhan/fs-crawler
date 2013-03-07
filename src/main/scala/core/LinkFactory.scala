@@ -31,7 +31,7 @@ akka {
   }
 
   remote {
-    netty {
+    netty.tcp {
       port = %s
     }
   }
@@ -55,7 +55,7 @@ akka {
       }
     })
 
-  private val akkaURLTemplate = "akka://%s@%s:%s/user/%s"
+  private val akkaURLTemplate = "akka.tcp://%s@%s:%s/user/%s"
 
   def createRemote(system: ActorSystem,
     systemName: String, ip: String, port: String, name: String): ActorRef =

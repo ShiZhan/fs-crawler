@@ -30,12 +30,13 @@ object ModelFactory extends Logging {
   def shutdown = dataSet.close
 
   def queryStore(q: String): String = {
-    val sparqlQueryString = "SELECT (count(*) AS ?count) { ?s ?p ?o }"
-    val query = QueryFactory.create(sparqlQueryString)
-    val qexec = QueryExecutionFactory.create(query, dataSet)
-    val results = qexec.execSelect
-    qexec.close()
-    results.toString
+//    val sparqlQueryString = "SELECT (count(*) AS ?count) { ?s ?p ?o }"
+//    val query = QueryFactory.create(sparqlQueryString)
+//    val qexec = QueryExecutionFactory.create(query, dataSet)
+//    val results = qexec.execSelect
+//    qexec.close
+//    results.toString
+    "work in progress: " + q 
   }
 
   def recursiveListFiles(f: File): Array[File] = {
