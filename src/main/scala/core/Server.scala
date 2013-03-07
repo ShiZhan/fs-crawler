@@ -3,7 +3,7 @@
  */
 package core
 
-import model.Model.queryStore
+import ModelFactory.queryStore
 import LinkFactory._
 import util.Logging
 

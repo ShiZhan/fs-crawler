@@ -2,6 +2,11 @@
 *.log
 *.jar
 
+# tdb storage
+data/*
+# except place holder
+!data/_tdb_
+
 # sbt specific
 dist/*
 target/

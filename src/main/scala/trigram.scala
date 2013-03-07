@@ -5,7 +5,7 @@
  */
 import org.apache.commons.cli._
 import core.{ Server, Console }
-import model.Model.importDirToModel
+import core.ModelFactory.importDirToModel
 import util.{ Logging, Version }
 
 object trigram extends Logging {
@@ -34,10 +34,10 @@ object trigram extends Logging {
     options.addOption(OptionBuilder.create("a"))
 
     OptionBuilder.withLongOpt("initialize")
-    OptionBuilder.withDescription("create model on given root directory")
+    OptionBuilder.withDescription("import metadata from given item")
     OptionBuilder.hasArg
     OptionBuilder.isRequired(false)
-    OptionBuilder.withArgName("ROOT_DIR")
+    OptionBuilder.withArgName("ITEM_ROOT")
     options.addOption(OptionBuilder.create("i"))
 
     try {

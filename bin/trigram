@@ -1,5 +1,0 @@
-#!/bin/sh
-# trigram launcher script
-# use relative directory to load compiled classes
-CLASSLIB=`cat ../.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s;",$2}'`
-scala -cp "$CLASSLIB;../target/scala-2.10/classes" trigram "$@" 
