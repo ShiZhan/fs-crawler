@@ -12,7 +12,7 @@ import java.io._
 object Version {
 
   def getVersion(): String = {
-    val masterHashFile = new File("../.git/refs/heads/master")
+    val masterHashFile = new File(".git/refs/heads/master")
     return if (masterHashFile.exists())
       (new BufferedReader(new FileReader(masterHashFile))).readLine()
     else
