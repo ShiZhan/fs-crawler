@@ -5,14 +5,15 @@ package core
 
 import java.io._
 
-import com.hp.hpl.jena.query.Dataset ;
-import com.hp.hpl.jena.query.Query ;
-import com.hp.hpl.jena.query.QueryExecution ;
-import com.hp.hpl.jena.query.QueryExecutionFactory ;
-import com.hp.hpl.jena.query.QueryFactory ;
-import com.hp.hpl.jena.query.ResultSet ;
-import com.hp.hpl.jena.query.ResultSetFormatter ;
-import com.hp.hpl.jena.tdb.TDBFactory ;
+import com.hp.hpl.jena.rdf.model.Model
+import com.hp.hpl.jena.query.Dataset
+import com.hp.hpl.jena.query.Query
+import com.hp.hpl.jena.query.QueryExecution
+import com.hp.hpl.jena.query.QueryExecutionFactory
+import com.hp.hpl.jena.query.QueryFactory
+import com.hp.hpl.jena.query.ResultSet
+import com.hp.hpl.jena.query.ResultSetFormatter
+import com.hp.hpl.jena.tdb.TDBFactory
 
 import util.Logging
 
@@ -25,36 +26,54 @@ import util.Logging
 object ModelFactory extends Logging {
 
   val DEFAULT_LOCATION = "data/"
-  val dataSet = TDBFactory.createDataset(DEFAULT_LOCATION)
+  def loadStore = TDBFactory.createDataset(DEFAULT_LOCATION)
+  // close dataset with dataset.close()
 
-  def shutdown = dataSet.close
-
-  def queryStore(q: String): String = {
-//    val sparqlQueryString = "SELECT (count(*) AS ?count) { ?s ?p ?o }"
-//    val query = QueryFactory.create(sparqlQueryString)
-//    val qexec = QueryExecutionFactory.create(query, dataSet)
-//    val results = qexec.execSelect
-//    qexec.close
-//    results.toString
-    "work in progress: " + q 
+  def queryStore(m: Dataset, q: String): String = {
+    //    val qexec = QueryExecutionFactory.create(QueryFactory.create(q), m)
+    //    val results = qexec.execSelect
+    //    qexec.close
+    //    results.toString
+    "work in progress: " + q
   }
 
-  def recursiveListFiles(f: File): Array[File] = {
-    val all = f.listFiles
-    all ++ all.filter(_.isDirectory).flatMap(recursiveListFiles)
+  def posixInterpreter(cmd: String) = cmd
+
+  def unknownInterpreter(cmd: String) = "unsupported command"
+
+  def traverseDirectory(d: File): Array[File] = {
+    val all = d.listFiles
+    all.foreach(item => println(item.getName + " (in) " + item.getParent))
+    all ++ all.filter(_.isDirectory).flatMap(traverseDirectory)
   }
 
-  def importDirToModel(rootDirName: String) = {
-    val input = new File(rootDirName)
-    val rootDir = if (input.isDirectory) input else new File(input.getParent)
-    val absolutePathOfRoot = rootDir.getAbsolutePath
+  def parseDirectory(d: File) = {
+    logger.info("initializing model with root directory: " + d.getAbsolutePath)
 
-    logger.info("initializing model with root directory: " + absolutePathOfRoot)
+    val dirTree = traverseDirectory(d)
 
-    val dirTree = recursiveListFiles(rootDir)
-    dirTree.foreach(item => println(item.getName + " (in) " + item.getParent))
-    
-    println("object total: " + dirTree.length)
+    logger.info("object total: " + dirTree.length)
+
+    //    translating directory data to model
+  }
+
+  def parseFile(f: File) = {
+    logger.info("not implemented")
+
+    //    check file format and decide which dedicated parser to use
+  }
+
+  def parseUnknown(f: File) = {
+    logger.info("unrecognized file reource")
+
+    //    check file format and decide which dedicated parser to use
+  }
+
+  def importData(name: String) = {
+    val input = new File(name)
+    val parser = if (input.isDirectory) parseDirectory(_)
+    else if (input.isFile) parseFile(_) else parseUnknown(_)
+    parser(input)
   }
 
 }

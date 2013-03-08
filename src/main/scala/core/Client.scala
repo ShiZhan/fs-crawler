@@ -31,10 +31,8 @@ object Client {
     def deliver(q: String): String = {
       Await.result(remoteActor ? Request(q), Duration.Inf) match {
         case Response(result) => return result
-        case _ => return "Unknown Result"
       }
     }
-
   }
 
 }

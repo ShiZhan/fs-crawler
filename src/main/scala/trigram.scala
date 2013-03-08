@@ -5,21 +5,22 @@
  */
 import org.apache.commons.cli._
 import core.{ Server, Console }
-import core.ModelFactory.importDirToModel
+import core.ModelFactory.importData
 import util.{ Logging, Version }
 
 object trigram extends Logging {
-
-  val defaultAddress = Array("localhost", "10001")
 
   def main(args: Array[String]) {
 
     println("Triple Graph based Metadata storage - TriGraM")
 
-    // create the command line parser
-    val parser: CommandLineParser = new PosixParser()
+    if (args.length == 0) {
+      println("Use '-h' option to access help")
+      return
+    }
 
-    // create the Options
+    val parser = new PosixParser()
+
     val options = new Options()
       .addOption("h", "help", false, "print this message")
       .addOption("v", "version", false, "show program version")
@@ -40,15 +41,16 @@ object trigram extends Logging {
     OptionBuilder.withArgName("ITEM_ROOT")
     options.addOption(OptionBuilder.create("i"))
 
+    val defaultAddress = Array("localhost", "10001")
+
     try {
-      // parse the command line arguments
-      val line: CommandLine = parser.parse(options, args)
+      val line = parser.parse(options, args)
 
       if (line.hasOption("h")) (new HelpFormatter()).printHelp("trigram", options)
 
       if (line.hasOption("v")) println(Version.getVersion)
 
-      if (line.hasOption("i")) importDirToModel(line.getOptionValue("i"))
+      if (line.hasOption("i")) importData(line.getOptionValue("i"))
 
       val address = if (line.hasOption("a")) line.getOptionValues("a")
       else defaultAddress

@@ -42,7 +42,6 @@ object Console extends Logging {
       line.split(' ') match {
         case Array("exit") => {
           Client.shutdown
-          println("press Ctrl+C")
           return
         }
 
