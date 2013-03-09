@@ -5,7 +5,7 @@
  */
 import org.apache.commons.cli._
 import core.{ Server, Console }
-import core.ModelFactory.importData
+import core.ModelFactory.importDataset
 import util.{ Logging, Version }
 
 object trigram extends Logging {
@@ -50,7 +50,7 @@ object trigram extends Logging {
 
       if (line.hasOption("v")) println(Version.getVersion)
 
-      if (line.hasOption("i")) importData(line.getOptionValue("i"))
+      if (line.hasOption("i")) importDataset(line.getOptionValue("i"))
 
       val address = if (line.hasOption("a")) line.getOptionValues("a")
       else defaultAddress

@@ -36,7 +36,7 @@ object Console extends Logging {
     println(consoleTitle)
     print(consolePrompt)
 
-    val connection = new Client.Connect(address)
+    val connection = Client.getConnection(address)
 
     for (line <- io.Source.stdin.getLines) {
       line.split(' ') match {

@@ -50,6 +50,8 @@ akka {
       become {
         case Request(req) =>
           sender ! Response(handler(req))
+        case _ =>
+          sender ! Response("Unhandled request!")
       }
     })
 

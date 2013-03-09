@@ -21,7 +21,7 @@ object Client {
 
   def shutdown = system.shutdown
 
-  class Connect(address: Array[String]) {
+  class Connection(address: Array[String]) {
 
     private val remoteActor = createRemote(system,
       "TrigramServer", address(0), address(1), "Server")
@@ -31,8 +31,12 @@ object Client {
     def deliver(q: String): String = {
       Await.result(remoteActor ? Request(q), Duration.Inf) match {
         case Response(result) => return result
+        case _ => return "Unknown Result"
       }
     }
+
   }
+
+  def getConnection(a: Array[String]) = new Connection(a)
 
 }
