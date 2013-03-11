@@ -12,6 +12,5 @@ libraryDependencies ++= Seq(
  "com.typesafe.akka" % "akka-remote_2.10" % "2.2-M1",
  "com.typesafe.akka" % "akka-slf4j_2.10" % "2.2-M1",
  "org.slf4j" % "slf4j-api" % "1.7.2",
- "org.slf4j" % "slf4j-simple" % "1.7.2",
- "commons-cli" % "commons-cli" % "1.2"
+ "org.slf4j" % "slf4j-simple" % "1.7.2"
 )

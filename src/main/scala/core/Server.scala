@@ -14,13 +14,13 @@ import util.Logging
  */
 object Server extends Logging {
 
-  def run(address: Array[String]) = {
-    logger.info("Starting server on port: " + address(1))
+  def run(port: String) = {
+    logger.info("Starting server on port: " + port)
 
     val model = initDataset
 
     val serviceActor = createLocal(
-      createActorSystem("TrigramServer", address(1)), "Server",
+      createActorSystem("TrigramServer", port), "Server",
       queryDataset(model, _))
 
     model.close

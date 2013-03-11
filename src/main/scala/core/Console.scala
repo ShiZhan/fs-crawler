@@ -12,18 +12,19 @@ import util.{ Logging, Version }
  */
 object Console extends Logging {
 
-  private val consoleUsage =
-    "[Console Usage]\n" +
-      " help                  print this message\n" +
-      " version               show program version\n" +
-      " put <file>            upload a file\n" +
-      " get <file>            download a file\n" +
-      " mv <origin> <target>  move/rename a file/directory (end with '/')\n" +
-      " mk <directory>        create a directory\n" +
-      " cd <directory>        change current directory\n" +
-      " ls <directory>        list directory content\n" +
-      " rm <target>           remove file or directory\n" +
-      " exit                  exit console\n"
+  private val consoleUsage = """
+  [Console Usage]
+   help                  print this message
+   version               show program version
+   put <file>            upload a file
+   get <file>            download a file
+   mv <origin> <target>  move/rename a file/directory (end with '/')
+   mk <directory>        create a directory
+   cd <directory>        change current directory
+   ls <directory>        list directory content
+   rm <target>           remove file or directory
+   exit                  exit console
+"""
 
   private val consoleTitle = "TriGraM Console"
   private val consolePromptChar = " > "
