@@ -26,7 +26,7 @@ import util.Logging
 object ModelFactory extends Logging {
 
   val DEFAULT_LOCATION = "data/"
-  def loadDataset = TDBFactory.createDataset(DEFAULT_LOCATION)
+  def initDataset = TDBFactory.createDataset(DEFAULT_LOCATION)
   // close dataset with dataset.close()
 
   def queryDataset(m: Dataset, q: String): String = {
@@ -76,9 +76,9 @@ object ModelFactory extends Logging {
     parser(input)
   }
 
-  def importDataset(name: String) = {
+  def load(name: String) = {
     parseData(name: String)
-    val model = loadDataset
+    val model = initDataset
     model.close
   }
 }
