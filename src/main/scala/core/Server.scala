@@ -3,8 +3,8 @@
  */
 package core
 
-import DataFactory.{ initDataset, queryDataset }
-import LinkFactory._
+import DataFactory.queryDataset
+import LinkFactory.{createActorSystem, createLocal}
 import util.Logging
 
 /**
@@ -17,13 +17,9 @@ object Server extends Logging {
   def run(port: String) = {
     logger.info("Starting server on port: " + port)
 
-    val model = initDataset()
-
     val serviceActor = createLocal(
       createActorSystem("TrigramServer", port), "Server",
-      queryDataset(model, _))
-
-    model.close
+      queryDataset)
   }
 
 }

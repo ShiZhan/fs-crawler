@@ -30,11 +30,11 @@ object DataFactory extends Logging {
 
   val DEFAULT_LOCATION = "data/"
 
-  def initDataset() = TDBFactory.createDataset(DEFAULT_LOCATION)
-  // close dataset with dataset.close()
+  private val store = TDBFactory.createDataset(DEFAULT_LOCATION)
+  // close dataset with store.close()
 
-  def queryDataset(m: Dataset, q: String): String = {
-    //    val qexec = QueryExecutionFactory.create(QueryFactory.create(q), m)
+  def queryDataset(q: String): String = {
+    //    val qexec = QueryExecutionFactory.create(QueryFactory.create(q), store)
     //    val results = qexec.execSelect
     //    qexec.close
     //    results.toString
@@ -82,8 +82,6 @@ object DataFactory extends Logging {
 
   def load(name: String) = {
     logger.info("importing RDF/OWL model")
-    val dataset = initDataset
-    dataset.addNamedModel(name, parseData(name))
-    dataset.close
+    store.addNamedModel(name, parseData(name))
   }
 }

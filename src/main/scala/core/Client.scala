@@ -8,7 +8,7 @@ import akka.util.Timeout
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-import LinkFactory._
+import LinkFactory.{createActorSystem, createRemote}
 
 /**
  * @author ShiZhan
