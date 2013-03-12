@@ -23,13 +23,14 @@ import util.Logging
 /**
  * @author ShiZhan
  * 2013
- * Model Factory object
- * use different classes to support various data sources
+ * DataFactory
+ * manipulate various data sources
  */
-object Store extends Logging {
+object DataFactory extends Logging {
 
   val DEFAULT_LOCATION = "data/"
-  def initDataset = TDBFactory.createDataset(DEFAULT_LOCATION)
+
+  def initDataset() = TDBFactory.createDataset(DEFAULT_LOCATION)
   // close dataset with dataset.close()
 
   def queryDataset(m: Dataset, q: String): String = {
@@ -62,10 +63,8 @@ object Store extends Logging {
   }
 
   private def parseFile(f: File): Model = {
-    logger.info("importing RDF/OWL model")
     val m = ModelFactory.createDefaultModel
     FileManager.get.readModel( m, f.getName )
-    println(m.size)
     m
   }
 
@@ -82,8 +81,9 @@ object Store extends Logging {
   }
 
   def load(name: String) = {
-    val model = initDataset
-    model.addNamedModel(name, parseData(name: String))
-    model.close
+    logger.info("importing RDF/OWL model")
+    val dataset = initDataset
+    dataset.addNamedModel(name, parseData(name))
+    dataset.close
   }
 }

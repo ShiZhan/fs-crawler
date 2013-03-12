@@ -10,7 +10,7 @@
  * 4. start server
  * 5. enter console
  */
-import core.{ Server, Console, Store }
+import core.{ Server, Console, DataFactory }
 import util.Version.getVersion
 
 object trigram {
@@ -60,7 +60,7 @@ usage: trigram [-h] [-v] [-i] [-s] [-c]
 
     if (options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)
-    else if (options.contains('resource)) Store.load(options('resource).toString)
+    else if (options.contains('resource)) DataFactory.load(options('resource).toString)
     else if (options.contains('port)) Server.run(options('port).toString)
     else if (options.contains('remote)) Console.run(options('remote).toString.split(":"))
   }
