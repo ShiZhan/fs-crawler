@@ -5,7 +5,7 @@ package core
 
 import java.io._
 
-import com.hp.hpl.jena.rdf.model.Model
+import com.hp.hpl.jena.rdf.model._
 import com.hp.hpl.jena.query.Dataset
 import com.hp.hpl.jena.query.Query
 import com.hp.hpl.jena.query.QueryExecution
@@ -14,6 +14,9 @@ import com.hp.hpl.jena.query.QueryFactory
 import com.hp.hpl.jena.query.ResultSet
 import com.hp.hpl.jena.query.ResultSetFormatter
 import com.hp.hpl.jena.tdb.TDBFactory
+import com.hp.hpl.jena.util.FileManager
+import com.hp.hpl.jena.vocabulary.RDF
+import com.hp.hpl.jena.vocabulary.RDFS
 
 import util.Logging
 
@@ -23,7 +26,7 @@ import util.Logging
  * Model Factory object
  * use different classes to support various data sources
  */
-object ModelFactory extends Logging {
+object Store extends Logging {
 
   val DEFAULT_LOCATION = "data/"
   def initDataset = TDBFactory.createDataset(DEFAULT_LOCATION)
@@ -54,19 +57,22 @@ object ModelFactory extends Logging {
 
     logger.info("object total: " + dirTree.length)
 
-    //    translating directory data to model
+    // translating directory data to model
   }
 
   private def parseFile(f: File) = {
     logger.info("not implemented")
 
-    //    check file format and decide which dedicated parser to use
+    // check file format and decide which dedicated parser to use
+    val m = ModelFactory.createDefaultModel
+    FileManager.get.readModel( m, f.getName )
+    println(m.size)
   }
 
   private def parseUnknown(f: File) = {
     logger.info("unrecognized file reource")
 
-    //    check file format and decide which dedicated parser to use
+    // check file format and decide which dedicated parser to use
   }
 
   def parseData(name: String) = {

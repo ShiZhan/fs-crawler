@@ -1,0 +1,247 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY terms "http://purl.org/dc/terms/" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="https://sites.google.com/site/ontology2013/trigram.owl#"
+     xml:base="https://sites.google.com/site/ontology2013/trigram.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:terms="http://purl.org/dc/terms/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="https://sites.google.com/site/ontology2013/trigram.owl">
+        <terms:license rdf:datatype="&xsd;string">
+Copyright 2013 Shi.Zhan.
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0.
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing
+permissions and limitations under the License.
+</terms:license>
+        <dc:created rdf:datatype="&xsd;dateTimeStamp">2013-03-12 10:10</dc:created>
+        <dc:creator>Shi.Zhan</dc:creator>
+        <dc:date>2013-01-31</dc:date>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#anyType -->
+
+    <rdfs:Datatype rdf:about="&xsd;anyType"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#compose -->
+
+    <owl:ObjectProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#compose"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#atime -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#atime"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#ctime -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#ctime"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#gid -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#gid"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#mode -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#mode"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#mtime -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#mtime"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#name -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#name"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#origin -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#origin"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#size -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#size"/>
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#uid -->
+
+    <owl:DatatypeProperty rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#uid"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- https://sites.google.com/site/ontology2013/trigram.owl#Object -->
+
+    <owl:Class rdf:about="https://sites.google.com/site/ontology2013/trigram.owl#Object">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#atime"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;unsignedLong"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#origin"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;normalizedString"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#mode"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;unsignedShort"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#compose"/>
+                <owl:allValuesFrom rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#Object"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#size"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;unsignedLong"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#mtime"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;unsignedLong"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#gid"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;int"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#name"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;normalizedString"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#ctime"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;unsignedLong"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#uid"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;int"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="https://sites.google.com/site/ontology2013/seed.owl">
+        <owl:versionInfo rdf:datatype="&xsd;hexBinary">bf51771d2795dca03b66f838c378bd2fec1a7b17</owl:versionInfo>
+        <rdfs:comment xml:lang="en">SEED ontology</rdfs:comment>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

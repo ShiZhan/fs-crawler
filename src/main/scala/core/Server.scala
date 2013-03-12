@@ -3,7 +3,7 @@
  */
 package core
 
-import ModelFactory.{ initDataset, queryDataset }
+import Store.{ initDataset, queryDataset }
 import LinkFactory._
 import util.Logging
 
