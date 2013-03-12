@@ -7,6 +7,9 @@ data/*
 # except place holder
 !data/_tdb_
 
+# protege catalog
+catalog-v001.xml
+
 # sbt specific
 dist/*
 target/

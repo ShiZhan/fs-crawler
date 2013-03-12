@@ -6,7 +6,7 @@
  * 1. show help
  * 2. show version
  * 3. get data from specified source and put into local storage
- *    allowed source: directory tree, typed file
+ *    allowed source: directory tree, RDF/OWL model file
  * 4. start server
  * 5. enter console
  */

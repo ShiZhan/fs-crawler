@@ -50,32 +50,31 @@ object Store extends Logging {
     all ++ all.filter(_.isDirectory).flatMap(traverseDirectory)
   }
 
-  private def parseDirectory(d: File) = {
+  private def parseDirectory(d: File): Model = {
     logger.info("initializing model with root directory: " + d.getAbsolutePath)
 
+    val m = ModelFactory.createDefaultModel
     val dirTree = traverseDirectory(d)
 
     logger.info("object total: " + dirTree.length)
 
-    // translating directory data to model
+    m
   }
 
-  private def parseFile(f: File) = {
-    logger.info("not implemented")
-
-    // check file format and decide which dedicated parser to use
+  private def parseFile(f: File): Model = {
+    logger.info("importing RDF/OWL model")
     val m = ModelFactory.createDefaultModel
     FileManager.get.readModel( m, f.getName )
     println(m.size)
+    m
   }
 
-  private def parseUnknown(f: File) = {
-    logger.info("unrecognized file reource")
-
-    // check file format and decide which dedicated parser to use
+  private def parseUnknown(f: File): Model = {
+    logger.info("unrecognized reource: " + f.getName)
+    ModelFactory.createDefaultModel
   }
 
-  def parseData(name: String) = {
+  def parseData(name: String): Model = {
     val input = new File(name)
     val parser = if (input.isDirectory) parseDirectory(_)
     else if (input.isFile) parseFile(_) else parseUnknown(_)
@@ -83,8 +82,8 @@ object Store extends Logging {
   }
 
   def load(name: String) = {
-    parseData(name: String)
     val model = initDataset
+    model.addNamedModel(name, parseData(name: String))
     model.close
   }
 }
