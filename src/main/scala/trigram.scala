@@ -29,7 +29,6 @@ usage: trigram [-h] [-v] [-i] [-s] [-c]
 
     if (args.length == 0) println(usage)
 
-    val arglist = args.toList
     type OptionMap = Map[Symbol, Any]
 
     def nextOption(map: OptionMap, list: List[String]): OptionMap = {
@@ -56,7 +55,7 @@ usage: trigram [-h] [-v] [-i] [-s] [-c]
           sys.exit(1)
       }
     }
-    val options = nextOption(Map(), arglist)
+    val options = nextOption(Map(), args.toList)
 
     if (options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)

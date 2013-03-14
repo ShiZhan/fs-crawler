@@ -1,10 +1,9 @@
 /**
- *
+ * Actor system encapsulation
  */
 package core
 
-import akka.actor.{ Actor, ActorRef, ActorSystem }
-import akka.actor.ActorDSL._
+import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigFactory.parseString
 
@@ -44,21 +43,6 @@ akka {
     ActorSystem(name,
       ConfigFactory.load(parseString(configTemplate.format(port))))
 
-  def createLocal(system: ActorSystem,
-    name: String, handler: String => String): ActorRef =
-    actor(system, name)(new Act {
-      become {
-        case Request(req) =>
-          sender ! Response(handler(req))
-        case _ =>
-          sender ! Response("Unhandled request!")
-      }
-    })
-
-  private val akkaURLTemplate = "akka.tcp://%s@%s:%s/user/%s"
-
-  def createRemote(system: ActorSystem,
-    systemName: String, ip: String, port: String, name: String): ActorRef =
-    system.actorFor(akkaURLTemplate.format(systemName, ip, port, name))
+  val akkaURLTemplate = "akka.tcp://%s@%s:%s/user/%s"
 
 }

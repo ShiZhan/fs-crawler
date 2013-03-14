@@ -1,5 +1,5 @@
 /**
- *
+ * Console program
  */
 package core
 
@@ -8,7 +8,7 @@ import util.{ Logging, Version }
 /**
  * @author ShiZhan
  * 2013
- * Program console
+ * Console command loop
  */
 object Console extends Logging {
 
@@ -40,24 +40,24 @@ object Console extends Logging {
     val connection = Client.getConnection(address)
 
     for (line <- io.Source.stdin.getLines) {
-      line.split(' ') match {
-        case Array("exit") => {
+      line.split(" ").toList match {
+        case "exit" :: Nil => {
           Client.shutdown
           return
         }
 
-        case Array("help") => println(consoleUsage)
-        case Array("version") => println(Version.getVersion)
+        case "help" :: Nil => println(consoleUsage)
+        case "version" :: Nil => println(Version.getVersion)
 
-        case Array("test") => println(connection.deliver(line))
+        case "test" :: Nil => println(connection.deliver(line))
 
-        case Array("put", file) => println("Uploading: " + file)
-        case Array("get", file) => println("Downloading: " + file)
-        case Array("mv", origin, target) => println("Move: " + origin + " to: " + target)
-        case Array("mk", directory) => println("Create directory: " + directory)
-        case Array("cd", directory) => println("Change to: " + directory)
-        case Array("ls", directory) => println("Content of: " + directory)
-        case Array("rm", target) => println("Removing: " + target)
+        case "put" :: file => println("Uploading: " + file)
+        case "get" :: file => println("Downloading: " + file)
+        case "mv" :: origin :: target => println("Move: " + origin + " to: " + target)
+        case "mk" :: directory => println("Create directory: " + directory)
+        case "cd" :: directory => println("Change to: " + directory)
+        case "ls" :: directory => println("Content of: " + directory)
+        case "rm" :: target => println("Removing: " + target)
 
         case _ => println("Unrecognized command: " + line +
           "\nUse 'help' to list available commands")

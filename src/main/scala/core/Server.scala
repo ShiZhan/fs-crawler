@@ -3,8 +3,10 @@
  */
 package core
 
+import akka.actor.ActorDSL._
+
+import LinkFactory._
 import DataFactory.queryDataset
-import LinkFactory.{createActorSystem, createLocal}
 import util.Logging
 
 /**
@@ -15,11 +17,20 @@ import util.Logging
 object Server extends Logging {
 
   def run(port: String) = {
+
     logger.info("Starting server on port: " + port)
 
-    val serviceActor = createLocal(
-      createActorSystem("TrigramServer", port), "Server",
-      queryDataset)
+    val system = createActorSystem("TrigramServer", port)
+
+    val serviceActor = actor(system, "Server")(new Act {
+      become {
+        case Request(req) =>
+          sender ! Response(queryDataset(req))
+        case _ =>
+          sender ! Response("Unhandled request!")
+      }
+    })
+      
   }
 
 }

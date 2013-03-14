@@ -64,7 +64,7 @@ object DataFactory extends Logging {
 
   private def parseFile(f: File): Model = {
     val m = ModelFactory.createDefaultModel
-    FileManager.get.readModel( m, f.getName )
+    FileManager.get.readModel(m, f.getName)
     m
   }
 
