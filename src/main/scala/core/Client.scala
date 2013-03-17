@@ -3,7 +3,6 @@
  */
 package core
 
-import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.Await
@@ -26,7 +25,7 @@ object Client {
     private val remoteActor = system.actorFor(
       akkaURLTemplate.format("TrigramServer", address(0), address(1), "Server"))
 
-    private implicit val timeout = Timeout(2 seconds)
+    private implicit val timeout = Timeout(10 seconds)
 
     def deliver(q: String): String =
       Await.result(remoteActor ? Request(q), Duration.Inf) match {

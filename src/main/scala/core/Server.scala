@@ -30,7 +30,7 @@ object Server extends Logging {
           sender ! Response("Unhandled request!")
       }
     })
-      
+
   }
 
 }
