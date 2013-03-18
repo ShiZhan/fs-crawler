@@ -28,17 +28,18 @@ import util.Logging
  */
 object DataFactory extends Logging {
 
-  val DEFAULT_LOCATION = "data/"
+  private val DEFAULT_LOCATION = "data/"
 
   private val store = TDBFactory.createDataset(DEFAULT_LOCATION)
   // close dataset with store.close()
 
   def queryDataset(q: String): String = {
-    //    val qexec = QueryExecutionFactory.create(QueryFactory.create(q), store)
-    //    val results = qexec.execSelect
-    //    qexec.close
-    //    results.toString
-    "work in progress: " + q
+    val query = "SELECT * {?s ?p ?o}"
+    val qexec = QueryExecutionFactory.create(QueryFactory.create(query), store)
+    val results = qexec.execSelect
+    qexec.close
+    results.toString
+//    "work in progress: " + q
   }
 
   def interpreterPosix(cmd: String) = cmd
