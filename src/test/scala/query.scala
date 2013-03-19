@@ -9,18 +9,19 @@ import com.hp.hpl.jena.query.ResultSet
 import com.hp.hpl.jena.query.ResultSetFormatter
 import com.hp.hpl.jena.tdb.TDBFactory
 
-object QueryStore {
-  def main(args: Array[String]) = {
-    val DEFAULT_LOCATION = "data/"
-    val SPARQL_FILE = "sparql/list.sparql"
-    val store = TDBFactory.createDataset(DEFAULT_LOCATION)
-    val queryString = Source.fromFile(SPARQL_FILE).getLines.mkString("\n")
-    println("Query:\n" + queryString)
-    val query = QueryFactory.create(queryString)
-    val qexec = QueryExecutionFactory.create(query, store)
-    val results = qexec.execSelect
-    ResultSetFormatter.out(results)
-    qexec.close
-    store.close
-  }
+object QuerySelect {
+  def main(args: Array[String]) =
+    if(args.length < 2)
+      println("run with <dataset> <query>")
+    else {
+      val store = TDBFactory.createDataset(args(0))
+      val queryString = Source.fromFile(args(1)).getLines.mkString("\n")
+      println("Query:\n" + queryString)
+      val query = QueryFactory.create(queryString)
+      val qexec = QueryExecutionFactory.create(query, store)
+      val results = qexec.execSelect
+      ResultSetFormatter.out(results)
+      qexec.close
+      store.close
+    }
 }
