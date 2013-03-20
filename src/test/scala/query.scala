@@ -60,11 +60,11 @@ object QueryUpdate {
       val store = TDBFactory.createDataset(args(0))
       val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
       println("SPARQL:\n" + sparqlString)
+      val graphStore = GraphStoreFactory.create(store)
+      val update = UpdateFactory.create(sparqlString)
+      val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
       store.begin(ReadWrite.WRITE)
       try {
-        val graphStore = GraphStoreFactory.create(store)
-        val update = UpdateFactory.create(sparqlString)
-        val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
         updateProcessor.execute
         store.commit()
         // Or call .abort()
