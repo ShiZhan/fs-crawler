@@ -46,7 +46,41 @@ object QueryConstruct {
       val query = QueryFactory.create(sparqlString)
       val qexec = QueryExecutionFactory.create(query, store)
       val results = qexec.execConstruct
-      println(results.size)
+      println(results)
+      qexec.close
+      store.close
+    }
+}
+
+object QueryAsk {
+  def main(args: Array[String]) =
+    if (args.length < 2)
+      println("run with <dataset> <ask query>")
+    else {
+      val store = TDBFactory.createDataset(args(0))
+      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
+      println("SPARQL:\n" + sparqlString)
+      val query = QueryFactory.create(sparqlString)
+      val qexec = QueryExecutionFactory.create(query, store)
+      val results = qexec.execAsk
+      println(results)
+      qexec.close
+      store.close
+    }
+}
+
+object QueryDescribe {
+  def main(args: Array[String]) =
+    if (args.length < 2)
+      println("run with <dataset> <describe query>")
+    else {
+      val store = TDBFactory.createDataset(args(0))
+      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
+      println("SPARQL:\n" + sparqlString)
+      val query = QueryFactory.create(sparqlString)
+      val qexec = QueryExecutionFactory.create(query, store)
+      val results = qexec.execDescribe
+      println(results)
       qexec.close
       store.close
     }
