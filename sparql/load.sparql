@@ -1,1 +1,1 @@
-LOAD <file:///E:/Works/hive/trigram/trigram.owl>
+LOAD <trigram.owl>
