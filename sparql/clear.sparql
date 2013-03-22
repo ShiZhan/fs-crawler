@@ -1,1 +1,1 @@
-DELETE {?s ?p ?o} where {?s ?p ?o}
+CLEAR DEFAULT
