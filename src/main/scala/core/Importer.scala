@@ -1,5 +1,5 @@
 /**
- * model functions
+ * importer functions
  */
 package core
 
@@ -31,10 +31,9 @@ import util.Logging
 /**
  * @author ShiZhan
  * 2013
- * DataFactory
- * manipulate various data sources
+ * import metadata from various data sources
  */
-object DataFactory extends Logging {
+object Importer extends Logging {
 
   private val DEFAULT_LOCATION = "data/"
 
@@ -49,10 +48,6 @@ object DataFactory extends Logging {
     results.toString
 //    "work in progress: " + q
   }
-
-  def interpreterPosix(cmd: String) = cmd
-
-  def interpreterUnknown(cmd: String) = "unsupported command"
 
   private def traverseDirectory(d: File): Array[File] = {
     val all = d.listFiles

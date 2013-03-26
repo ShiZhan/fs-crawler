@@ -10,24 +10,22 @@
  * 4. start server
  * 5. enter console
  */
-import core.{ Server, Console, DataFactory }
+import core.{ Console, Importer }
 import util.Version.getVersion
 
 object trigram {
 
   val usage = """
-usage: trigram [-h] [-v] [-i] [-s] [-c]
+usage: trigram [-h] [-v] [-i]
  -h,--help                    print this message
  -v,--version                 show program version
- -i,--import <ITEM_ROOT>      import metadata locally from given item
- -s,--server <PORT>           start server on specified port
- -c,--console <IP:PORT>       open console on specified address
+ -i,--import <ITEM_ROOT>      import metadata from given item
 """
 
   def main(args: Array[String]) {
     println("Triple Graph based Metadata storage - TriGraM")
 
-    if (args.length == 0) println(usage)
+    if (args.length == 0) Console.run
 
     type OptionMap = Map[Symbol, Any]
 
@@ -42,14 +40,6 @@ usage: trigram [-h] [-v] [-i] [-s] [-c]
           nextOption(map ++ Map('resource -> root), tail)
         case "--import" :: root :: tail =>
           nextOption(map ++ Map('resource -> root), tail)
-        case "-s" :: value :: tail =>
-          nextOption(map ++ Map('port -> value), tail)
-        case "--server" :: value :: tail =>
-          nextOption(map ++ Map('port -> value), tail)
-        case "-c" :: address :: tail =>
-          nextOption(map ++ Map('remote -> address), tail)
-        case "--console" :: address :: tail =>
-          nextOption(map ++ Map('remote -> address), tail)
         case option :: tail =>
           println("Incorrect option: " + option)
           sys.exit(1)
@@ -59,9 +49,7 @@ usage: trigram [-h] [-v] [-i] [-s] [-c]
 
     if (options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)
-    else if (options.contains('resource)) DataFactory.load(options('resource).toString)
-    else if (options.contains('port)) Server.run(options('port).toString)
-    else if (options.contains('remote)) Console.run(options('remote).toString.split(":"))
+    else if (options.contains('resource)) Importer.load(options('resource).toString)
   }
 
 }

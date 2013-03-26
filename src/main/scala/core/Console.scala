@@ -3,14 +3,14 @@
  */
 package core
 
-import util.{ Logging, Version }
+import util.Version
 
 /**
  * @author ShiZhan
  * 2013
  * Console command loop
  */
-object Console extends Logging {
+object Console {
 
   private val consoleUsage = """
   [Console Usage]
@@ -27,29 +27,20 @@ object Console extends Logging {
 """
 
   private val consoleTitle = "TriGraM Console"
-  private val consolePromptChar = " > "
+  private val consolePrompt = "> "
 
-  def run(address: Array[String]): Unit = {
-    logger.info("Opening CLI on " + address.mkString(":"))
-
-    val consolePrompt = address.mkString(":") + consolePromptChar
-
+  def run(): Unit = {
     println(consoleTitle)
     print(consolePrompt)
 
-    val connection = Client.getConnection(address)
-
     for (line <- io.Source.stdin.getLines) {
       line.split(" ").toList match {
-        case "exit" :: Nil => {
-          Client.shutdown
-          return
-        }
+        case "exit" :: Nil => return
 
         case "help" :: Nil => println(consoleUsage)
         case "version" :: Nil => println(Version.getVersion)
 
-        case "test" :: Nil => println(connection.deliver(line))
+        case "test" :: Nil => println("WIP")
 
         case "put" :: file => println("Uploading: " + file)
         case "get" :: file => println("Downloading: " + file)
