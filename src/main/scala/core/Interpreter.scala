@@ -18,9 +18,17 @@ object Interpreter {
 
   def parseSparql(cmd: String) = cmd
 
-  def parsePosix(cmd: String) = cmd
+  def parsePosix(cmd: String) = cmd.split(" ").toList match {
+    case "ls" :: item :: Nil => "Content of: " + item
+    case "stat" :: item :: Nil => "Properties of: " + item
+    case "cp" :: from :: to :: Nil => "Copy object from [%s] to [%s]".format(from, to)
+    case "mv" :: from :: to :: Nil => "Move object from [%s] to [%s]".format(from, to)
+    case "rm" :: item :: Nil => "Delete: " + item
+    case "mkdir" :: item :: Nil => "Delete: " + item
+    case _ => "Unknown POSIX command: " + cmd
+  }
 
-  def parseRest(cmd: String) = cmd
+  def parseRest(cmd: String) = "Work in progress"
 
   def parseUnknown(cmd: String) = "No valid interpreter is associated\n" +
     "Available interpreters: " +

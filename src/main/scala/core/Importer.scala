@@ -54,7 +54,7 @@ object Importer extends Logging {
     all ++ all.filter(_.isDirectory).flatMap(traverseDirectory)
   }
 
-  private def parseDirectory(d: File): Model = {
+  private def readDirectory(d: File): Model = {
     logger.info("initializing model with root directory: " + d.getAbsolutePath)
 
     val m = ModelFactory.createDefaultModel
@@ -65,26 +65,26 @@ object Importer extends Logging {
     m
   }
 
-  private def parseFile(f: File): Model = {
+  private def readFile(f: File): Model = {
     val m = ModelFactory.createDefaultModel
     FileManager.get.readModel(m, f.getName)
     m
   }
 
-  private def parseUnknown(f: File): Model = {
+  private def readUnknown(f: File): Model = {
     logger.info("unrecognized reource: " + f.getName)
     ModelFactory.createDefaultModel
   }
 
-  def parseData(name: String): Model = {
+  def readData(name: String): Model = {
     val input = new File(name)
-    val parser = if (input.isDirectory) parseDirectory(_)
-    else if (input.isFile) parseFile(_) else parseUnknown(_)
+    val parser = if (input.isDirectory) readDirectory(_)
+    else if (input.isFile) readFile(_) else readUnknown(_)
     parser(input)
   }
 
   def load(name: String) = {
     logger.info("importing RDF/OWL model")
-    store.addNamedModel(name, parseData(name))
+    store.addNamedModel(name, readData(name))
   }
 }
