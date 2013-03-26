@@ -28,11 +28,11 @@ object Interpreter {
 
   def get(prefix: String): Parser = pasers.getOrElse(prefix, parseUnknown)
 
-  private val help = Map(
+  private val parserHelp = Map(
     "q" -> "SPARQL query",
     "p" -> "POSIX operation",
     "r" -> "REST operation")
 
-  def printHelp = help.foreach { case (k, v) => println("%s -> %s".format(k, v)) }
+  val help = parserHelp.flatMap { case (k, v) => List(k + ": " + v) }.mkString("\n")
 
 }

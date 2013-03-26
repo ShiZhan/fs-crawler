@@ -38,7 +38,7 @@ object Console {
 
         case "test" :: Nil => println("WIP")
 
-        case "interpreters" :: Nil => Interpreter.printHelp
+        case "interpreters" :: Nil => println(Interpreter.help)
 
         case prefix :: cmd :: Nil =>
           println("Do OP: " + Interpreter.get(prefix)(cmd))
