@@ -9,12 +9,12 @@ package core
  */
 object Interpreter {
 
-  type Parser = String=>String
+  type Parser = String => String
   type ParserMap = Map[String, Parser]
-  private val mapper: ParserMap = Map(
-    "q"->parseSparql,
-    "p"->parsePosix,
-    "r"->parseRest)
+  private val pasers: ParserMap = Map(
+    "q" -> parseSparql,
+    "p" -> parsePosix,
+    "r" -> parseRest)
 
   def parseSparql(cmd: String) = cmd
 
@@ -23,16 +23,16 @@ object Interpreter {
   def parseRest(cmd: String) = cmd
 
   def parseUnknown(cmd: String) = "No valid interpreter is associated\n" +
-    "Available interpreters: " + mapper.foreach(i => "[%s]".format(i._1))
-    // TODO: above line
+    "Available interpreters: " +
+    pasers.flatMap { case (k, v) => List(k) }.mkString("[", "] [", "]")
 
-  def get(prefix: String): Parser = mapper.getOrElse(prefix, parseUnknown)
+  def get(prefix: String): Parser = pasers.getOrElse(prefix, parseUnknown)
 
   private val help = Map(
-    "q"->"SPARQL query",
-    "p"->"POSIX operation",
-    "r"->"REST operation")
+    "q" -> "SPARQL query",
+    "p" -> "POSIX operation",
+    "r" -> "REST operation")
 
-  def printHelp = help.foreach(i => println("%s -> %s".format(i._1, i._2)))
+  def printHelp = help.foreach { case (k, v) => println("%s -> %s".format(k, v)) }
 
 }
