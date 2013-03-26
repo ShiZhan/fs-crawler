@@ -1,5 +1,5 @@
 /**
- *
+ * command interpreter
  */
 package core
 

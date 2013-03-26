@@ -50,6 +50,8 @@ object Console {
         case "ls" :: directory => println("Content of: " + directory)
         case "rm" :: target => println("Removing: " + target)
 
+        case "" :: Nil => {}
+
         case _ => println("Unrecognized command: " + line +
           "\nUse 'help' to list available commands")
       }

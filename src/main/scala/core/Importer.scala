@@ -46,7 +46,6 @@ object Importer extends Logging {
     val results = qexec.execSelect
     qexec.close
     results.toString
-//    "work in progress: " + q
   }
 
   private def traverseDirectory(d: File): Array[File] = {
