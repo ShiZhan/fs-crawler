@@ -14,27 +14,23 @@ object Console {
 
   private val consoleUsage = """
   [Console Usage]
-   help                  print this message
-   version               show program version
-   put <file>            upload a file
-   get <file>            download a file
-   mv <origin> <target>  move/rename a file/directory (end with '/')
-   mk <directory>        create a directory
-   cd <directory>        change current directory
-   ls <directory>        list directory content
-   rm <target>           remove file or directory
-   exit                  exit console
+   help                       print this message
+   version                    show program version
+   interpreters               show available interpreters
+   interpreter:: <operation>  do "Domain Specific Command"
+                              indicated by "interpreter::"
+   exit                       exit console
 """
 
   private val consoleTitle = "TriGraM Console"
-  private val consolePrompt = "> "
+  private val consolePrompt = "# "
 
   def run(): Unit = {
     println(consoleTitle)
     print(consolePrompt)
 
     for (line <- io.Source.stdin.getLines) {
-      line.split(" ").toList match {
+      line.split("::").toList match {
         case "exit" :: Nil => return
 
         case "help" :: Nil => println(consoleUsage)
@@ -42,13 +38,10 @@ object Console {
 
         case "test" :: Nil => println("WIP")
 
-        case "put" :: file => println("Uploading: " + file)
-        case "get" :: file => println("Downloading: " + file)
-        case "mv" :: origin :: target => println("Move: " + origin + " to: " + target)
-        case "mk" :: directory => println("Create directory: " + directory)
-        case "cd" :: directory => println("Change to: " + directory)
-        case "ls" :: directory => println("Content of: " + directory)
-        case "rm" :: target => println("Removing: " + target)
+        case "interpreters" :: Nil => Interpreter.printHelp
+
+        case prefix :: cmd :: Nil =>
+          println("Do OP: " + Interpreter.get(prefix)(cmd))
 
         case "" :: Nil => {}
 
