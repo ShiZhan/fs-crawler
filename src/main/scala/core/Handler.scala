@@ -28,7 +28,7 @@ trait Handler extends Store {
       "SPARQL: " + sparql + "\nReqult: " + result
     }
     else {
-      "SPARQL file %s not exist".format(sparqlFile)
+      "SPARQL file \"%s\" not exist".format(sparqlFile)
     }
   }
 

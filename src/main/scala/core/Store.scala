@@ -50,6 +50,14 @@ trait Store {
     resultBool
   }
 
+  def queryDescribe(sparql: String) = {
+    val query = QueryFactory.create(sparql)
+    val qexec = QueryExecutionFactory.create(query, store)
+    val resultModel = qexec.execDescribe
+    qexec.close
+    resultModel
+  }
+
   def queryUpdate(sparql: String) = {
     val graphStore = GraphStoreFactory.create(store)
     val update = UpdateFactory.create(sparql)

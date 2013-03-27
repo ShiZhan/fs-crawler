@@ -21,6 +21,7 @@ import com.hp.hpl.jena.update.UpdateProcessor
 import com.hp.hpl.jena.update.UpdateRequest
 
 object SparqlQuery {
+
   def main(args: Array[String]) =
     if (args.length < 2)
       println("run with <dataset> <query>")
@@ -29,15 +30,61 @@ object SparqlQuery {
       val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
       println("SPARQL:\n" + sparqlString)
 
-      // recognize query type
-      val query = QueryFactory.create(sparqlString)
-      val qexec = QueryExecutionFactory.create(query, store)
-      val resultSet = qexec.execSelect
-      val solutions = resultSet.asScala.toIterable
-      qexec.close
+      def querySelect(sparql: String) = {
+        val query = QueryFactory.create(sparql)
+        val qexec = QueryExecutionFactory.create(query, store)
+        val resultSet = qexec.execSelect
+        val solutions = resultSet.asScala.toList
+        qexec.close
+        solutions
+      }
+    
+      def queryConstruct(sparql: String) = {
+        val query = QueryFactory.create(sparql)
+        val qexec = QueryExecutionFactory.create(query, store)
+        val resultModel = qexec.execConstruct
+        qexec.close
+        resultModel
+      }
+    
+      def queryAsk(sparql: String) = {
+        val query = QueryFactory.create(sparql)
+        val qexec = QueryExecutionFactory.create(query, store)
+        val resultBool = qexec.execAsk
+        qexec.close
+        resultBool
+      }
+    
+      def queryDescribe(sparql: String) = {
+        val query = QueryFactory.create(sparql)
+        val qexec = QueryExecutionFactory.create(query, store)
+        val resultModel = qexec.execDescribe
+        qexec.close
+        resultModel
+      }
+    
+      def queryUpdate(sparql: String) = {
+        val graphStore = GraphStoreFactory.create(store)
+        val update = UpdateFactory.create(sparql)
+        val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
+        store.begin(ReadWrite.WRITE)
+        try {
+          updateProcessor.execute
+          store.commit()
+        } finally {
+          store.end()
+        }
+      }
+
+      def execQuery(sparql: String): Any = {
+        querySelect(sparql)
+      }
+
+      println(execQuery(sparqlString))
+
       store.close
-      println(solutions.toList)
     }
+
 }
 
 object QuerySelect {
