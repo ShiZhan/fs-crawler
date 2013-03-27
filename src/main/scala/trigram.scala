@@ -2,13 +2,13 @@
  * @author ShiZhan
  * 2013
  * TriGraM main program
- * provides 5 entries:
+ * provides 3 entries:
  * 1. show help
  * 2. show version
  * 3. get data from specified source and put into local storage
  *    allowed source: directory tree, RDF/OWL model file
- * 4. start server
- * 5. enter console
+ * default entry:
+ *    enter console
  */
 import core.{ Console, Importer }
 import util.Version.getVersion
@@ -20,9 +20,11 @@ usage: trigram [-h] [-v] [-i]
  -h,--help                    print this message
  -v,--version                 show program version
  -i,--import <ITEM_ROOT>      import metadata from given item
+
+ no argument: enter console
 """
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]) = {
     println("Triple Graph based Metadata storage - TriGraM")
 
     if (args.length == 0) Console.run

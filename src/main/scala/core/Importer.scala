@@ -40,14 +40,6 @@ object Importer extends Logging {
   private val store = TDBFactory.createDataset(DEFAULT_LOCATION)
   // close dataset with store.close()
 
-  def queryDataset(q: String): String = {
-    val query = "SELECT * {?s ?p ?o}"
-    val qexec = QueryExecutionFactory.create(QueryFactory.create(query), store)
-    val results = qexec.execSelect
-    qexec.close
-    results.toString
-  }
-
   private def traverseDirectory(d: File): Array[File] = {
     val all = d.listFiles
     all.foreach(item => println(item.getName + " (in) " + item.getParent))

@@ -1,5 +1,7 @@
 import scala.io.Source
 
+import scala.collection.JavaConverters._
+
 import com.hp.hpl.jena.rdf.model._
 import com.hp.hpl.jena.query.Dataset
 import com.hp.hpl.jena.query.Query
@@ -28,10 +30,11 @@ object QuerySelect {
       println("SPARQL:\n" + sparqlString)
       val query = QueryFactory.create(sparqlString)
       val qexec = QueryExecutionFactory.create(query, store)
-      val results = qexec.execSelect
-      ResultSetFormatter.out(results)
+      val resultSet = qexec.execSelect
+      val solutions = resultSet.asScala.toIterable
       qexec.close
       store.close
+      println(solutions.toList)
     }
 }
 
@@ -45,10 +48,10 @@ object QueryConstruct {
       println("SPARQL:\n" + sparqlString)
       val query = QueryFactory.create(sparqlString)
       val qexec = QueryExecutionFactory.create(query, store)
-      val results = qexec.execConstruct
-      println(results)
+      val resultModel = qexec.execConstruct
       qexec.close
       store.close
+      println(resultModel)
     }
 }
 
