@@ -24,7 +24,8 @@ trait Handler extends Store {
     val f = new File(sparqlFile)
     if(f.exists()) {
       val sparql = Source.fromFile(sparqlFile).getLines.mkString("\n")
-      "SPARQL: " + sparql + "\nReqult: " + querySelect(sparql)
+      val result = querySelect(sparql)
+      "SPARQL: " + sparql + "\nReqult: " + result
     }
     else {
       "SPARQL file %s not exist".format(sparqlFile)

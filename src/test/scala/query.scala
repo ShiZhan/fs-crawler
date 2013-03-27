@@ -20,6 +20,26 @@ import com.hp.hpl.jena.update.UpdateFactory
 import com.hp.hpl.jena.update.UpdateProcessor
 import com.hp.hpl.jena.update.UpdateRequest
 
+object SparqlQuery {
+  def main(args: Array[String]) =
+    if (args.length < 2)
+      println("run with <dataset> <query>")
+    else {
+      val store = TDBFactory.createDataset(args(0))
+      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
+      println("SPARQL:\n" + sparqlString)
+
+      // recognize query type
+      val query = QueryFactory.create(sparqlString)
+      val qexec = QueryExecutionFactory.create(query, store)
+      val resultSet = qexec.execSelect
+      val solutions = resultSet.asScala.toIterable
+      qexec.close
+      store.close
+      println(solutions.toList)
+    }
+}
+
 object QuerySelect {
   def main(args: Array[String]) =
     if (args.length < 2)
