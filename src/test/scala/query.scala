@@ -30,136 +30,26 @@ object SparqlQuery {
       val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
       println("SPARQL:\n" + sparqlString)
 
-      def querySelect(sparql: String) = {
-        val query = QueryFactory.create(sparql)
-        val qexec = QueryExecutionFactory.create(query, store)
-        val resultSet = qexec.execSelect
-        val solutions = resultSet.asScala.toList
-        qexec.close
-        solutions
-      }
-    
-      def queryConstruct(sparql: String) = {
-        val query = QueryFactory.create(sparql)
-        val qexec = QueryExecutionFactory.create(query, store)
-        val resultModel = qexec.execConstruct
-        qexec.close
-        resultModel
-      }
-    
-      def queryAsk(sparql: String) = {
-        val query = QueryFactory.create(sparql)
-        val qexec = QueryExecutionFactory.create(query, store)
-        val resultBool = qexec.execAsk
-        qexec.close
-        resultBool
-      }
-    
-      def queryDescribe(sparql: String) = {
-        val query = QueryFactory.create(sparql)
-        val qexec = QueryExecutionFactory.create(query, store)
-        val resultModel = qexec.execDescribe
-        qexec.close
-        resultModel
-      }
-    
-      def queryUpdate(sparql: String) = {
-        val graphStore = GraphStoreFactory.create(store)
-        val update = UpdateFactory.create(sparql)
-        val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
-        store.begin(ReadWrite.WRITE)
-        try {
-          updateProcessor.execute
-          store.commit()
-        } finally {
-          store.end()
-        }
-      }
-
-      def execQuery(sparql: String): Any = {
-        querySelect(sparql)
-      }
-
-      println(execQuery(sparqlString))
-
-      store.close
-    }
-
-}
-
-object QuerySelect {
-  def main(args: Array[String]) =
-    if (args.length < 2)
-      println("run with <dataset> <select query>")
-    else {
-      val store = TDBFactory.createDataset(args(0))
-      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
-      println("SPARQL:\n" + sparqlString)
       val query = QueryFactory.create(sparqlString)
       val qexec = QueryExecutionFactory.create(query, store)
-      val resultSet = qexec.execSelect
-      val solutions = resultSet.asScala.toIterable
-      qexec.close
-      store.close
-      println(solutions.toList)
-    }
-}
+      val result = query.getQueryType match {
+        case 111 => qexec.execSelect.asScala.toList
+        case 222 => qexec.execConstruct
+        case 333 => qexec.execDescribe
+        case 444 => qexec.execAsk
+        case _ => "unkown query"
+      }
 
-object QueryConstruct {
-  def main(args: Array[String]) =
-    if (args.length < 2)
-      println("run with <dataset> <construct query>")
-    else {
-      val store = TDBFactory.createDataset(args(0))
-      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
-      println("SPARQL:\n" + sparqlString)
-      val query = QueryFactory.create(sparqlString)
-      val qexec = QueryExecutionFactory.create(query, store)
-      val resultModel = qexec.execConstruct
-      qexec.close
-      store.close
-      println(resultModel)
-    }
-}
-
-object QueryAsk {
-  def main(args: Array[String]) =
-    if (args.length < 2)
-      println("run with <dataset> <ask query>")
-    else {
-      val store = TDBFactory.createDataset(args(0))
-      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
-      println("SPARQL:\n" + sparqlString)
-      val query = QueryFactory.create(sparqlString)
-      val qexec = QueryExecutionFactory.create(query, store)
-      val results = qexec.execAsk
-      println(results)
-      qexec.close
+      println(result)
       store.close
     }
+
 }
 
-object QueryDescribe {
+object SparqlUpdate {
   def main(args: Array[String]) =
     if (args.length < 2)
-      println("run with <dataset> <describe query>")
-    else {
-      val store = TDBFactory.createDataset(args(0))
-      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
-      println("SPARQL:\n" + sparqlString)
-      val query = QueryFactory.create(sparqlString)
-      val qexec = QueryExecutionFactory.create(query, store)
-      val results = qexec.execDescribe
-      println(results)
-      qexec.close
-      store.close
-    }
-}
-
-object QueryUpdate {
-  def main(args: Array[String]) =
-    if (args.length < 2)
-      println("run with <dataset> <update query>")
+      println("run with <dataset> <update>")
     else {
       val store = TDBFactory.createDataset(args(0))
       val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
@@ -167,6 +57,7 @@ object QueryUpdate {
       val graphStore = GraphStoreFactory.create(store)
       val update = UpdateFactory.create(sparqlString)
       val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
+
       store.begin(ReadWrite.WRITE)
       try {
         updateProcessor.execute
@@ -175,5 +66,7 @@ object QueryUpdate {
       } finally {
         store.end()
       }
+
+      store.close
     }
 }

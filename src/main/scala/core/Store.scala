@@ -11,6 +11,7 @@ import com.hp.hpl.jena.query.QueryFactory
 import com.hp.hpl.jena.query.QueryExecutionFactory
 import com.hp.hpl.jena.query.ReadWrite
 import com.hp.hpl.jena.update.GraphStoreFactory
+import com.hp.hpl.jena.update.UpdateAction
 import com.hp.hpl.jena.update.UpdateFactory
 import com.hp.hpl.jena.update.UpdateExecutionFactory
 
@@ -58,12 +59,31 @@ trait Store {
     resultModel
   }
 
-  def queryUpdate(sparql: String) = {
+  def sparqlQuery(sparql: String): Any = {
+    val query = QueryFactory.create(sparql)
+    val qexec = QueryExecutionFactory.create(query, store)
+    val result = query.getQueryType match {
+      case 111 => qexec.execSelect.asScala.toList
+      case 222 => qexec.execConstruct
+      case 333 => qexec.execDescribe
+      case 444 => qexec.execAsk
+      case _ => "unkown query"
+    }
+    qexec.close
+    result
+  }
+
+  def sparqlUpdate(sparql: String) = {
     val graphStore = GraphStoreFactory.create(store)
-    val update = UpdateFactory.create(sparql)
-    val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
+    UpdateAction.parseExecute(sparql, graphStore)
+  }
+
+  def sparqlTxnUpdate(sparql: String) = {
     store.begin(ReadWrite.WRITE)
     try {
+      val graphStore = GraphStoreFactory.create(store)
+      val update = UpdateFactory.create(sparql)
+      val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
       updateProcessor.execute
       store.commit()
     } finally {

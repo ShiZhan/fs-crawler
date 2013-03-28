@@ -17,18 +17,29 @@ trait Handler extends Store {
   type HandlerMap = Map[String, Handler]
   private val handlerMap: HandlerMap = Map(
     "q" -> handlerSparql,
+    "u" -> handlerSparqlUpdate,
     "p" -> handlerPosix,
     "r" -> handlerRest)
 
   def handlerSparql(sparqlFile: String) = {
     val f = new File(sparqlFile)
-    if(f.exists()) {
+    if (f.exists()) {
       val sparql = Source.fromFile(sparqlFile).getLines.mkString("\n")
-      val result = querySelect(sparql)
-      "SPARQL: " + sparql + "\nReqult: " + result
-    }
-    else {
+      val result = sparqlQuery(sparql)
+      "SPARQL Query: " + sparql + "\nReqult: " + result
+    } else {
       "SPARQL file \"%s\" not exist".format(sparqlFile)
+    }
+  }
+
+  def handlerSparqlUpdate(sparqlUpdateFile: String) = {
+    val f = new File(sparqlUpdateFile)
+    if (f.exists()) {
+      val sparql = Source.fromFile(sparqlUpdateFile).getLines.mkString("\n")
+      sparqlUpdate(sparql)
+      "SPARQL Update: " + sparql + "\nExecuted normally"
+    } else {
+      "SPARQL file \"%s\" not exist".format(sparqlUpdateFile)
     }
   }
 
@@ -52,6 +63,7 @@ trait Handler extends Store {
 
   private val handlerHelp = Map(
     "q" -> "load and execute SPARQL query file",
+    "u" -> "load and execute SPARQL update file",
     "p" -> "perform POSIX-like operation",
     "r" -> "perform RESTful operation")
 
