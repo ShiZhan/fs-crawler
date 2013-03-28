@@ -3,23 +3,21 @@
  */
 package core
 
-import util.Version
-
 /**
  * @author ShiZhan
  * 2013
- * Console command loop with Command handler and Store
+ * Console command loop
+ * main entry to Domain Specific Command Line Interface
  */
 object Console extends Handler {
 
   private val consoleUsage = """
   [Console Usage]
-   help                   print this message
-   version                show program version
-   handlers               show available command parsers
-   handler:: <operation>  do "Domain Specific Command"
-                          indicated by "parser::"
-   exit                   exit console
+   help               print this message
+   version            show program version
+   modes              show available command modes
+   mode <mode>        enter <mode> to execute "Domain Specific Command"
+   exit               exit console
 """
 
   private val consoleTitle = "TriGraM Console"
@@ -30,24 +28,27 @@ object Console extends Handler {
     print(consolePrompt)
 
     for (line <- io.Source.stdin.getLines) {
-      line.split("::").toList match {
+      val output = line.split(" ").toList match {
         case "exit" :: Nil =>
           close
           return
 
-        case "help" :: Nil => println(consoleUsage)
-        case "version" :: Nil => println(Version.getVersion)
+        case "help" :: Nil => consoleUsage
+        case "version" :: Nil => util.Version.getVersion
 
-        case "test" :: Nil => println("internal test command")
+        case "test" :: Nil => "internal test command"
 
-        case "handlers" :: Nil => println(help)
-        case handler :: cmd :: Nil => println(getHandler(handler)(cmd))
+        case "modes" :: Nil => help
+        case "mode" :: mode :: Nil =>
+          enterDSCLI(mode)
+          "return to default console"
 
-        case "" :: Nil => {}
+        case "" :: Nil => ""
 
-        case _ => println("Unrecognized command: " + line +
-          "\nUse 'help' to list available commands")
+        case _ => "Unrecognized command: " + line +
+          "\nUse 'help' to list available commands"
       }
+      println(output)
 
       print(consolePrompt)
     }

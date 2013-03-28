@@ -3,8 +3,6 @@
  */
 package util
 
-import scala.io.Source
-import java.io.File
 /**
  * @author ShiZhan
  * 2013
@@ -13,11 +11,11 @@ import java.io.File
 object Version {
 
   private val masterHashFilePath = ".git/refs/heads/master"
-  private val masterHashFileExists = (new File(masterHashFilePath)).exists
+  private val masterHashFileExists = new java.io.File(masterHashFilePath).exists
 
   def getVersion =
     if (masterHashFileExists)
-      Source.fromFile(masterHashFilePath).getLines.mkString("")
+      io.Source.fromFile(masterHashFilePath).getLines.mkString("")
     else
       "not available"
 

@@ -3,70 +3,103 @@
  */
 package core
 
-import scala.io.Source
-import java.io.File
-
 /**
  * @author ShiZhan
- * domain specific command handlers
+ * Domain Specific Command handlers
  * Store trait wrapper
  */
 trait Handler extends Store {
 
-  type Handler = String => Any
+  type Handler = (String => Unit, String)
   type HandlerMap = Map[String, Handler]
   private val handlerMap: HandlerMap = Map(
-    "q" -> handlerSparql,
-    "u" -> handlerSparqlUpdate,
-    "p" -> handlerPosix,
-    "r" -> handlerRest)
+    "QUERY" -> (handlerQuery, "SPARQL query interpreter"),
+    "UPDATE" -> (handlerUpdate, "SPARQL update interpreter"),
+    "POSIX" -> (handlerPosix, "perform POSIX-like operation"),
+    "REST" -> (handlerRest, "perform RESTful operation"))
 
-  def handlerSparql(sparqlFile: String) = {
-    val f = new File(sparqlFile)
-    if (f.exists()) {
-      val sparql = Source.fromFile(sparqlFile).getLines.mkString("\n")
-      val result = sparqlQuery(sparql)
-      "SPARQL Query: " + sparql + "\nReqult: " + result
-    } else {
-      "SPARQL file \"%s\" not exist".format(sparqlFile)
+  def coarseReader: String = {
+    val line = io.Source.stdin.getLines.next
+    line match {
+      case "." => ""
+      case _ => line + "\n" + coarseReader
     }
   }
 
-  def handlerSparqlUpdate(sparqlUpdateFile: String) = {
-    val f = new File(sparqlUpdateFile)
-    if (f.exists()) {
-      val sparql = Source.fromFile(sparqlUpdateFile).getLines.mkString("\n")
-      sparqlUpdate(sparql)
-      "SPARQL Update: " + sparql + "\nExecuted normally"
-    } else {
-      "SPARQL file \"%s\" not exist".format(sparqlUpdateFile)
+  def handlerQuery(prompt: String): Unit = {
+    print(prompt)
+
+    for (input <- io.Source.stdin.getLines) {
+      val sparql = input match {
+        case "exit" => return
+        case _ => coarseReader
+      }
+
+      try {
+        val result = sparqlQuery(sparql)
+        println("SPARQL Query: " + sparql + "\nReqult: " + result)
+      } catch {
+        case e: Exception =>
+          println("SPARQL Query exception:")
+          println(e)
+      }
+
+      print(prompt)
     }
   }
 
-  def handlerPosix(cmd: String) = cmd.split(" ").toList match {
-    case "ls" :: item :: Nil => "Content of: " + item
-    case "stat" :: item :: Nil => "Properties of: " + item
-    case "cp" :: from :: to :: Nil => "Copy object from [%s] to [%s]".format(from, to)
-    case "mv" :: from :: to :: Nil => "Move object from [%s] to [%s]".format(from, to)
-    case "rm" :: item :: Nil => "Delete: " + item
-    case "mkdir" :: item :: Nil => "Delete: " + item
-    case _ => "Unknown POSIX command: " + cmd
+  def handlerUpdate(prompt: String): Unit = {
+    print(prompt)
+
+    for (input <- io.Source.stdin.getLines) {
+      val sparql = input match {
+        case "exit" => return
+        case _ => coarseReader
+      }
+
+      try {
+        sparqlUpdate(sparql)
+        println("SPARQL Update: " + sparql + "\nExecuted normally")
+      } catch {
+        case e: Exception =>
+          println("SPARQL Query exception:")
+          println(e)
+      }
+
+      print(prompt)
+    }
   }
 
-  def handlerRest(cmd: String) = "Work in progress"
+  def handlerPosix(prompt: String): Unit = {
+    print(prompt)
 
-  def handlerUnknown(cmd: String) = "No valid command handler is associated\n" +
+    for (input <- io.Source.stdin.getLines) {
+      val output = input.split(" ").toList match {
+        case "exit" :: Nil => return
+        case "ls" :: item :: Nil => "Content of: " + item
+        case "stat" :: item :: Nil => "Properties of: " + item
+        case "cp" :: from :: to :: Nil => "Copy object from [%s] to [%s]".format(from, to)
+        case "mv" :: from :: to :: Nil => "Move object from [%s] to [%s]".format(from, to)
+        case "rm" :: item :: Nil => "Delete: " + item
+        case "mkdir" :: item :: Nil => "Delete: " + item
+        case "" :: Nil => ""
+        case _ => "Unknown POSIX command: " + input
+      }
+      println(output)
+
+      print(prompt)
+    }
+  }
+
+  def handlerRest(prompt: String) = println("Work in progress")
+
+  def handlerUnknown(prompt: String) = println("No valid command handler is associated\n" +
     "Available handlers: " +
-    handlerMap.flatMap { case (k, v) => List(k) }.mkString("[", "] [", "]")
+    handlerMap.flatMap { case (k, v) => List(k) }.mkString("[", "] [", "]"))
 
-  def getHandler(key: String): Handler = handlerMap.getOrElse(key, handlerUnknown)
+  def enterDSCLI(mode: String) =
+    handlerMap.getOrElse(mode, (handlerUnknown _, "")) match { case (h, s) => h(mode + " > ") }
 
-  private val handlerHelp = Map(
-    "q" -> "load and execute SPARQL query file",
-    "u" -> "load and execute SPARQL update file",
-    "p" -> "perform POSIX-like operation",
-    "r" -> "perform RESTful operation")
-
-  val help = handlerHelp.flatMap { case (k, v) => List(k + ": " + v) }.mkString("\n")
+  val help = handlerMap.flatMap { case (m, (h, s)) => List(m + ":\t" + s) }.mkString("\n")
 
 }
