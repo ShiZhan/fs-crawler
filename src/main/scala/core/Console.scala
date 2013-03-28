@@ -11,14 +11,12 @@ package core
  */
 object Console extends Handler {
 
-  private val consoleUsage = """
-  [Console Usage]
+  private val consoleUsage = """  [Console Usage]
    help               print this message
    version            show program version
    modes              show available command modes
    mode <mode>        enter <mode> to execute "Domain Specific Command"
-   exit               exit console
-"""
+   exit               exit console"""
 
   private val consoleTitle = "TriGraM Console"
   private val consolePrompt = "# "

@@ -18,21 +18,24 @@ trait Handler extends Store {
     "POSIX" -> (handlerPosix, "perform POSIX-like operation"),
     "REST" -> (handlerRest, "perform RESTful operation"))
 
-  def coarseReader: String = {
+  val inputNotice = "NOTICE: use . in a new line to submit"
+  private def readMore: String = {
     val line = io.Source.stdin.getLines.next
     line match {
       case "." => ""
-      case _ => line + "\n" + coarseReader
+      case _ => line + "\n" + readMore
     }
   }
 
   def handlerQuery(prompt: String): Unit = {
+    println(inputNotice)
+
     print(prompt)
 
     for (input <- io.Source.stdin.getLines) {
       val sparql = input match {
         case "exit" => return
-        case _ => coarseReader
+        case _ => input + "\n" + readMore
       }
 
       try {
@@ -49,12 +52,14 @@ trait Handler extends Store {
   }
 
   def handlerUpdate(prompt: String): Unit = {
+    println(inputNotice)
+
     print(prompt)
 
     for (input <- io.Source.stdin.getLines) {
       val sparql = input match {
         case "exit" => return
-        case _ => coarseReader
+        case _ => input + "\n" + readMore
       }
 
       try {
@@ -100,6 +105,8 @@ trait Handler extends Store {
   def enterDSCLI(mode: String) =
     handlerMap.getOrElse(mode, (handlerUnknown _, "")) match { case (h, s) => h(mode + " > ") }
 
-  val help = handlerMap.flatMap { case (m, (h, s)) => List(m + ":\t" + s) }.mkString("\n")
+  val help = handlerMap.flatMap {
+    case (m, (h, s)) => List("  %s:\t%s".format(m, s))
+  }.mkString("\n")
 
 }
