@@ -78,7 +78,7 @@ trait Store {
     UpdateAction.parseExecute(sparql, graphStore)
   }
 
-  def sparqlTxnUpdate(sparql: String) = {
+  def sparqlUpdateTxn(sparql: String) = {
     store.begin(ReadWrite.WRITE)
     try {
       val graphStore = GraphStoreFactory.create(store)

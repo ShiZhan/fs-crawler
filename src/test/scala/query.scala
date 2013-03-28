@@ -15,6 +15,7 @@ import com.hp.hpl.jena.tdb.TDBFactory
 import com.hp.hpl.jena.query.ReadWrite
 import com.hp.hpl.jena.update.GraphStore
 import com.hp.hpl.jena.update.GraphStoreFactory
+import com.hp.hpl.jena.update.UpdateAction
 import com.hp.hpl.jena.update.UpdateExecutionFactory
 import com.hp.hpl.jena.update.UpdateFactory
 import com.hp.hpl.jena.update.UpdateProcessor
@@ -47,6 +48,21 @@ object SparqlQuery {
 }
 
 object SparqlUpdate {
+  def main(args: Array[String]) =
+    if (args.length < 2)
+      println("run with <dataset> <update>")
+    else {
+      val store = TDBFactory.createDataset(args(0))
+      val sparqlString = Source.fromFile(args(1)).getLines.mkString("\n")
+      println("SPARQL:\n" + sparqlString)
+      val graphStore = GraphStoreFactory.create(store)
+      UpdateAction.parseExecute(sparqlString, graphStore)
+
+      store.close
+    }
+}
+
+object SparqlUpdateTxn {
   def main(args: Array[String]) =
     if (args.length < 2)
       println("run with <dataset> <update>")
