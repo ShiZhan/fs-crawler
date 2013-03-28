@@ -21,7 +21,7 @@ usage: trigram [-h] [-v] [-i]
  -v,--version                 show program version
  -i,--import <ITEM_ROOT>      import metadata from given item
 
- no argument: enter console
+ no argument                  enter console
 """
 
   def main(args: Array[String]) = {

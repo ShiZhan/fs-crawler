@@ -3,20 +3,22 @@
  */
 package util
 
-import java.io._
+import scala.io.Source
+import java.io.File
 /**
  * @author ShiZhan
  * 2013
- * get program version from git repository
+ * get program version from GIT repository
  */
 object Version {
 
-  def getVersion(): String = {
-    val masterHashFile = new File(".git/refs/heads/master")
-    return if (masterHashFile.exists())
-      (new BufferedReader(new FileReader(masterHashFile))).readLine()
+  private val masterHashFilePath = ".git/refs/heads/master"
+  private val masterHashFileExists = (new File(masterHashFilePath)).exists
+
+  def getVersion =
+    if (masterHashFileExists)
+      Source.fromFile(masterHashFilePath).getLines.mkString("")
     else
       "not available"
-  }
 
 }
