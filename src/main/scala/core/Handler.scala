@@ -19,9 +19,9 @@ trait Handler extends Store {
     "rest" -> (handlerRest, "perform RESTful operation"))
 
   private def readSPARQL = {
-    println("NOTICE: use Ctrl+Z to submit.")
+    println("NOTICE: use Ctrl+E to submit.")
     print("SPARQL <- ")
-    io.Source.fromInputStream(System.in).takeWhile(_ != 26.toChar).mkString
+    io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
   }
 
   val sparqlConsoleHelp =
