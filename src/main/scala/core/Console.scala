@@ -11,12 +11,12 @@ package core
  */
 object Console extends Handler {
 
-  private val consoleUsage = """  [Console Usage]
-   help               print this message
-   version            show program version
-   modes              show available command modes
-   mode <mode>        enter <mode> to execute "Domain Specific Command"
-   exit               exit console"""
+  private val consoleUsage = """ [Console Usage]
+  help               print this message
+  version            show program version
+  modes              show available command modes
+  mode <mode>        enter <mode> to execute "Domain Specific Command"
+  exit               exit console"""
 
   private val consoleTitle = "TriGraM Console"
   private val consolePrompt = "# "
@@ -27,9 +27,7 @@ object Console extends Handler {
 
     for (line <- io.Source.stdin.getLines) {
       val output = line.split(" ").toList match {
-        case "exit" :: Nil =>
-          close
-          return
+        case "exit" :: Nil => close; return
 
         case "help" :: Nil => consoleUsage
         case "version" :: Nil => util.Version.getVersion
@@ -41,12 +39,13 @@ object Console extends Handler {
           enterDSCLI(mode)
           "return to default console"
 
-        case "" :: Nil => ""
+        case "" :: Nil => null
 
         case _ => "Unrecognized command: " + line +
           "\nUse 'help' to list available commands"
       }
-      println(output)
+
+      if (output != null) println(output)
 
       print(consolePrompt)
     }

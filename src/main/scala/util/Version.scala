@@ -15,7 +15,7 @@ object Version {
 
   def getVersion =
     if (masterHashFileExists)
-      io.Source.fromFile(masterHashFilePath).getLines.mkString("")
+      io.Source.fromFile(masterHashFilePath).getLines.mkString
     else
       "not available"
 

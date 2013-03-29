@@ -1,12 +1,12 @@
 /**
- *
+ * slf4j wrapper
  */
 package util
 
 import org.slf4j.{ Logger, LoggerFactory }
 /**
  * @author ShiZhan
- * wrap slf4j for use with object
+ * for use slf4j with object
  */
 
 /**

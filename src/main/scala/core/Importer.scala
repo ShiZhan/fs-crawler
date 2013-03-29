@@ -35,11 +35,6 @@ import util.Logging
  */
 object Importer extends Logging {
 
-  private val DEFAULT_LOCATION = "data/"
-
-  private val store = TDBFactory.createDataset(DEFAULT_LOCATION)
-  // close dataset with store.close()
-
   private def traverseDirectory(d: File): Array[File] = {
     val all = d.listFiles
     all.foreach(item => println(item.getName + " (in) " + item.getParent))
@@ -75,8 +70,9 @@ object Importer extends Logging {
     parser(input)
   }
 
-  def load(name: String) = {
+  def load(name: String): Unit = {
     logger.info("importing RDF/OWL model")
-    store.addNamedModel(name, readData(name))
+    readData(name)
+    return
   }
 }

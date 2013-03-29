@@ -13,10 +13,10 @@ trait Handler extends Store {
   type Handler = (String => Unit, String)
   type HandlerMap = Map[String, Handler]
   private val handlerMap: HandlerMap = Map(
-    "QUERY" -> (handlerQuery, "SPARQL query interpreter"),
-    "UPDATE" -> (handlerUpdate, "SPARQL update interpreter"),
-    "POSIX" -> (handlerPosix, "perform POSIX-like operation"),
-    "REST" -> (handlerRest, "perform RESTful operation"))
+    "query" -> (handlerQuery, "SPARQL query interpreter"),
+    "update" -> (handlerUpdate, "SPARQL update interpreter"),
+    "posix" -> (handlerPosix, "perform POSIX-like operation"),
+    "rest" -> (handlerRest, "perform RESTful operation"))
 
   private def readSPARQL = {
     println("NOTICE: Start SPARQL input here, use Ctrl+Z to submit.")
@@ -62,9 +62,7 @@ trait Handler extends Store {
         sparqlUpdate(sparql)
         println("SPARQL Update: " + sparql + "\nExecuted normally")
       } catch {
-        case e: Exception =>
-          println("SPARQL Query exception:")
-          println(e)
+        case e: Exception => println(e)
       }
 
       print(prompt)
@@ -102,7 +100,7 @@ trait Handler extends Store {
     handlerMap.getOrElse(mode, (handlerUnknown _, "")) match { case (h, s) => h(mode + " > ") }
 
   val help = handlerMap.flatMap {
-    case (m, (h, s)) => List("  %s:\t%s".format(m, s))
+    case (m, (h, s)) => List("  %s: \t %s".format(m, s))
   }.mkString("\n")
 
 }
