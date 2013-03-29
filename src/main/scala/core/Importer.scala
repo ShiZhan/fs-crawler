@@ -6,24 +6,10 @@ package core
 import java.io._
 
 import com.hp.hpl.jena.rdf.model._
-import com.hp.hpl.jena.query.Dataset
-import com.hp.hpl.jena.query.Query
-import com.hp.hpl.jena.query.QueryExecution
-import com.hp.hpl.jena.query.QueryExecutionFactory
-import com.hp.hpl.jena.query.QueryFactory
-import com.hp.hpl.jena.query.ResultSet
-import com.hp.hpl.jena.query.ReadWrite
-import com.hp.hpl.jena.update.GraphStore
-import com.hp.hpl.jena.update.GraphStoreFactory
-import com.hp.hpl.jena.update.UpdateExecutionFactory
-import com.hp.hpl.jena.update.UpdateFactory
-import com.hp.hpl.jena.update.UpdateProcessor
-import com.hp.hpl.jena.update.UpdateRequest
 
 import com.hp.hpl.jena.vocabulary.RDF
 import com.hp.hpl.jena.vocabulary.RDFS
 
-import com.hp.hpl.jena.tdb.TDBFactory
 import com.hp.hpl.jena.util.FileManager
 
 import util.Logging
@@ -33,7 +19,7 @@ import util.Logging
  * 2013
  * import metadata from various data sources
  */
-object Importer extends Logging {
+object Importer extends Store with Logging {
 
   private def traverseDirectory(d: File): Array[File] = {
     val all = d.listFiles

@@ -28,30 +28,31 @@ usage: trigram [-h] [-v] [-i]
     println("Triple Graph based Metadata storage - TriGraM")
 
     if (args.length == 0) Console.run
-
-    type OptionMap = Map[Symbol, Any]
-
-    def nextOption(map: OptionMap, list: List[String]): OptionMap = {
-      list match {
-        case Nil => map
-        case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
-        case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
-        case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
-        case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-        case "-i" :: root :: tail =>
-          nextOption(map ++ Map('resource -> root), tail)
-        case "--import" :: root :: tail =>
-          nextOption(map ++ Map('resource -> root), tail)
-        case option :: tail =>
-          println("Incorrect option: " + option)
-          sys.exit(1)
+    else {
+      type OptionMap = Map[Symbol, Any]
+  
+      def nextOption(map: OptionMap, list: List[String]): OptionMap = {
+        list match {
+          case Nil => map
+          case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
+          case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
+          case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
+          case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
+          case "-i" :: root :: tail =>
+            nextOption(map ++ Map('resource -> root), tail)
+          case "--import" :: root :: tail =>
+            nextOption(map ++ Map('resource -> root), tail)
+          case option :: tail =>
+            println("Incorrect option: " + option)
+            sys.exit(1)
+        }
       }
+      val options = nextOption(Map(), args.toList)
+  
+      if (options.contains('help)) println(usage)
+      else if (options.contains('version)) println(getVersion)
+      else if (options.contains('resource)) Importer.load(options('resource).toString)
     }
-    val options = nextOption(Map(), args.toList)
-
-    if (options.contains('help)) println(usage)
-    else if (options.contains('version)) println(getVersion)
-    else if (options.contains('resource)) Importer.load(options('resource).toString)
   }
 
 }
