@@ -39,7 +39,7 @@ trait Handler extends Store {
 
       try {
         val result = sparqlQuery(sparql)
-        println("SPARQL Query: " + sparql + "\nResult: " + result)
+        println("SPARQL: " + sparql + "\nResult: " + result)
       } catch {
         case e: Exception => println(e)
       }
@@ -60,7 +60,7 @@ trait Handler extends Store {
 
       try {
         sparqlUpdate(sparql)
-        println("SPARQL Update: " + sparql + "\nExecuted normally")
+        println("SPARQL: " + sparql + "\nExecuted normally")
       } catch {
         case e: Exception => println(e)
       }

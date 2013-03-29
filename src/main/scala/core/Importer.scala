@@ -59,6 +59,7 @@ object Importer extends Store with Logging {
   def load(name: String): Unit = {
     logger.info("importing RDF/OWL model")
     readData(name)
+    close
     return
   }
 }
