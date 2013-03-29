@@ -19,7 +19,7 @@ trait Handler extends Store {
     "rest" -> (handlerRest, "perform RESTful operation"))
 
   private def readSPARQL = {
-    println("NOTICE: Start SPARQL input here, use Ctrl+Z to submit.")
+    println("NOTICE: use Ctrl+Z to submit.")
     print("SPARQL <- ")
     io.Source.fromInputStream(System.in).takeWhile(_ != 26.toChar).mkString
   }
@@ -97,7 +97,7 @@ trait Handler extends Store {
     handlerMap.flatMap { case (k, v) => List(k) }.mkString("[", "] [", "]"))
 
   def enterDSCLI(mode: String) =
-    handlerMap.getOrElse(mode, (handlerUnknown _, "")) match { case (h, s) => h(mode + " > ") }
+    handlerMap.getOrElse(mode, (handlerUnknown _, null)) match { case (h, s) => h(mode + " > ") }
 
   val help = handlerMap.flatMap {
     case (m, (h, s)) => List("  %s: \t %s".format(m, s))
