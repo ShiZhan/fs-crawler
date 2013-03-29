@@ -24,7 +24,11 @@ trait Handler extends Store {
     io.Source.fromInputStream(System.in).takeWhile(_ != 26.toChar).mkString
   }
 
+  val sparqlConsoleHelp =
+    "Use exit to go back, press enter to begin SPARQL input."
+
   def handlerQuery(prompt: String): Unit = {
+    println(sparqlConsoleHelp)
     print(prompt)
 
     for (input <- io.Source.stdin.getLines) {
@@ -45,6 +49,7 @@ trait Handler extends Store {
   }
 
   def handlerUpdate(prompt: String): Unit = {
+    println(sparqlConsoleHelp)
     print(prompt)
 
     for (input <- io.Source.stdin.getLines) {
