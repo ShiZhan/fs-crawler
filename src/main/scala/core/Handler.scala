@@ -19,13 +19,7 @@ trait Handler extends Store {
     "REST" -> (handlerRest, "perform RESTful operation"))
 
   val inputNotice = "NOTICE: use . in a new line to submit"
-  private def readMore: String = {
-    val line = io.Source.stdin.getLines.next
-    line match {
-      case "." => ""
-      case _ => line + "\n" + readMore
-    }
-  }
+  private def readMore = io.Source.stdin.getLines.takeWhile(_ != ".").mkString("\n")
 
   def handlerQuery(prompt: String): Unit = {
     println(inputNotice)
@@ -38,13 +32,12 @@ trait Handler extends Store {
         case _ => input + "\n" + readMore
       }
 
+      println(sparql)
       try {
         val result = sparqlQuery(sparql)
         println("SPARQL Query: " + sparql + "\nReqult: " + result)
       } catch {
-        case e: Exception =>
-          println("SPARQL Query exception:")
-          println(e)
+        case e: Exception => println(e)
       }
 
       print(prompt)
