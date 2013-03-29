@@ -18,9 +18,11 @@ trait Handler extends Store {
     "POSIX" -> (handlerPosix, "perform POSIX-like operation"),
     "REST" -> (handlerRest, "perform RESTful operation"))
 
-  val inputNotice = "NOTICE: Start SPARQL input here, use Ctrl+Z to submit."
-  private def readSPARQL =
+  private def readSPARQL = {
+    println("NOTICE: Start SPARQL input here, use Ctrl+Z to submit.")
+    print("SPARQL <- ")
     io.Source.fromInputStream(System.in).takeWhile(_ != 26.toChar).mkString
+  }
 
   def handlerQuery(prompt: String): Unit = {
     print(prompt)
@@ -28,7 +30,7 @@ trait Handler extends Store {
     for (input <- io.Source.stdin.getLines) {
       val sparql = input match {
         case "exit" => return
-        case _ => println(inputNotice); readSPARQL
+        case _ => readSPARQL
       }
 
       try {
@@ -48,7 +50,7 @@ trait Handler extends Store {
     for (input <- io.Source.stdin.getLines) {
       val sparql = input match {
         case "exit" => return
-        case _ => println(inputNotice); readSPARQL
+        case _ => readSPARQL
       }
 
       try {
