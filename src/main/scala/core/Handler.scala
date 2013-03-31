@@ -6,6 +6,7 @@ package core
 /**
  * @author ShiZhan
  * extents Store class with Domain Specific Command handlers
+ * for use in Console application
  */
 class Handler(location: String) extends Store(location) {
 
@@ -18,8 +19,7 @@ class Handler(location: String) extends Store(location) {
     "rest" -> (handlerRest, "perform RESTful operation"))
 
   private def readSPARQL = {
-    println("NOTICE: use Ctrl+E to submit.")
-    print("SPARQL <- ")
+    print("SPARQL input, end with Ctrl+E <- ")
     io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
   }
 

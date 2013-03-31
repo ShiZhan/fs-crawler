@@ -19,7 +19,7 @@ import com.hp.hpl.jena.update.UpdateExecutionFactory
  * @author ShiZhan
  * triple store operations
  */
-class Store(location: String) {
+class Store(val location: String) {
 
   private val store = TDBFactory.createDataset(location)
 
@@ -84,9 +84,9 @@ class Store(location: String) {
       val graphStore = GraphStoreFactory.create(store)
       val uExec = UpdateExecutionFactory.create(update, graphStore)
       uExec.execute
-      store.commit()
+      store.commit
     } finally {
-      store.end()
+      store.end
     }
   }
 
