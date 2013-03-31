@@ -5,10 +5,9 @@ package core
 
 /**
  * @author ShiZhan
- * Domain Specific Command handlers
- * Store trait wrapper
+ * extents Store class with Domain Specific Command handlers
  */
-trait Handler extends Store {
+class Handler(location: String) extends Store(location) {
 
   type Handler = (String => Unit, String)
   type HandlerMap = Map[String, Handler]

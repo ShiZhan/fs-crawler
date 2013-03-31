@@ -9,7 +9,7 @@ package core
  * Console command loop
  * main entry to Domain Specific Command Line Interface
  */
-object Console extends Handler {
+object Console extends Handler(Store.DEFAULT_LOCATION) {
 
   private val consoleUsage = """ [Console Usage]
   help               print this message

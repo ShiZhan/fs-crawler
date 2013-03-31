@@ -19,7 +19,7 @@ import util.Logging
  * 2013
  * import metadata from various data sources
  */
-object Importer extends Store with Logging {
+object Importer extends Store(Store.DEFAULT_LOCATION) with Logging {
 
   private def traverseDirectory(d: File): Array[File] = {
     val all = d.listFiles

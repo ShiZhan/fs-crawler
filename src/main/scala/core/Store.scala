@@ -19,57 +19,56 @@ import com.hp.hpl.jena.update.UpdateExecutionFactory
  * @author ShiZhan
  * triple store operations
  */
-trait Store {
+class Store(location: String) {
 
-  private val DEFAULT_LOCATION = "data/"
-  private val store = TDBFactory.createDataset(DEFAULT_LOCATION)
+  private val store = TDBFactory.createDataset(location)
 
   def close = store.close()
 
   def querySelect(sparql: String) = {
     val query = QueryFactory.create(sparql)
-    val qexec = QueryExecutionFactory.create(query, store)
-    val resultSet = qexec.execSelect
+    val qExec = QueryExecutionFactory.create(query, store)
+    val resultSet = qExec.execSelect
     val solutions = resultSet.asScala.toList
-    qexec.close
+    qExec.close
     solutions
   }
 
   def queryConstruct(sparql: String) = {
     val query = QueryFactory.create(sparql)
-    val qexec = QueryExecutionFactory.create(query, store)
-    val resultModel = qexec.execConstruct
-    qexec.close
+    val qExec = QueryExecutionFactory.create(query, store)
+    val resultModel = qExec.execConstruct
+    qExec.close
     resultModel
   }
 
   def queryAsk(sparql: String) = {
     val query = QueryFactory.create(sparql)
-    val qexec = QueryExecutionFactory.create(query, store)
-    val resultBool = qexec.execAsk
-    qexec.close
+    val qExec = QueryExecutionFactory.create(query, store)
+    val resultBool = qExec.execAsk
+    qExec.close
     resultBool
   }
 
   def queryDescribe(sparql: String) = {
     val query = QueryFactory.create(sparql)
-    val qexec = QueryExecutionFactory.create(query, store)
-    val resultModel = qexec.execDescribe
-    qexec.close
+    val qExec = QueryExecutionFactory.create(query, store)
+    val resultModel = qExec.execDescribe
+    qExec.close
     resultModel
   }
 
   def sparqlQuery(sparql: String): Any = {
     val query = QueryFactory.create(sparql)
-    val qexec = QueryExecutionFactory.create(query, store)
+    val qExec = QueryExecutionFactory.create(query, store)
     val result = query.getQueryType match {
-      case 111 => qexec.execSelect.asScala.toList
-      case 222 => qexec.execConstruct
-      case 333 => qexec.execDescribe
-      case 444 => qexec.execAsk
+      case 111 => qExec.execSelect.asScala.toList
+      case 222 => qExec.execConstruct
+      case 333 => qExec.execDescribe
+      case 444 => qExec.execAsk
       case _ => "unkown query"
     }
-    qexec.close
+    qExec.close
     result
   }
 
@@ -81,14 +80,18 @@ trait Store {
   def sparqlUpdateTxn(sparql: String) = {
     store.begin(ReadWrite.WRITE)
     try {
-      val graphStore = GraphStoreFactory.create(store)
       val update = UpdateFactory.create(sparql)
-      val updateProcessor = UpdateExecutionFactory.create(update, graphStore)
-      updateProcessor.execute
+      val graphStore = GraphStoreFactory.create(store)
+      val uExec = UpdateExecutionFactory.create(update, graphStore)
+      uExec.execute
       store.commit()
     } finally {
       store.end()
     }
   }
 
+}
+
+object Store {
+  val DEFAULT_LOCATION = "data/"
 }
