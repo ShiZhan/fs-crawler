@@ -24,7 +24,7 @@ class Handler(location: String) extends Store(location) {
   }
 
   val sparqlConsoleHelp =
-    "Use exit to go back, press enter to begin SPARQL input."
+    "Use [exit] to go back, press [enter] to begin SPARQL input."
 
   def handlerQuery(prompt: String): Unit = {
     println(sparqlConsoleHelp)
@@ -81,7 +81,17 @@ class Handler(location: String) extends Store(location) {
         case "rm" :: item :: Nil => "Delete: " + item
         case "mkdir" :: item :: Nil => "Delete: " + item
         case "" :: Nil => ""
-        case _ => "Unknown POSIX command: " + input
+        case _ => "Unknown POSIX command: " + input + "\n" +
+          "Available commands:\n" +
+          "[ls] directory: \t show the content of directory\n" +
+          "[stat] directory/file: \t show the properties of directory/file\n" +
+          "[cp] source destination: \t copy from source to destination\n" +
+          "[mv] source destination: \t move from source to destination\n" +
+          "[rm] directory/file: \t remove directory/file\n" +
+          "[mkdir] directory: \t create directory (tree)\n" +
+          "NOTE:\n" +
+          "just demo, use absolute path, no wildcard support.\n" +
+          "use [exit] to go back"
       }
       println(output)
 
