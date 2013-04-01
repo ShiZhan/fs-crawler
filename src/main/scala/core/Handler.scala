@@ -15,7 +15,6 @@ class Handler(location: String) extends Store(location) {
   private val handlerMap: HandlerMap = Map(
     "query" -> (handlerQuery, "SPARQL query interpreter"),
     "update" -> (handlerUpdate, "SPARQL update interpreter"),
-    "posix" -> (handlerPosix, "perform POSIX-like operation"),
     "rest" -> (handlerRest, "perform RESTful operation"))
 
   private def readSPARQL = {
@@ -68,29 +67,27 @@ class Handler(location: String) extends Store(location) {
     }
   }
 
-  def handlerPosix(prompt: String): Unit = {
+  def handlerRest(prompt: String): Unit = {
     print(prompt)
 
     for (input <- io.Source.stdin.getLines) {
       val output = input.split(" ").toList match {
         case "exit" :: Nil => return
-        case "ls" :: item :: Nil => "Content of: " + item
-        case "stat" :: item :: Nil => "Properties of: " + item
-        case "cp" :: from :: to :: Nil => "Copy object from [%s] to [%s]".format(from, to)
-        case "mv" :: from :: to :: Nil => "Move object from [%s] to [%s]".format(from, to)
-        case "rm" :: item :: Nil => "Delete: " + item
-        case "mkdir" :: item :: Nil => "Delete: " + item
+        case "head" :: item :: Nil => "HEAD object [%s]".format(item)
+        case "get" :: item :: Nil => "GET object [%s]".format(item)
+        case "put" :: item :: Nil => "PUT object [%s]".format(item)
+        case "post" :: item :: Nil => "POST object [%s]".format(item)
+        case "delete" :: item :: Nil => "DELETE object [%s]".format(item)
         case "" :: Nil => ""
-        case _ => "Unknown POSIX command: " + input + "\n" +
+        case _ => "Unknown REST command: " + input + "\n" +
           "Available commands:\n" +
-          "[ls] directory: \t show the content of directory\n" +
-          "[stat] directory/file: \t show the properties of directory/file\n" +
-          "[cp] source destination: \t copy from source to destination\n" +
-          "[mv] source destination: \t move from source to destination\n" +
-          "[rm] directory/file: \t remove directory/file\n" +
-          "[mkdir] directory: \t create directory (tree)\n" +
+          "[head] object: \t briefing of object\n" +
+          "[get] object: \t get object, list collection content\n" +
+          "[put] object: \t replace or create object or collection\n" +
+          "[post] object: \t create new entry in collection\n" +
+          "[delete] object: \t delete collection or object\n" +
           "NOTE:\n" +
-          "just demo, use absolute path, no wildcard support.\n" +
+          "just demo, no wildcard/additional parameter support.\n" +
           "use [exit] to go back"
       }
       println(output)
@@ -98,8 +95,6 @@ class Handler(location: String) extends Store(location) {
       print(prompt)
     }
   }
-
-  def handlerRest(prompt: String) = println("Work in progress")
 
   def handlerUnknown(prompt: String) = println("No valid command handler is associated\n" +
     "Available handlers: " +
