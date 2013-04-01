@@ -10,8 +10,8 @@ package core
  */
 class Handler(location: String) extends Store(location) {
 
-  type Handler = (String => Unit, String)
-  type HandlerMap = Map[String, Handler]
+  type Handler = String => Unit
+  type HandlerMap = Map[String, (Handler, String)]
   private val handlerMap: HandlerMap = Map(
     "query" -> (handlerQuery, "SPARQL query interpreter"),
     "update" -> (handlerUpdate, "SPARQL update interpreter"),
@@ -37,7 +37,7 @@ class Handler(location: String) extends Store(location) {
 
       try {
         val result = sparqlQuery(sparql)
-        println("SPARQL: " + sparql + "\nResult: " + result)
+        println("\nSPARQL: " + sparql + "\nResult: " + result)
       } catch {
         case e: Exception => println(e)
       }
@@ -58,7 +58,7 @@ class Handler(location: String) extends Store(location) {
 
       try {
         sparqlUpdate(sparql)
-        println("SPARQL: " + sparql + "\nExecuted normally")
+        println("\nSPARQL: " + sparql + "\nExecuted normally")
       } catch {
         case e: Exception => println(e)
       }
@@ -73,11 +73,11 @@ class Handler(location: String) extends Store(location) {
     for (input <- io.Source.stdin.getLines) {
       val output = input.split(" ").toList match {
         case "exit" :: Nil => return
-        case "head" :: item :: Nil => "HEAD object [%s]".format(item)
-        case "get" :: item :: Nil => "GET object [%s]".format(item)
-        case "put" :: item :: Nil => "PUT object [%s]".format(item)
-        case "post" :: item :: Nil => "POST object [%s]".format(item)
-        case "delete" :: item :: Nil => "DELETE object [%s]".format(item)
+        case "head" :: obj :: Nil => "HEAD object [%s]".format(obj)
+        case "get" :: obj :: Nil => "GET object [%s]".format(obj)
+        case "put" :: obj :: Nil => "PUT object [%s]".format(obj)
+        case "post" :: obj :: Nil => "POST object [%s]".format(obj)
+        case "delete" :: obj :: Nil => "DELETE object [%s]".format(obj)
         case "" :: Nil => ""
         case _ => "Unknown REST command: " + input + "\n" +
           "Available commands:\n" +
