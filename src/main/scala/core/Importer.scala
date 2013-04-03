@@ -3,7 +3,9 @@
  */
 package core
 
-import java.io._
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
 
 import com.hp.hpl.jena.rdf.model._
 
@@ -17,13 +19,17 @@ import util.Logging
 /**
  * @author ShiZhan
  * 2013
- * import metadata from various data sources
+ * import meta-data from various data sources
  */
 object Importer extends Store(Store.DEFAULT_LOCATION) with Logging {
 
   private def traverseDirectory(d: File): Array[File] = {
     val all = d.listFiles
-    all.foreach(item => println(item.getName + " (in) " + item.getParent))
+    for (i <- all) {
+      println(i.getName + " (in) " + i.getParent)
+      val a = Files.readAttributes(i.toPath, classOf[BasicFileAttributes])
+      println(a.creationTime + "|" + a.lastAccessTime + "|" + a.lastModifiedTime)
+    }
     all ++ all.filter(_.isDirectory).flatMap(traverseDirectory)
   }
 
