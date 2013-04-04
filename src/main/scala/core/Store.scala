@@ -7,9 +7,13 @@ import scala.collection.JavaConverters._
 
 import com.hp.hpl.jena.rdf.model.Model
 import com.hp.hpl.jena.tdb.TDBFactory
-import com.hp.hpl.jena.query.{QueryFactory, QueryExecutionFactory, ReadWrite}
-import com.hp.hpl.jena.update.{GraphStoreFactory, UpdateAction,
-                                UpdateFactory, UpdateExecutionFactory}
+import com.hp.hpl.jena.query.{ QueryFactory, QueryExecutionFactory, ReadWrite }
+import com.hp.hpl.jena.update.{
+  GraphStoreFactory,
+  UpdateAction,
+  UpdateFactory,
+  UpdateExecutionFactory
+}
 
 /**
  * @author ShiZhan

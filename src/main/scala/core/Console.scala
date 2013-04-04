@@ -27,7 +27,8 @@ object Console extends Handler(Store.DEFAULT_LOCATION) {
 
     for (line <- io.Source.stdin.getLines) {
       val output = line.split(" ").toList match {
-        case "exit" :: Nil => close; return
+        case "exit" :: Nil =>
+          close; return
 
         case "help" :: Nil => consoleUsage
         case "version" :: Nil => util.Version.getVersion

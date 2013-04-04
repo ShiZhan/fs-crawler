@@ -3,9 +3,8 @@
  */
 package core
 
-import java.io.IOException
-import java.nio.file.{FileSystems, Path, Files, SimpleFileVisitor}
-import java.nio.file.FileVisitResult._
+import scala.collection.JavaConverters._
+import java.nio.file.{ Path, Files, FileSystems }
 import java.nio.file.attribute.BasicFileAttributes
 
 import com.hp.hpl.jena.rdf.model._
@@ -22,30 +21,47 @@ import util.Logging
  * 2013
  * import meta-data from various data sources
  */
-class ModelFiles extends SimpleFileVisitor[Path] {
-
-  override def visitFile(file: Path, attr: BasicFileAttributes) = {
-    println(file.getFileName + " (" + attr.size() + "byte) in " +
-            file.getParent.getFileName)
-    CONTINUE
-  }
-
-  override def postVisitDirectory(dir: Path, e: IOException) = {
-    println(dir.getFileName)
-    CONTINUE
-  }
-
-  override def visitFileFailed(file: Path, e: IOException) = {
-    println(e)
-    CONTINUE
-  }
-}
-
 object Importer extends Store(Store.DEFAULT_LOCATION) with Logging {
+
+  private def walkDirectory(p: Path): Array[Path] = {
+    val ds = Files.newDirectoryStream(p).iterator.asScala.toArray
+    for (i <- ds) {
+      val a = Files.readAttributes(i, classOf[BasicFileAttributes])
+      println(i.getFileName + " in " + p.getFileName +
+        " [" + a.creationTime + "|" + a.lastAccessTime + "|" + a.lastModifiedTime + "]")
+    }
+    ds ++ ds.filter(Files.isDirectory(_)).flatMap(walkDirectory)
+  }
+
+  private def readDirectory(d: Path): Model = {
+    logger.info("initializing model with root directory: " + d.toString)
+
+    val all = walkDirectory(d)
+    println(all.size)
+
+    ModelFactory.createDefaultModel
+  }
+
+  private def readFile(f: Path): Model = {
+    logger.info("model file: " + f.toString)
+    ModelFactory.createDefaultModel
+  }
+
+  private def readUnknown(f: Path): Model = {
+    logger.info("unrecognized reource: " + f.toString)
+    ModelFactory.createDefaultModel
+  }
+
+  def readData(name: String): Model = {
+    val p = FileSystems.getDefault.getPath(name)
+    if (Files.isDirectory(p)) readDirectory(p)
+    else if (Files.isRegularFile(p)) readFile(p)
+    else readUnknown(p)
+  }
 
   def load(name: String) = {
     logger.info("importing RDF/OWL model")
-    Files.walkFileTree(FileSystems.getDefault.getPath(name), new ModelFiles)
+    readData(name)
     close
   }
 }

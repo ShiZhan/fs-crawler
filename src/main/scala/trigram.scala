@@ -30,7 +30,7 @@ usage: trigram [-h] [-v] [-i]
     if (args.length == 0) Console.run
     else {
       type OptionMap = Map[Symbol, Any]
-  
+
       def nextOption(map: OptionMap, list: List[String]): OptionMap = {
         list match {
           case Nil => map
@@ -48,7 +48,7 @@ usage: trigram [-h] [-v] [-i]
         }
       }
       val options = nextOption(Map(), args.toList)
-  
+
       if (options.contains('help)) println(usage)
       else if (options.contains('version)) println(getVersion)
       else if (options.contains('resource)) Importer.load(options('resource).toString)
