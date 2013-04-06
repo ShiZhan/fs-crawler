@@ -42,7 +42,8 @@ object Translator extends Logging {
       for (i <- walkDirectory(p)) {
         val a = Files.readAttributes(i, classOf[BasicFileAttributes])
         println("[%s] in [%s]: %s | %s | %s ".format(
-          i.getFileName, p.getFileName, a.creationTime, a.lastAccessTime, a.lastModifiedTime))
+          i.getFileName, i.getParent.getFileName,
+          a.creationTime, a.lastAccessTime, a.lastModifiedTime))
       }
 
       m

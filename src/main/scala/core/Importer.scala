@@ -16,7 +16,12 @@ object Importer extends Store(Store.DEFAULT_LOCATION) with Logging {
     logger.info("importing RDF/OWL model")
 
     val sparql = "LOAD <%s>".format(name)
-    sparqlUpdateTxn(sparql)
+
+    try {
+      sparqlUpdateTxn(sparql)
+    } catch {
+      case e: Exception => println(e)
+    }
 
     logger.info("done")
 
