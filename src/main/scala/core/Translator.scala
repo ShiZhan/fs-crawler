@@ -6,6 +6,7 @@ package core
 import scala.collection.JavaConverters._
 import java.nio.file.{ Path, Files, FileSystems }
 import java.nio.file.attribute.BasicFileAttributes
+import java.io.FileOutputStream
 
 import com.hp.hpl.jena.rdf.model._
 
@@ -22,35 +23,52 @@ import util.Logging
  */
 object Translator extends Logging {
 
-  private def walkDirectory(p: Path, n: Resource, m: Model): Model = {
+  type Modeler = String => Model
+  type ModelerMap = Map[String, (Modeler, String)]
+  private val modelerMap: ModelerMap = Map(
+    "directory" -> (modelDirectory, "Translate directory structure into TriGraM model"))
+
+  private def walkDirectory(p: Path): Array[Path] = {
     val ds = Files.newDirectoryStream(p).iterator.asScala.toArray
-    for (i <- ds) {
-      val a = Files.readAttributes(i, classOf[BasicFileAttributes])
-      println("[%s] in [%s]: %s | %s | %s ".format(
-        i.getFileName, p.getFileName, a.creationTime, a.lastAccessTime, a.lastModifiedTime))
-      val r = m.createResource
-      // n contain r
-      // r name|CT|AT|MT attributes
-      if (Files.isDirectory(i)) walkDirectory(i, r, m)
-    }
-    m
+    ds ++ ds.filter(Files.isDirectory(_)).flatMap(walkDirectory)
   }
 
-  private def modelDirectory(name: String) = {
+  def modelDirectory(name: String) = {
     val p = FileSystems.getDefault.getPath(name)
-    val m = ModelFactory.createDefaultModel
     if (Files.isDirectory(p)) {
       logger.info("creating model for root directory [%s]".format(p.toString))
+
+      val m = ModelFactory.createDefaultModel
       val n = m.createResource
-      walkDirectory(p, n, m)
-      m.write(System.out)
+      for (i <- walkDirectory(p)) {
+        val a = Files.readAttributes(i, classOf[BasicFileAttributes])
+        println("[%s] in [%s]: %s | %s | %s ".format(
+          i.getFileName, p.getFileName, a.creationTime, a.lastAccessTime, a.lastModifiedTime))
+      }
+
+      m
     } else {
       logger.info("[%s] is not a directory".format(p.toString))
+
+      ModelFactory.createDefaultModel
     }
   }
 
-  private def modelFile(name: String) = {
-    logger.info("model file: " + name)
+  def modelUnkown(name: String) = {
+    logger.info("unkown resource: " + name)
+
+    ModelFactory.createDefaultModel
   }
+
+  def run(t: String, i: String, o: String) = {
+    val modeler = modelerMap.getOrElse(t, (modelUnkown _, null)) match { case (m, s) => m }
+    val model = modeler(i)
+    if (model.size > 0) model.write(new FileOutputStream(o))
+    println("%d triples generated".format(model.size))
+  }
+
+  val help = modelerMap.flatMap {
+    case (t, (m, s)) => List("  %s: \t %s".format(t, s))
+  }.mkString("\n")
 
 }

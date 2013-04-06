@@ -57,6 +57,8 @@ usage: Trigram [-h] [-v] [-i]
 
 }
 
+import core.Translator
+
 object TrigramTranslator {
 
   val defaultInType = "directory"
@@ -113,13 +115,15 @@ default:
 
     if (options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)
-    else if (options.contains('list)) println("translatable resources: ")
+    else if (options.contains('list)) println("translatable resources:\n" + Translator.help)
     else {
       val t = if (options.contains('intype)) options('intype).toString else defaultInType
       val i = if (options.contains('source)) options('source).toString else defaultSource
       val o = if (options.contains('target)) options('target).toString else defaultTarget
 
       println("translating [%s] as [%s] to [%s]".format(i, t, o))
+
+      Translator.run(t, i, o)
     }
   }
 
