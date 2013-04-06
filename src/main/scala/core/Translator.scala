@@ -1,5 +1,5 @@
 /**
- *
+ * TriGraM translator
  */
 package core
 
@@ -18,7 +18,7 @@ import util.Logging
 
 /**
  * @author ShiZhan
- *
+ * translate various resources to semantic model
  */
 object Translator extends Logging {
 
@@ -31,7 +31,7 @@ object Translator extends Logging {
       val r = m.createResource
       // n contain r
       // r name|CT|AT|MT attributes
-      if(Files.isDirectory(i)) walkDirectory(i, r, m)
+      if (Files.isDirectory(i)) walkDirectory(i, r, m)
     }
     m
   }
@@ -44,8 +44,7 @@ object Translator extends Logging {
       val n = m.createResource
       walkDirectory(p, n, m)
       m.write(System.out)
-    }
-    else {
+    } else {
       logger.info("[%s] is not a directory".format(p.toString))
     }
   }
