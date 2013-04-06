@@ -10,8 +10,7 @@ import java.io.FileOutputStream
 
 import com.hp.hpl.jena.rdf.model._
 
-import com.hp.hpl.jena.vocabulary.RDF
-import com.hp.hpl.jena.vocabulary.RDFS
+import com.hp.hpl.jena.vocabulary.{ RDF, RDFS }
 
 import com.hp.hpl.jena.util.FileManager
 
