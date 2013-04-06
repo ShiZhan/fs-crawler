@@ -13,15 +13,15 @@
 import core.{ Console, Importer }
 import util.Version.getVersion
 
-object trigram {
+object Trigram {
 
   val usage = """
 usage: trigram [-h] [-v] [-i]
- -h,--help                    print this message
- -v,--version                 show program version
- -i,--import <ITEM_ROOT>      import metadata from given item
+ -h,--help                print this message
+ -v,--version             show program version
+ -i,--import <MODEL>      import model
 
- no argument                  enter console
+ no argument              enter console
 """
 
   def main(args: Array[String]) = {
@@ -38,10 +38,10 @@ usage: trigram [-h] [-v] [-i]
           case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
           case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
           case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-          case "-i" :: root :: tail =>
-            nextOption(map ++ Map('resource -> root), tail)
-          case "--import" :: root :: tail =>
-            nextOption(map ++ Map('resource -> root), tail)
+          case "-i" :: model :: tail =>
+            nextOption(map ++ Map('resource -> model), tail)
+          case "--import" :: model :: tail =>
+            nextOption(map ++ Map('resource -> model), tail)
           case option :: tail =>
             println("Incorrect option: " + option)
             sys.exit(1)
@@ -53,6 +53,14 @@ usage: trigram [-h] [-v] [-i]
       else if (options.contains('version)) println(getVersion)
       else if (options.contains('resource)) Importer.load(options('resource).toString)
     }
+  }
+
+}
+
+object TrigramTranslator {
+
+  def main(args: Array[String]) = {
+    println("TriGraM metadata translator")
   }
 
 }

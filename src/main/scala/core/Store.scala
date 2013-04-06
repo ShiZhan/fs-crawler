@@ -28,10 +28,9 @@ class Store(val location: String) {
   def querySelect(sparql: String) = {
     val query = QueryFactory.create(sparql)
     val qExec = QueryExecutionFactory.create(query, store)
-    val resultSet = qExec.execSelect
-    val solutions = resultSet.asScala.toList
+    val resultList = qExec.execSelect.asScala.toList
     qExec.close
-    solutions
+    resultList
   }
 
   def queryConstruct(sparql: String) = {

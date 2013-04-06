@@ -9,8 +9,8 @@ esac
 
 if $cygwin; then
   CP=`cat .classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s;",$2}'`
-  scala -cp "$CP;target/scala-2.10/classes" trigram "$@" 
+  scala -cp "$CP;target/scala-2.10/classes" Trigram "$@" 
 else
   CP=`cat .classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s:",$2}'`
-  scala -cp "$CP:target/scala-2.10/classes" trigram "$@" 
+  scala -cp "$CP:target/scala-2.10/classes" Trigram "$@" 
 fi
