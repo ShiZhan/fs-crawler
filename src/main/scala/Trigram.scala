@@ -8,7 +8,7 @@
  * 3. get data from specified model and put into local storage
  * default entry:
  *    enter console
- * 
+ *
  * TriGraM translator program
  * provides 3 entries:
  * 1. show help
@@ -77,7 +77,7 @@ usage: TrigramTranslator [-h] [-v] [-l] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -i,--input SOURCE        input resource         [default: %s]
  -o,--output TARGET       output target          [default: %s]
 """.format(defaultInType, defaultSource, defaultTarget) +
-"\ntranslatable resources:\n" + Translator.help
+    "\ntranslatable resources:\n" + Translator.help
 
   type OptionMap = Map[Symbol, Any]
 

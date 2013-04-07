@@ -78,7 +78,7 @@ class Handler(location: String) extends Store(location) {
         case "put" :: obj :: Nil => "PUT object [%s]".format(obj)
         case "post" :: obj :: Nil => "POST object [%s]".format(obj)
         case "delete" :: obj :: Nil => "DELETE object [%s]".format(obj)
-        case "" :: Nil => ""
+        case "" :: Nil => null
         case _ => "Unknown REST command: " + input + "\n" +
           "Available commands:\n" +
           "[head] object: \t briefing of object\n" +
@@ -90,7 +90,7 @@ class Handler(location: String) extends Store(location) {
           "just demo, no wildcard/additional parameter support.\n" +
           "use [exit] to go back"
       }
-      println(output)
+      if (output != null) println(output)
 
       print(prompt)
     }

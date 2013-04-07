@@ -92,5 +92,5 @@ class Store(val location: String) {
 }
 
 object Store {
-  val DEFAULT_LOCATION = "data/"
+  val defaultLocation = "data/"
 }

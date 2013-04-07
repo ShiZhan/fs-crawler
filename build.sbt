@@ -2,7 +2,7 @@ name := "trigram"
 
 version := "1.0"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.1"
 
 libraryDependencies ++= Seq(
  "org.apache.jena" % "jena-core" % "2.10.0" excludeAll(ExclusionRule(organization = "org.slf4j")), 

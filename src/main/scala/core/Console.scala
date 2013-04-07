@@ -9,7 +9,7 @@ package core
  * Console command loop
  * main entry to Domain Specific Command Line Interface
  */
-object Console extends Handler(Store.DEFAULT_LOCATION) {
+object Console extends Handler(Store.defaultLocation) {
 
   private val consoleUsage = """ [Console Usage]
   help               print this message
@@ -42,8 +42,7 @@ object Console extends Handler(Store.DEFAULT_LOCATION) {
 
         case "" :: Nil => null
 
-        case _ => "Unrecognized command: " + line +
-          "\nUse 'help' to list available commands"
+        case _ => "Unrecognized command: [%s]".format(line)
       }
 
       if (output != null) println(output)

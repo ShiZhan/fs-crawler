@@ -10,7 +10,7 @@ import util.Logging
  * 2013
  * import meta-data from model file to TDB data set
  */
-object Importer extends Store(Store.DEFAULT_LOCATION) with Logging {
+object Importer extends Store(Store.defaultLocation) with Logging {
 
   def load(name: String) = {
     logger.info("importing RDF/OWL model")
