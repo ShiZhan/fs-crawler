@@ -16,6 +16,7 @@ class Handler(location: String) extends Store(location) {
     "query" -> (handlerQuery, "SPARQL query interpreter"),
     "update" -> (handlerUpdate, "SPARQL update interpreter"),
     "rest" -> (handlerRest, "perform RESTful operation"))
+  private val handlerMapDefault = (handlerUnknown _, null)
 
   private def readSPARQL = {
     print("SPARQL input, end with Ctrl+E <- ")
@@ -101,7 +102,7 @@ class Handler(location: String) extends Store(location) {
     handlerMap.flatMap { case (k, v) => List(k) }.mkString("[", "] [", "]"))
 
   def enterDSCLI(mode: String) =
-    handlerMap.getOrElse(mode, (handlerUnknown _, null)) match { case (h, s) => h(mode + " > ") }
+    handlerMap.getOrElse(mode, handlerMapDefault) match { case (h, s) => h(mode + " > ") }
 
   val help = handlerMap.flatMap {
     case (m, (h, s)) => List("  %s: \t %s".format(m, s))

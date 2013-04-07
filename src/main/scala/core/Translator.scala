@@ -26,6 +26,7 @@ object Translator extends Logging {
   type ModelerMap = Map[String, (Modeler, String)]
   private val modelerMap: ModelerMap = Map(
     "directory" -> (modelDirectory, "Translate directory structure into TriGraM model"))
+  private val modelerMapDefault = (modelUnkown _, null)
 
   private def walkDirectory(p: Path): Array[Path] = {
     val ds = Files.newDirectoryStream(p).iterator.asScala.toArray
@@ -61,7 +62,7 @@ object Translator extends Logging {
   }
 
   def run(t: String, i: String, o: String) = {
-    val modeler = modelerMap.getOrElse(t, (modelUnkown _, null)) match { case (m, s) => m }
+    val modeler = modelerMap.getOrElse(t, modelerMapDefault) match { case (m, s) => m }
     val model = modeler(i)
     if (model.size > 0) model.write(new FileOutputStream(o))
     println("%d triples generated".format(model.size))
