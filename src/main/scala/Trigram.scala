@@ -5,10 +5,17 @@
  * provides 3 entries:
  * 1. show help
  * 2. show version
- * 3. get data from specified source and put into local storage
- *    allowed source: directory tree, RDF/OWL model file
+ * 3. get data from specified model and put into local storage
  * default entry:
  *    enter console
+ * 
+ * TriGraM translator program
+ * provides 3 entries:
+ * 1. show help
+ * 2. show version
+ * 3. translate specified source to TriGraM model
+ * default entry:
+ *    translate current directory tree structure to model
  */
 import core.{ Console, Importer }
 import util.Version.getVersion
@@ -24,29 +31,26 @@ usage: Trigram [-h] [-v] [-i]
  no argument              enter console
 """
 
+  type OptionMap = Map[Symbol, Any]
+
+  def nextOption(map: OptionMap, list: List[String]): OptionMap = {
+    list match {
+      case Nil => map
+      case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
+      case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
+      case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
+      case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
+      case "-i" :: m :: tail => nextOption(map ++ Map('resource -> m), tail)
+      case "--import" :: m :: tail => nextOption(map ++ Map('resource -> m), tail)
+      case option :: tail => println("Incorrect option: " + option); sys.exit(1)
+    }
+  }
+
   def main(args: Array[String]) = {
     println("Triple Graph based Metadata storage - TriGraM")
 
     if (args.length == 0) Console.run
     else {
-      type OptionMap = Map[Symbol, Any]
-
-      def nextOption(map: OptionMap, list: List[String]): OptionMap = {
-        list match {
-          case Nil => map
-          case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
-          case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
-          case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
-          case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-          case "-i" :: model :: tail =>
-            nextOption(map ++ Map('resource -> model), tail)
-          case "--import" :: model :: tail =>
-            nextOption(map ++ Map('resource -> model), tail)
-          case option :: tail =>
-            println("Incorrect option: " + option)
-            sys.exit(1)
-        }
-      }
       val options = nextOption(Map(), args.toList)
 
       if (options.contains('help)) println(usage)
@@ -69,57 +73,42 @@ object TrigramTranslator {
 usage: TrigramTranslator [-h] [-v] [-l] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -h,--help                print this message
  -v,--version             show program version
- -l,--list                list all translatable resources
- -t,--type TYPE           type of input resource
- -i,--input SOURCE        input resource
- -o,--output TARGET       output target
+ -t,--type TYPE           type of input resource [default: %s]
+ -i,--input SOURCE        input resource         [default: %s]
+ -o,--output TARGET       output target          [default: %s]
+""".format(defaultInType, defaultSource, defaultTarget) +
+"\ntranslatable resources:\n" + Translator.help
 
-default:
- TYPE   - [%s]
- SOURCE - [%s]
- TARGET - [%s]
-""".format(defaultInType, defaultSource, defaultTarget)
+  type OptionMap = Map[Symbol, Any]
+
+  def nextOption(map: OptionMap, list: List[String]): OptionMap = {
+    list match {
+      case Nil => map
+      case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
+      case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
+      case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
+      case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
+      case "-t" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
+      case "--type" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
+      case "-i" :: i :: tail => nextOption(map ++ Map('source -> i), tail)
+      case "--input" :: i :: tail => nextOption(map ++ Map('source -> i), tail)
+      case "-o" :: o :: tail => nextOption(map ++ Map('target -> o), tail)
+      case "--output" :: o :: tail => nextOption(map ++ Map('target -> o), tail)
+      case option :: tail => println("Incorrect option: " + option); sys.exit(1)
+    }
+  }
 
   def main(args: Array[String]) = {
     println("TriGraM metadata translator")
 
-    type OptionMap = Map[Symbol, Any]
-
-    def nextOption(map: OptionMap, list: List[String]): OptionMap = {
-      list match {
-        case Nil => map
-        case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
-        case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
-        case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
-        case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-        case "-l" :: tail => nextOption(map ++ Map('list -> true), tail)
-        case "--list" :: tail => nextOption(map ++ Map('list -> true), tail)
-        case "-t" :: inType :: tail =>
-          nextOption(map ++ Map('intype -> inType), tail)
-        case "--type" :: inType :: tail =>
-          nextOption(map ++ Map('intype -> inType), tail)
-        case "-i" :: source :: tail =>
-          nextOption(map ++ Map('source -> source), tail)
-        case "--input" :: source :: tail =>
-          nextOption(map ++ Map('source -> source), tail)
-        case "-o" :: target :: tail =>
-          nextOption(map ++ Map('target -> target), tail)
-        case "--output" :: target :: tail =>
-          nextOption(map ++ Map('target -> target), tail)
-        case option :: tail =>
-          println("Incorrect option: " + option)
-          sys.exit(1)
-      }
-    }
     val options = nextOption(Map(), args.toList)
 
     if (options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)
-    else if (options.contains('list)) println("translatable resources:\n" + Translator.help)
     else {
-      val t = if (options.contains('intype)) options('intype).toString else defaultInType
-      val i = if (options.contains('source)) options('source).toString else defaultSource
-      val o = if (options.contains('target)) options('target).toString else defaultTarget
+      val t = options.getOrElse('intype, defaultInType).toString
+      val i = options.getOrElse('source, defaultSource).toString
+      val o = options.getOrElse('target, defaultTarget).toString
 
       println("translating [%s] as [%s] to [%s]".format(i, t, o))
 
