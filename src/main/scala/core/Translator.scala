@@ -7,13 +7,9 @@ import scala.collection.JavaConverters._
 import java.nio.file.{ Path, Files, FileSystems }
 import java.nio.file.attribute.BasicFileAttributes
 import java.io.FileOutputStream
-
 import com.hp.hpl.jena.rdf.model._
-
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS }
-
 import com.hp.hpl.jena.util.FileManager
-
 import util.Logging
 
 /**

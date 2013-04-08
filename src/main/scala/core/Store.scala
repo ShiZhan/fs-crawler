@@ -4,10 +4,15 @@
 package core
 
 import scala.collection.JavaConverters._
-
 import com.hp.hpl.jena.rdf.model.Model
 import com.hp.hpl.jena.tdb.TDBFactory
 import com.hp.hpl.jena.query.{ QueryFactory, QueryExecutionFactory, ReadWrite }
+import com.hp.hpl.jena.query.Query.{
+  QueryTypeSelect,
+  QueryTypeConstruct,
+  QueryTypeDescribe,
+  QueryTypeAsk
+}
 import com.hp.hpl.jena.update.{
   GraphStoreFactory,
   UpdateAction,
@@ -61,10 +66,10 @@ class Store(val location: String) {
     val query = QueryFactory.create(sparql)
     val qExec = QueryExecutionFactory.create(query, store)
     val result = query.getQueryType match {
-      case 111 => qExec.execSelect.asScala.toList
-      case 222 => qExec.execConstruct
-      case 333 => qExec.execDescribe
-      case 444 => qExec.execAsk
+      case QueryTypeSelect => qExec.execSelect.asScala.toList
+      case QueryTypeConstruct => qExec.execConstruct
+      case QueryTypeDescribe => qExec.execDescribe
+      case QueryTypeAsk => qExec.execAsk
       case _ => "unkown query"
     }
     qExec.close
