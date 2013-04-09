@@ -6,7 +6,7 @@ package core
 import scalax.file.{ Path, PathSet }
 import java.io.FileOutputStream
 import com.hp.hpl.jena.rdf.model._
-import com.hp.hpl.jena.vocabulary.{ RDF, RDFS }
+import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL }
 import com.hp.hpl.jena.util.FileManager
 import util.Logging
 
@@ -16,27 +16,31 @@ import util.Logging
  */
 object Translator extends Logging {
 
+  val defaultUrl = "https://sites.google.com/site/ontology2013/trigram.owl"
+  val NAME = new impl.PropertyImpl( defaultUrl + "#name" )
+
   type Modeler = String => Model
   type ModelerMap = Map[String, (Modeler, String)]
   private val modelerMap: ModelerMap = Map(
     "directory" -> (modelDirectory, "Translate directory structure into TriGraM model"))
   private val modelerMapDefault = (modelUnkown _, null)
 
-  def modelDirectory(name: String) = {
-    val p = Path(name)
+  def modelDirectory(n: String) = {
+    val p = Path(n)
     if (p.isDirectory) {
       logger.info("creating model for root directory [%s]".format(p.name))
 
       val ps = p ***
-      val m = ModelFactory.createDefaultModel
-      val n = m.createResource
+      val model = ModelFactory.createDefaultModel
+      val node = model.createResource(defaultUrl + "#" + n)
+                       .addProperty(NAME, n)
       for (i <- ps) {
         println("[%s] in [%s]: %d|%d|%s|%s|%s".format(
           i.name, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
           i.lastModified, i.canRead, i.canWrite, i.canExecute))
       }
 
-      m
+      model
     } else {
       logger.info("[%s] is not a directory".format(p.name))
 
@@ -44,8 +48,8 @@ object Translator extends Logging {
     }
   }
 
-  def modelUnkown(name: String) = {
-    logger.info("unkown resource: " + name)
+  def modelUnkown(n: String) = {
+    logger.info("unkown resource: " + n)
 
     ModelFactory.createDefaultModel
   }
