@@ -17,7 +17,6 @@ import util.Logging
 object Translator extends Logging {
 
   val defaultUrl = "https://sites.google.com/site/ontology2013/trigram.owl"
-  val NAME = new impl.PropertyImpl( defaultUrl + "#name" )
 
   type Modeler = String => Model
   type ModelerMap = Map[String, (Modeler, String)]
@@ -32,7 +31,8 @@ object Translator extends Logging {
 
       val ps = p ***
       val model = ModelFactory.createDefaultModel
-      val node = model.createResource(defaultUrl + "#" + n)
+      val NAME = model.createProperty( defaultUrl + "#name" )
+      val node = model.createResource( defaultUrl + "#" + n )
                        .addProperty(NAME, n)
       for (i <- ps) {
         println("[%s] in [%s]: %d|%d|%s|%s|%s".format(
