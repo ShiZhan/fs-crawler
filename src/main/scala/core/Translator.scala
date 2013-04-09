@@ -3,9 +3,8 @@
  */
 package core
 
-import scala.collection.JavaConverters._
-import java.nio.file.{ Path, Files, FileSystems }
-import java.nio.file.attribute.BasicFileAttributes
+import scalax.file.Path
+import scalax.file.PathSet
 import java.io.FileOutputStream
 import com.hp.hpl.jena.rdf.model._
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS }
@@ -24,23 +23,18 @@ object Translator extends Logging {
     "directory" -> (modelDirectory, "Translate directory structure into TriGraM model"))
   private val modelerMapDefault = (modelUnkown _, null)
 
-  private def walkDirectory(p: Path): Array[Path] = {
-    val ds = Files.newDirectoryStream(p).iterator.asScala.toArray
-    ds ++ ds.filter(Files.isDirectory(_)).flatMap(walkDirectory)
-  }
-
   def modelDirectory(name: String) = {
-    val p = FileSystems.getDefault.getPath(name)
-    if (Files.isDirectory(p)) {
-      logger.info("creating model for root directory [%s]".format(p.toString))
+    val p = Path(name)
+    if (p.isDirectory) {
+      logger.info("creating model for root directory [%s]".format(p.name))
 
+      val ps = p ***
       val m = ModelFactory.createDefaultModel
       val n = m.createResource
-      for (i <- walkDirectory(p)) {
-        val a = Files.readAttributes(i, classOf[BasicFileAttributes])
-        println("[%s] in [%s]: %s | %s | %s ".format(
-          i.getFileName, i.getParent.getFileName,
-          a.creationTime, a.lastAccessTime, a.lastModifiedTime))
+      for (i <- ps) {
+        println("[%s] in [%s]: %d|%d|%s|%s|%s".format(
+          i.name, i.parent.get.name, if(i.isFile) i.size.get else 0,
+          i.lastModified, i.canRead, i.canWrite, i.canExecute))
       }
 
       m
