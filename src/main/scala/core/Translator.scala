@@ -3,8 +3,7 @@
  */
 package core
 
-import scalax.file.Path
-import scalax.file.PathSet
+import scalax.file.{ Path, PathSet }
 import java.io.FileOutputStream
 import com.hp.hpl.jena.rdf.model._
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS }
@@ -33,13 +32,13 @@ object Translator extends Logging {
       val n = m.createResource
       for (i <- ps) {
         println("[%s] in [%s]: %d|%d|%s|%s|%s".format(
-          i.name, i.parent.get.name, if(i.size.nonEmpty) i.size.get else 0,
+          i.name, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
           i.lastModified, i.canRead, i.canWrite, i.canExecute))
       }
 
       m
     } else {
-      logger.info("[%s] is not a directory".format(p.toString))
+      logger.info("[%s] is not a directory".format(p.name))
 
       ModelFactory.createDefaultModel
     }
