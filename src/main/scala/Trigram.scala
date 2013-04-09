@@ -66,11 +66,11 @@ import core.Translator
 object TrigramTranslator {
 
   val defaultInType = "directory"
-  val defaultSource = "./"
+  val defaultSource = "."
   val defaultTarget = "model.rdf"
 
   val usage = """
-usage: TrigramTranslator [-h] [-v] [-l] [-t] TYPE [-i] INPUT [-o] OUTPUT
+usage: TrigramTranslator [-h] [-v] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -h,--help                print this message
  -v,--version             show program version
  -t,--type TYPE           type of input resource [default: %s]

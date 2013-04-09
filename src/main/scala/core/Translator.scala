@@ -33,7 +33,7 @@ object Translator extends Logging {
       val n = m.createResource
       for (i <- ps) {
         println("[%s] in [%s]: %d|%d|%s|%s|%s".format(
-          i.name, i.parent.get.name, if(i.isFile) i.size.get else 0,
+          i.name, i.parent.get.name, if(i.size.nonEmpty) i.size.get else 0,
           i.lastModified, i.canRead, i.canWrite, i.canExecute))
       }
 
