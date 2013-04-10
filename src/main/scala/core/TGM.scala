@@ -30,8 +30,15 @@ object TGM extends Logging {
       .addProperty(TYPE, OWL.DatatypeProperty)
     model.createResource(OBJECT.getURI)
       .addProperty(TYPE, OWL.Class)
-      .addProperty(name, XSD.normalizedString)
-      .addProperty(contain, OBJECT)
+      .addProperty(RDFS.subClassOf, model.createResource
+          .addProperty(TYPE, OWL.Restriction)
+          .addProperty(OWL.onProperty, name)
+          .addProperty(OWL.allValuesFrom, XSD.normalizedString))
+      .addProperty(RDFS.subClassOf, model.createResource
+          .addProperty(TYPE, OWL.Restriction)
+          .addProperty(OWL.onProperty, contain)
+          .addProperty(OWL.allValuesFrom, OBJECT))
+
     model.write(new FileOutputStream("trigram.rdf"))
     logger.info("TriGraM core created with [%d] triples".format(model.size))
   }
