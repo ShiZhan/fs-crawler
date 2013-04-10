@@ -103,7 +103,7 @@ usage: TrigramTranslator [-h] [-v] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
     val options = nextOption(Map(), args.toList)
 
-    if (options.contains('help)) println(usage)
+    if (args.length == 0 | options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)
     else {
       val t = options.getOrElse('intype, defaultInType).toString
