@@ -7,10 +7,12 @@ case "`uname`" in
   Darwin) darwin=true;;
 esac
 
+TGM_ROOT=$(dirname `which $0`)
+
 if $cygwin; then
-  CP=`cat .classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s;",$2}'`
-  scala -cp "$CP;target/scala-2.10/classes" Trigram "$@" 
+  CP=`cat $TGM_ROOT/.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s;",$2}'`
+  scala -cp "$CP;`cygpath -alm $TGM_ROOT`/target/scala-2.10/classes" Trigram "$@" 
 else
-  CP=`cat .classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s:",$2}'`
-  scala -cp "$CP:target/scala-2.10/classes" Trigram "$@" 
+  CP=`cat $TGM_ROOT/.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s:",$2}'`
+  scala -cp "$CP:$TGM_ROOT/target/scala-2.10/classes" Trigram "$@" 
 fi

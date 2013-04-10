@@ -17,6 +17,6 @@ object Version {
     if (masterHashFileExists)
       io.Source.fromFile(masterHashFilePath).getLines.mkString
     else
-      "not available"
+      "version 0.1 beta (source repo not available)"
 
 }
