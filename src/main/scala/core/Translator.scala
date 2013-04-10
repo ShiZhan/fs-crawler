@@ -45,7 +45,7 @@ object Translator extends Logging {
         .addProperty(TYPE, OBJECT)
         .addProperty(NAME, n)
       for (i <- ps) {
-        println("[%s] in [%s]: %d|%d|%s|%s|%s".format(
+        logger.info("[%s] in [%s]: %d|%d|%s|%s|%s".format(
           i.name, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
           i.lastModified, i.canRead, i.canWrite, i.canExecute))
       }
@@ -65,8 +65,13 @@ object Translator extends Logging {
   def run(t: String, i: String, o: String) = {
     val modeler = modelerMap.getOrElse(t, modelerMapDefault) match { case (m, s) => m }
     val model = modeler(i)
-    println("%d triples generated".format(model.size))
-    if (!model.isEmpty) model.write(new FileOutputStream(o))
+    logger.info("%d triples generated".format(model.size))
+    if (!model.isEmpty) {
+      model.write(new FileOutputStream(o))
+      logger.info("model saved to file [%s]".format(o))
+    } else {
+      logger.info("model is empty")
+    }
   }
 
   val help = modelerMap.flatMap {
