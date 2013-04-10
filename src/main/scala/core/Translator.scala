@@ -7,6 +7,7 @@ import scalax.file.{ Path, PathSet }
 import java.io.FileOutputStream
 import com.hp.hpl.jena.rdf.model._
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2 }
+import com.hp.hpl.jena.vocabulary.RDF.{ `type` => TYPE }
 import com.hp.hpl.jena.util.FileManager
 import util.Logging
 
@@ -16,34 +17,25 @@ import util.Logging
  */
 object Translator extends Logging {
 
-  val defaultUrl = "https://sites.google.com/site/ontology2013/trigram.owl#"
-
   type Modeler = String => Model
   type ModelerMap = Map[String, (Modeler, String)]
   private val modelerMap: ModelerMap = Map(
     "directory" -> (modelDirectory, "Translate directory structure into TriGraM model"))
   private val modelerMapDefault = (modelUnkown _, null)
 
-  def createCoreModel = {
-    logger.info("initialize core model")
-  }
-
   def modelDirectory(n: String) = {
     val model = ModelFactory.createDefaultModel
-    model.setNsPrefix("tgm", defaultUrl)
-    val OBJECT = model.createResource(defaultUrl + "object")
-    val NAME = model.createProperty(defaultUrl + "name")
-    val TYPE = model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+    model.setNsPrefix("tgm", TGM.uri)
 
     val p = Path(n)
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.name))
 
       val ps = p ***
-      val node = model.createResource(defaultUrl + n)
+      val node = model.createResource(TGM.uri + n)
         .addProperty(TYPE, OWL2.NamedIndividual)
-        .addProperty(TYPE, OBJECT)
-        .addProperty(NAME, n)
+        .addProperty(TYPE, TGM.OBJECT)
+        .addProperty(TGM.name, n)
       for (i <- ps) {
         logger.info("[%s] in [%s]: %d|%d|%s|%s|%s".format(
           i.name, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
