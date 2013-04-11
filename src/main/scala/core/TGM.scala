@@ -3,17 +3,14 @@
  */
 package core
 
-import com.hp.hpl.jena.rdf.model.impl.{ ResourceImpl, PropertyImpl }
-import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, XSD => JenaXSD }
 import java.io.FileOutputStream
-import util.Logging
+import java.util.Calendar
+import com.hp.hpl.jena.rdf.model.ModelFactory
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
+import com.hp.hpl.jena.ontology.OntModelSpec
+import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, XSD => JenaXSD, DC_11 => DC }
+import util.{ Logging, Version }
 
-/*
- * Patch for mapping Jena RDF type to Scala RDF TYPE,
- * avoid the conflict with internal term.
- */
-import com.hp.hpl.jena.vocabulary.RDF.{ `type` => TYPE }
 /*
  * Patch for mapping Jena XSD var to Scala XSD val
  */
@@ -24,6 +21,7 @@ object XSD {
   val string = JenaXSD.xstring
   val normalizedString = JenaXSD.normalizedString
   val dateTime = JenaXSD.dateTime
+  val hexBinary = JenaXSD.hexBinary
 }
 
 /**
@@ -31,36 +29,35 @@ object XSD {
  * TriGraM core model vocabulary, concept and statement
  */
 object TGM extends Logging {
+  logger.info("initialize core model")
+
   val base = "https://sites.google.com/site/ontology2013/trigram.owl"
   val uri = base + "#"
-  val OBJECT = new ResourceImpl(uri + "object")
-  val contain = new PropertyImpl(uri + "contain")
-  val name = new PropertyImpl(uri + "name")
+  private val objectUri = uri + "object"
+  private val containUri = uri + "contain"
+  private val nameUri = uri + "name"
+  private val model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF)
+  private val defaultModelName = "trigram.rdf"
 
-  def createCore = {
-    logger.info("initialize core model")
+  model.setNsPrefix("tgm", uri)
+  model.createOntology(base)
+    .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString)
+    .addProperty(OWL.versionInfo, Version.getVersion)
+  val contain = model.createObjectProperty(containUri)
+  val name = model.createDatatypeProperty(nameUri)
+  val Object = model.createClass(objectUri)
+  Object.addSuperClass(model.createResource(OWL.Restriction)
+    .addProperty(OWL.onProperty, name)
+    .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+    .addProperty(OWL2.onDataRange, XSD.normalizedString))
+  Object.addSuperClass(model.createResource(OWL.Restriction)
+    .addProperty(OWL.onProperty, contain)
+    .addProperty(OWL.allValuesFrom, Object))
 
-    val model = ModelFactory.createDefaultModel
-    model.setNsPrefix("tgm", uri)
-    model.createResource(base)
-      .addProperty(TYPE, OWL.Ontology)
-    model.createProperty(contain.getURI)
-      .addProperty(TYPE, OWL.ObjectProperty)
-    model.createProperty(name.getURI)
-      .addProperty(TYPE, OWL.DatatypeProperty)
-    model.createResource(OBJECT.getURI)
-      .addProperty(TYPE, OWL.Class)
-      .addProperty(RDFS.subClassOf, model.createResource
-        .addProperty(TYPE, OWL.Restriction)
-        .addProperty(OWL.onProperty, name)
-        .addProperty(OWL.allValuesFrom, XSD.normalizedString))
-      .addProperty(RDFS.subClassOf, model.createResource
-        .addProperty(TYPE, OWL.Restriction)
-        .addProperty(OWL.onProperty, contain)
-        .addProperty(OWL.allValuesFrom, OBJECT))
+  def writeCoreModel = {
+    model.write(new FileOutputStream(defaultModelName))
 
-    model.write(new FileOutputStream("trigram.rdf"))
-    logger.info("TriGraM core created with [%d] triples".format(model.size))
+    logger.info("TriGraM core created with [%d] triples".format(model.getBaseModel.size))
   }
 
 }

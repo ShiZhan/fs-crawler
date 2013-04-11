@@ -5,11 +5,11 @@ package core
 
 import scalax.file.{ Path, PathSet }
 import java.io.FileOutputStream
+import java.util.Calendar
 import com.hp.hpl.jena.rdf.model._
-import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2 }
-import com.hp.hpl.jena.vocabulary.RDF.{ `type` => TYPE }
+import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC }
 import com.hp.hpl.jena.util.FileManager
-import util.Logging
+import util.{ Logging, Version }
 
 /**
  * @author ShiZhan
@@ -24,17 +24,22 @@ object Translator extends Logging {
   private val modelerMapDefault = (modelUnkown _, null)
 
   def modelDirectory(n: String) = {
-    val model = ModelFactory.createDefaultModel
-    model.setNsPrefix("tgm", TGM.uri)
+    val base = "http://localhost/directory/" + n
+    val uri = base + "#"
+    val m = ModelFactory.createDefaultModel
+    m.setNsPrefix("tgm", TGM.uri)
+    m.createResource(base)
+      .addProperty(RDF.`type`, OWL.Ontology)
+      .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString)
+      .addProperty(OWL.versionInfo, Version.getVersion)
 
     val p = Path(n)
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.name))
 
       val ps = p ***
-      val node = model.createResource(TGM.uri + n)
-        .addProperty(TYPE, OWL2.NamedIndividual)
-        .addProperty(TYPE, TGM.OBJECT)
+      val node = m.createResource(uri + n, TGM.Object)
+        .addProperty(RDF.`type`, OWL2.NamedIndividual)
         .addProperty(TGM.name, n)
       for (i <- ps) {
         logger.info("[%s] in [%s]: %d|%d|%s|%s|%s".format(
@@ -45,7 +50,7 @@ object Translator extends Logging {
       logger.info("[%s] is not a directory".format(p.name))
     }
 
-    model
+    m
   }
 
   def modelUnkown(n: String) = {

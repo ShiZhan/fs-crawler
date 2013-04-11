@@ -70,10 +70,10 @@ object TrigramTranslator {
   val defaultTarget = "model.rdf"
 
   val usage = """
-usage: TrigramTranslator [-h] [-v] [-t] TYPE [-i] INPUT [-o] OUTPUT
+usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -h,--help                print this message
  -v,--version             show program version
- -c,--core                create core model      [trigram.rdf]
+ -c,--core                write core model      [trigram.rdf]
  -t,--type TYPE           type of input resource [default: %s]
  -i,--input SOURCE        input resource         [default: %s]
  -o,--output TARGET       output target          [default: %s]
@@ -108,7 +108,7 @@ usage: TrigramTranslator [-h] [-v] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
     if (args.length == 0 | options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)
-    else if (options.contains('core)) TGM.createCore
+    else if (options.contains('core)) TGM.writeCoreModel
     else {
       val t = options.getOrElse('intype, defaultInType).toString
       val i = options.getOrElse('source, defaultSource).toString
