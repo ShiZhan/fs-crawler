@@ -18,7 +18,7 @@ object Translator extends Logging {
     val model = modeler(i)
     logger.info("%d triples generated".format(model.getBaseModel.size))
     if (!model.isEmpty) {
-      model.write(new FileOutputStream(o))
+      model.write(new FileOutputStream(o), "RDF/XML-ABBREV")
       logger.info("model saved to file [%s]".format(o))
     } else {
       logger.info("model is empty")
