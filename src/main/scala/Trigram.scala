@@ -17,7 +17,7 @@
  * default entry:
  *    translate current directory tree structure to model
  */
-import core.{ Console, Importer, TGM }
+import core.{ Console, Importer }
 import util.Version.getVersion
 
 object Trigram {
@@ -73,7 +73,6 @@ object TrigramTranslator {
 usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -h,--help                print this message
  -v,--version             show program version
- -c,--core                write core model      [trigram.rdf]
  -t,--type TYPE           type of input resource [default: %s]
  -i,--input SOURCE        input resource         [default: %s]
  -o,--output TARGET       output target          [default: %s]
@@ -89,8 +88,6 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
       case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
       case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
       case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "-c" :: tail => nextOption(map ++ Map('core -> true), tail)
-      case "--core" :: tail => nextOption(map ++ Map('core -> true), tail)
       case "-t" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
       case "--type" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
       case "-i" :: i :: tail => nextOption(map ++ Map('source -> i), tail)
@@ -108,7 +105,6 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
     if (args.length == 0 | options.contains('help)) println(usage)
     else if (options.contains('version)) println(getVersion)
-    else if (options.contains('core)) TGM.writeCoreModel
     else {
       val t = options.getOrElse('intype, defaultInType).toString
       val i = options.getOrElse('source, defaultSource).toString
@@ -116,7 +112,7 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
       println("translating [%s] as [%s] to [%s]".format(i, t, o))
 
-      Translator.run(t, i, o)
+      Translator.createModel(t, i, o)
     }
   }
 
