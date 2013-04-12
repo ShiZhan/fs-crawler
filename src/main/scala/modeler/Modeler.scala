@@ -15,11 +15,11 @@ trait Modeler {
 }
 
 object Modelers {
-  val adapterMap: Map[String, Modeler] = Map(
+  val modelerMap: Map[String, Modeler] = Map(
     "directory" -> Directory)
-  def getModeler(t: String) = adapterMap.getOrElse(t, Unknown)
+  def getModeler(t: String) = modelerMap.getOrElse(t, Unknown)
   def getModelerList =
-    adapterMap.flatMap {
+    modelerMap.flatMap {
       case (s, a) => List("  %s: \t %s".format(s, a.usage))
     }.mkString("\n")
 }

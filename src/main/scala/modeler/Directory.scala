@@ -29,16 +29,17 @@ object Directory extends Modeler with Logging {
     m.createResource(TGM.base, OWL.Ontology)
       .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString)
       .addProperty(DC.description, Version.getVersion)
-    val contain = m.createObjectProperty(TGM.DIR.contain.getURI)
-    val name = m.createDatatypeProperty(TGM.DIR.name.getURI)
-    val Object = m.createClass(TGM.DIR.Object.getURI)
-    Object.addSuperClass(m.createResource(OWL.Restriction)
-      .addProperty(OWL.onProperty, name)
-      .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-      .addProperty(OWL2.onDataRange, XSD.normalizedString))
-    Object.addSuperClass(m.createResource(OWL.Restriction)
-      .addProperty(OWL.onProperty, contain)
-      .addProperty(OWL.allValuesFrom, Object))
+
+    m.createObjectProperty(TGM.DIR.contain.getURI)
+    m.createDatatypeProperty(TGM.DIR.name.getURI)
+    m.createClass(TGM.DIR.Object.getURI)
+      .addProperty(RDFS.subClassOf, OWL.Restriction)
+        .addProperty(OWL.onProperty, TGM.DIR.name)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.normalizedString)
+      .addProperty(RDFS.subClassOf, OWL.Restriction)
+        .addProperty(OWL.onProperty, TGM.DIR.contain)
+        .addProperty(OWL.allValuesFrom, TGM.DIR.Object)
 
     m
   }
@@ -47,12 +48,19 @@ object Directory extends Modeler with Logging {
     val base = "http://localhost/directory/" + n
     val ns = base + "#"
     val m = ModelFactory.createOntologyModel
+
     m.setNsPrefix("tgm", TGM.ns)
+    val ont = m.createOntology(base)
+    ont.addImport(m.createResource(TGM.base))
+    ont.addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString)
+    ont.addProperty(DC.description, Version.getVersion)
 
     val p = Path(n)
-    m.createResource(ns + "001", OWL2.NamedIndividual)
+
+    m.createResource(ns + "root", OWL2.NamedIndividual)
       .addProperty(RDF.`type`, TGM.DIR.Object)
       .addProperty(TGM.DIR.name, n, XSDnormalizedString)
+
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.name))
 
