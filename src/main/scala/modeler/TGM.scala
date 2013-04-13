@@ -20,6 +20,9 @@ object TGM {
   private val model = ModelFactory.createDefaultModel
   val Import = model.createResource(base)
 
+  /*
+   * directory vocabulary
+   */
   // class
   val Object = model.createResource(ns + "Object")
 

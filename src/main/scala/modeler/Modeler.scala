@@ -1,5 +1,5 @@
 /**
- * Adapter Interface
+ * Modeler Interface
  */
 package modeler
 
@@ -7,8 +7,7 @@ import com.hp.hpl.jena.rdf.model.Model
 
 /**
  * @author ShiZhan
- * adapter interface
- * for adding more modelers:
+ * interface for managing modelers, for adding more, follow these steps:
  * 1. PREPARATION:
  *    add vocabulary (if needed) to TGM.scala
  * 2. BUILD:

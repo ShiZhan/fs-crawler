@@ -14,8 +14,6 @@
  * 1. show help
  * 2. show version
  * 3. translate specified source to TriGraM model
- * default entry:
- *    translate current directory tree structure to model
  */
 import core.{ Console, Importer }
 import util.Version.getVersion
