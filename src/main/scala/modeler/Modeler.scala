@@ -8,6 +8,15 @@ import com.hp.hpl.jena.rdf.model.Model
 /**
  * @author ShiZhan
  * adapter interface
+ * for adding more modelers:
+ * 1. PREPARATION:
+ *    add vocabulary (if needed) to TGM.scala
+ * 2. BUILD:
+ *    extends from Modeler trait and implement all 3 methods
+ *    usage:     help information
+ *    core:      build TBOX for modeling this category
+ *    translate: build ABOX for modeling this category
+ *    then add this modeler into modelerMap
  */
 trait Modeler {
   def usage: String
@@ -15,18 +24,9 @@ trait Modeler {
   def translate(resource: String): Model
 }
 
-/*
- * for adding more modelers:
- * 1. extends from Modeler and implement all 3 methods
- *    usage:     help information
- *    core:      TBOX for modeling this category
- *    translate: ABOX for modeling this category
- * 2. add vocabulary (if needed) to TGM.scala
- * 3. add statements (if needed) to core method
- */
 object Modelers {
 
-  val modelerMap: Map[String, Modeler] = Map(
+  private val modelerMap: Map[String, Modeler] = Map(
     "directory" -> Directory)
 
   def getModeler(t: String) = modelerMap.getOrElse(t, Unknown)

@@ -16,9 +16,7 @@ import util.{ Logging, Version }
  */
 object Directory extends Modeler with Logging {
 
-  private val help = "Translate directory structure into TriGraM model"
-
-  def usage = { help }
+  def usage = "Translate directory structure into TriGraM model"
 
   def core = {
     logger.info("initialize core model")
@@ -50,26 +48,27 @@ object Directory extends Modeler with Logging {
   }
 
   def translate(n: String) = {
-    val base = "http://localhost/directory/" + n
-    val ns = base + "#"
-    val m = ModelFactory.createDefaultModel
-
-    m.setNsPrefix("tgm", TGM.ns)
-    m.createResource(base, OWL.Ontology)
-      .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
-      .addProperty(DC.description, "TriGraM directory model", XSDstring)
-      .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
-      .addProperty(OWL.imports, TGM.Import)
-
     val p = Path(n)
 
-    m.createResource(ns + "root", OWL2.NamedIndividual)
-      .addProperty(RDF.`type`, TGM.Object)
-      .addProperty(TGM.name, n, XSDnormalizedString)
+    val m = ModelFactory.createDefaultModel
 
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.name))
 
+      val base = "http://localhost/directory/" + n
+      val ns = base + "#"
+  
+      m.setNsPrefix("tgm", TGM.ns)
+      m.createResource(base, OWL.Ontology)
+        .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
+        .addProperty(DC.description, "TriGraM directory model", XSDstring)
+        .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
+        .addProperty(OWL.imports, TGM.Import)
+  
+      m.createResource(ns + "root", OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, TGM.Object)
+        .addProperty(TGM.name, n, XSDnormalizedString)
+  
       val ps = p.***
       for (i <- ps) {
         logger.info("[%s] in [%s]: %d|%d|%s|%s|%s".format(

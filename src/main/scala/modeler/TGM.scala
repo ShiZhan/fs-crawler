@@ -1,5 +1,5 @@
 /**
- * TriGraM core model
+ * TriGraM model vocabulary
  */
 package modeler
 
@@ -8,7 +8,9 @@ import com.hp.hpl.jena.vocabulary.{ XSD => JenaXSD }
 
 /**
  * @author ShiZhan
- * TriGraM vocabulary
+ * TriGraM model vocabulary
+ * 1. core model vocabulary
+ * 2. patch XSD vocabulary from Jena, map java variables to immutable values.
  */
 object TGM {
   val base = "https://sites.google.com/site/ontology2013/trigram.owl"
