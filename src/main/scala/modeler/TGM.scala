@@ -19,9 +19,20 @@ object TGM {
 
   private val model = ModelFactory.createDefaultModel
   val Import = model.createResource(base)
+
+  // class
   val Object = model.createResource(ns + "Object")
+
+  // object property
   val contain = model.createProperty(ns + "contain")
+
+  // data type property
   val name = model.createProperty(ns + "name")
+  val size = model.createProperty(ns + "size")
+  val lastModified = model.createProperty(ns + "lastModified")
+  val canRead = model.createProperty(ns + "canRead")
+  val canWrite = model.createProperty(ns + "canWrite")
+  val canExecute = model.createProperty(ns + "canExecute")
 }
 
 /*
