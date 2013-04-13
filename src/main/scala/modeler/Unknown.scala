@@ -20,7 +20,7 @@ object Unknown extends Modeler with Logging {
   def translate(n: String) = {
     logger.info("unkown resource: " + n)
 
-    ModelFactory.createOntologyModel
+    ModelFactory.createDefaultModel
   }
 
 }

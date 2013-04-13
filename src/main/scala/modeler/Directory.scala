@@ -28,7 +28,7 @@ object Directory extends Modeler with Logging {
     m.setNsPrefix("tgm", TGM.ns)
     m.createResource(TGM.base, OWL.Ontology)
       .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
-      .addProperty(DC.description, "TriGraM directory model", XSDstring)
+      .addProperty(DC.description, "TriGraM core model", XSDstring)
       .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
 
     m.createProperty(TGM.name.getURI)
@@ -52,14 +52,14 @@ object Directory extends Modeler with Logging {
   def translate(n: String) = {
     val base = "http://localhost/directory/" + n
     val ns = base + "#"
-    val m = ModelFactory.createOntologyModel
+    val m = ModelFactory.createDefaultModel
 
     m.setNsPrefix("tgm", TGM.ns)
-    val ont = m.createOntology(base)
-    ont.addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
-    ont.addProperty(DC.description, "TriGraM directory model", XSDstring)
-    ont.addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
-    ont.addImport(TGM.Import)
+    m.createResource(base, OWL.Ontology)
+      .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
+      .addProperty(DC.description, "TriGraM directory model", XSDstring)
+      .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
+      .addProperty(OWL.imports, TGM.Import)
 
     val p = Path(n)
 

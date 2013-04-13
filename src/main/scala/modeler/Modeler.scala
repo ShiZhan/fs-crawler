@@ -13,7 +13,7 @@ import com.hp.hpl.jena.ontology.{ OntModel, OntModelSpec }
 trait Modeler {
   def usage: String
   def core: Model
-  def translate(resource: String): OntModel
+  def translate(resource: String): Model
 }
 
 /*
