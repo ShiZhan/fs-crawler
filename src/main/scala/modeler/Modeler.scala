@@ -3,15 +3,17 @@
  */
 package modeler
 
-import com.hp.hpl.jena.ontology.OntModel
+import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
+import com.hp.hpl.jena.ontology.{ OntModel, OntModelSpec }
+
 /**
  * @author ShiZhan
  * adapter interface
  */
 trait Modeler {
   def usage: String
-  def core: OntModel
-  def translate(name: String): OntModel
+  def core: Model
+  def translate(resource: String): OntModel
 }
 
 /*
@@ -24,12 +26,20 @@ trait Modeler {
  * 3. add statements (if needed) to core method
  */
 object Modelers {
+
   val modelerMap: Map[String, Modeler] = Map(
     "directory" -> Directory)
+
   def getModeler(t: String) = modelerMap.getOrElse(t, Unknown)
-  def getModelerList =
+
+  def getModelerHelp =
     modelerMap.flatMap {
       case (s, a) => List("  %s: \t %s".format(s, a.usage))
     }.mkString("\n")
-  def getCoreModel = {}
+
+  def getCoreModel = {
+    val m = modelerMap.foldLeft(Unknown.core)((r, c) => r.union(c._2.core))
+    ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF, m)
+  }
+
 }

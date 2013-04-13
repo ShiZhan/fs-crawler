@@ -6,10 +6,10 @@ package modeler
 import java.util.Calendar
 import scalax.file.{ Path, PathSet }
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.ontology.OntModelSpec
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import util.{ Logging, Version }
+
 /**
  * @author ShiZhan
  * translate directory structure into TriGraM model
@@ -23,24 +23,28 @@ object Directory extends Modeler with Logging {
   def core = {
     logger.info("initialize core model")
 
-    val m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF)
+    val m = ModelFactory.createDefaultModel
 
     m.setNsPrefix("tgm", TGM.ns)
-    m.createOntology(TGM.base)
+    m.createResource(TGM.base, OWL.Ontology)
       .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
       .addProperty(DC.description, "TriGraM directory model", XSDstring)
       .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
 
-    m.createObjectProperty(TGM.contain.getURI)
-    m.createDatatypeProperty(TGM.name.getURI)
-    m.createClass(TGM.Object.getURI)
-      .addProperty(RDFS.subClassOf, OWL.Restriction)
+    m.createProperty(TGM.name.getURI)
+      .addProperty(RDF.`type`, OWL.DatatypeProperty)
+    m.createProperty(TGM.contain.getURI)
+      .addProperty(RDF.`type`, OWL.ObjectProperty)
+    m.createResource(TGM.Object.getURI, OWL.Class)
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
         .addProperty(OWL.onProperty, TGM.name)
         .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.normalizedString)
-      .addProperty(RDFS.subClassOf, OWL.Restriction)
+        .addProperty(OWL2.onDataRange, XSD.normalizedString))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
         .addProperty(OWL.onProperty, TGM.contain)
-        .addProperty(OWL.allValuesFrom, TGM.Object)
+        .addProperty(OWL.allValuesFrom, TGM.Object))
+
+    logger.info("created [%d] triples in core model".format(m.size))
 
     m
   }

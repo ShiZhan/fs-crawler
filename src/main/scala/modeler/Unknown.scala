@@ -15,7 +15,7 @@ object Unknown extends Modeler with Logging {
 
   def usage = { help }
 
-  def core = ModelFactory.createOntologyModel
+  def core = ModelFactory.createDefaultModel
 
   def translate(n: String) = {
     logger.info("unkown resource: " + n)
