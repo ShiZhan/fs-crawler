@@ -26,20 +26,21 @@ object Directory extends Modeler with Logging {
     val m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF)
 
     m.setNsPrefix("tgm", TGM.ns)
-    m.createResource(TGM.base, OWL.Ontology)
-      .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString)
-      .addProperty(DC.description, Version.getVersion)
+    m.createOntology(TGM.base)
+      .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
+      .addProperty(DC.description, "TriGraM directory model", XSDstring)
+      .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
 
-    m.createObjectProperty(TGM.DIR.contain.getURI)
-    m.createDatatypeProperty(TGM.DIR.name.getURI)
-    m.createClass(TGM.DIR.Object.getURI)
+    m.createObjectProperty(TGM.contain.getURI)
+    m.createDatatypeProperty(TGM.name.getURI)
+    m.createClass(TGM.Object.getURI)
       .addProperty(RDFS.subClassOf, OWL.Restriction)
-        .addProperty(OWL.onProperty, TGM.DIR.name)
+        .addProperty(OWL.onProperty, TGM.name)
         .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
         .addProperty(OWL2.onDataRange, XSD.normalizedString)
       .addProperty(RDFS.subClassOf, OWL.Restriction)
-        .addProperty(OWL.onProperty, TGM.DIR.contain)
-        .addProperty(OWL.allValuesFrom, TGM.DIR.Object)
+        .addProperty(OWL.onProperty, TGM.contain)
+        .addProperty(OWL.allValuesFrom, TGM.Object)
 
     m
   }
@@ -51,15 +52,16 @@ object Directory extends Modeler with Logging {
 
     m.setNsPrefix("tgm", TGM.ns)
     val ont = m.createOntology(base)
-    ont.addImport(m.createResource(TGM.base))
-    ont.addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString)
-    ont.addProperty(DC.description, Version.getVersion)
+    ont.addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
+    ont.addProperty(DC.description, "TriGraM directory model", XSDstring)
+    ont.addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
+    ont.addImport(TGM.Import)
 
     val p = Path(n)
 
     m.createResource(ns + "root", OWL2.NamedIndividual)
-      .addProperty(RDF.`type`, TGM.DIR.Object)
-      .addProperty(TGM.DIR.name, n, XSDnormalizedString)
+      .addProperty(RDF.`type`, TGM.Object)
+      .addProperty(TGM.name, n, XSDnormalizedString)
 
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.name))

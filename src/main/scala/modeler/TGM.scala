@@ -15,12 +15,11 @@ object TGM {
   val ns = base + "#"
   val local = "trigram.owl"
 
-  object DIR {
-    private val model = ModelFactory.createDefaultModel
-    val Object = model.createResource(ns + "Object")
-    val contain = model.createProperty(ns + "contain")
-    val name = model.createProperty(ns + "name")
-  }
+  private val model = ModelFactory.createDefaultModel
+  val Import = model.createResource(base)
+  val Object = model.createResource(ns + "Object")
+  val contain = model.createProperty(ns + "contain")
+  val name = model.createProperty(ns + "name")
 }
 
 /*
