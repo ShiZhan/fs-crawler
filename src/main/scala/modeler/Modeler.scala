@@ -3,8 +3,7 @@
  */
 package modeler
 
-import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
-import com.hp.hpl.jena.ontology.{ OntModel, OntModelSpec }
+import com.hp.hpl.jena.rdf.model.Model
 
 /**
  * @author ShiZhan
@@ -37,9 +36,6 @@ object Modelers {
       case (s, a) => List("  %s: \t %s".format(s, a.usage))
     }.mkString("\n")
 
-  def getCoreModel = {
-    val m = modelerMap.foldLeft(Unknown.core)((r, c) => r.union(c._2.core))
-    ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF, m)
-  }
+  def getCoreModel = modelerMap.foldLeft(Unknown.core)((r, c) => r.union(c._2.core))
 
 }

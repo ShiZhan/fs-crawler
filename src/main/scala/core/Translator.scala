@@ -29,7 +29,7 @@ object Translator extends Logging {
     val coreModel = Modelers.getCoreModel
     coreModel.write(new FileOutputStream(TGM.local), "RDF/XML-ABBREV")
     logger.info("[%d] triples saved to core model file [%s]".
-      format(coreModel.getBaseModel.size, TGM.local))
+      format(coreModel.size, TGM.local))
   }
 
   val help = Modelers.getModelerHelp
