@@ -13,7 +13,7 @@ object Version {
   private val masterHashFilePath = ".git/refs/heads/master"
   private val masterHashFileExists = new java.io.File(masterHashFilePath).exists
 
-  def getVersion =
+  def get =
     if (masterHashFileExists)
       io.Source.fromFile(masterHashFilePath).getLines.mkString
     else

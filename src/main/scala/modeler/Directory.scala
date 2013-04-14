@@ -3,12 +3,11 @@
  */
 package modeler
 
-import java.util.Calendar
 import scalax.file.{ Path, PathSet }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version }
+import util.{ Logging, Version, DateTime }
 
 /**
  * @author ShiZhan
@@ -40,10 +39,10 @@ permissions and limitations under the License.
 
     m.setNsPrefix("tgm", TGM.ns)
     m.createResource(TGM.base, OWL.Ontology)
-      .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
+      .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM core model", XSDstring)
       .addProperty(DT.license, license, XSDstring)
-      .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
+      .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
     m.createResource(TGM.name.getURI, OWL.DatatypeProperty)
     m.createResource(TGM.size.getURI, OWL.DatatypeProperty)
@@ -101,9 +100,9 @@ permissions and limitations under the License.
 
       m.setNsPrefix("tgm", TGM.ns)
       m.createResource(base, OWL.Ontology)
-        .addProperty(DC.date, Calendar.getInstance.getTime.toLocaleString, XSDdateTime)
+        .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM directory model", XSDstring)
-        .addProperty(OWL.versionInfo, Version.getVersion, XSDstring)
+        .addProperty(OWL.versionInfo, Version.get, XSDstring)
         .addProperty(OWL.imports, TGM.Import)
 
       m.createResource(ns + "root", OWL2.NamedIndividual)

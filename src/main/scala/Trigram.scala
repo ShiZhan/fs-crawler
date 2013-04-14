@@ -16,7 +16,7 @@
  * 3. translate specified source to TriGraM model
  */
 import core.{ Console, Importer }
-import util.Version.getVersion
+import util.Version
 
 object Trigram {
 
@@ -52,7 +52,7 @@ usage: Trigram [-h] [-v] [-i]
       val options = nextOption(Map(), args.toList)
 
       if (options.contains('help)) println(usage)
-      else if (options.contains('version)) println(getVersion)
+      else if (options.contains('version)) println(Version.get)
       else if (options.contains('resource)) Importer.load(options('resource).toString)
     }
   }
@@ -105,7 +105,7 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
     val options = nextOption(Map(), args.toList)
 
     if (args.length == 0 | options.contains('help)) println(usage)
-    else if (options.contains('version)) println(getVersion)
+    else if (options.contains('version)) println(Version.get)
     else if (options.contains('core)) Translator.createCoreModel
     else {
       val t = options.getOrElse('intype, defaultInType).toString

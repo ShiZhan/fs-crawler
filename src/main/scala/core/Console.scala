@@ -3,6 +3,8 @@
  */
 package core
 
+import util.Version
+
 /**
  * @author ShiZhan
  * 2013
@@ -31,7 +33,7 @@ object Console extends Handler(Store.defaultLocation) {
           close; return
 
         case "help" :: Nil => consoleUsage
-        case "version" :: Nil => util.Version.getVersion
+        case "version" :: Nil => Version.get
 
         case "test" :: Nil => "internal test command"
 
