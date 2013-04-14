@@ -5,8 +5,8 @@ package util
 
 /**
  * @author ShiZhan
- * 2013
  * get program version from GIT repository
+ * use build-in string if not available
  */
 object Version {
 
