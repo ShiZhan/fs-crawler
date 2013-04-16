@@ -4,7 +4,7 @@
 package modeler
 
 import scalax.file.{ Path, PathSet }
-import com.hp.hpl.jena.rdf.model.ModelFactory
+import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import util.{ Logging, Version, DateTime, Hash }
@@ -105,22 +105,35 @@ permissions and limitations under the License.
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
         .addProperty(OWL.imports, TGM.Import)
 
-      val pSize = if (p.size.nonEmpty) p.size.get.toString else "0"
+      def genNodeUri(p: Path) = ns + Hash.getMD5(p.path)
 
-      m.createResource(ns + Hash.getMD5(p.path), OWL2.NamedIndividual)
-        .addProperty(RDF.`type`, TGM.Object)
-        .addProperty(TGM.name, p.name, XSDnormalizedString)
-        .addProperty(TGM.size, pSize, XSDunsignedLong)
-        .addProperty(TGM.lastModified, DateTime.get(p.lastModified), XSDdateTime)
-        .addProperty(TGM.canRead, p.canRead.toString, XSDboolean)
-        .addProperty(TGM.canWrite, p.canWrite.toString, XSDboolean)
-        .addProperty(TGM.canExecute, p.canExecute.toString, XSDboolean)
+      def assignAttributes(p: Path) = {
+        val pSize = if (p.size.nonEmpty) p.size.get.toString else "0"
+    
+        m.createResource(genNodeUri(p), OWL2.NamedIndividual)
+          .addProperty(RDF.`type`, TGM.Object)
+          .addProperty(TGM.name, p.name, XSDnormalizedString)
+          .addProperty(TGM.size, pSize, XSDunsignedLong)
+          .addProperty(TGM.lastModified, DateTime.get(p.lastModified), XSDdateTime)
+          .addProperty(TGM.canRead, p.canRead.toString, XSDboolean)
+          .addProperty(TGM.canWrite, p.canWrite.toString, XSDboolean)
+          .addProperty(TGM.canExecute, p.canExecute.toString, XSDboolean)
+      }
+
+      assignAttributes(p)
 
       val ps = p.***
       for (i <- ps) {
         logger.info("[%s/%s] in [%s]: %d|%d|%s|%s|%s".format(
           i.name, i.path, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
           i.lastModified, i.canRead, i.canWrite, i.canExecute))
+
+        m.add(m.createStatement(
+          m.createResource(ns + Hash.getMD5(i.parent.get.path)),
+          TGM.contain,
+          m.createResource(genNodeUri(i))))
+
+        assignAttributes(i)
       }
     } else {
       logger.info("[%s] is not a directory".format(p.name))
