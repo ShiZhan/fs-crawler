@@ -37,10 +37,10 @@ permissions and limitations under the License.
     ModelFactory.createDefaultModel
   }
 
-  def translate(n: String) = {
-    val p = Path(n)
+  def translate(i: String, o: String) = {
+    val p = Path(i)
 
-    ModelFactory.createDefaultModel
+    logger.info("create model for *HUGE* directory")
   }
 
 }

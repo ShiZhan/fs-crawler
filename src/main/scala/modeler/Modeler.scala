@@ -4,10 +4,11 @@
 package modeler
 
 import com.hp.hpl.jena.rdf.model.Model
+import util.Logging
 
 /**
  * @author ShiZhan
- * interface for managing modelers, for adding more, follow these steps:
+ * interface for modelers, for adding more, follow these steps:
  * 1. PREPARATION:
  *    add vocabulary (if needed) to TGM.scala
  * 2. BUILD:
@@ -20,20 +21,29 @@ import com.hp.hpl.jena.rdf.model.Model
 trait Modeler {
   def usage: String
   def core: Model
-  def translate(resource: String): Model
+  def translate(input: String, output: String): Unit
 }
 
-object Modelers {
+/**
+ * managing modelers for translating various resources to RDF model
+ */
+object Modelers extends Logging {
 
   private val modelerMap: Map[String, Modeler] = Map(
     "Directory" -> Directory,
     "DirectoryEx" -> DirectoryEx)
 
-  def getModeler(t: String) = modelerMap.getOrElse(t, Unknown)
+  def getModel(t: String, i: String, o: String) =
+    modelerMap.getOrElse(t, Unknown).translate(i, o)
 
-  def getModelerHelp =
+  def getHelp =
     modelerMap.map { case (s, a) => "  %s: \t %s".format(s, a.usage) }.mkString("\n")
 
-  def getCoreModel = modelerMap.foldLeft(Unknown.core)((r, c) => r.union(c._2.core))
+  def getCoreModel = {
+    val m = modelerMap.foldLeft(Unknown.core)((r, c) => r.union(c._2.core))
+    m.write(new java.io.FileOutputStream(TGM.local), "RDF/XML-ABBREV")
+
+    logger.info("[%d] triples saved to core model file [%s]".format(m.size, TGM.local))
+  }
 
 }

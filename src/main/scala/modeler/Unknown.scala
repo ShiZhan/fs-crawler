@@ -19,10 +19,7 @@ object Unknown extends Modeler with Logging {
 
   def core = ModelFactory.createDefaultModel
 
-  def translate(n: String) = {
-    logger.info("unkown resource: " + n)
-
-    ModelFactory.createDefaultModel
-  }
+  def translate(i: String, o: String) =
+    logger.info("unkown resource: " + i)
 
 }

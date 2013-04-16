@@ -87,16 +87,16 @@ permissions and limitations under the License.
     m
   }
 
-  def translate(n: String) = {
-    val p = Path(n)
-
-    val m = ModelFactory.createDefaultModel
+  def translate(i: String, o: String) = {
+    val p = Path(i)
 
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.path))
 
-      val base = "http://localhost/directory/" + n
+      val base = "http://localhost/directory/" + 1
       val ns = base + "#"
+
+      val m = ModelFactory.createDefaultModel
 
       m.setNsPrefix("tgm", TGM.ns)
       m.createResource(base, OWL.Ontology)
@@ -134,11 +134,13 @@ permissions and limitations under the License.
           TGM.contain,
           m.getResource(genNodeUri(i))))
       }
+
+      m.write(new java.io.FileOutputStream(o), "RDF/XML-ABBREV")
+
+      logger.info("[%d] triples written".format(m.size))
     } else {
       logger.info("[%s] is not a directory".format(p.name))
     }
-
-    m
   }
 
 }

@@ -59,7 +59,7 @@ usage: Trigram [-h] [-v] [-i]
 
 }
 
-import core.Translator
+import modeler.Modelers
 
 object TrigramTranslator {
 
@@ -76,7 +76,7 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -i,--input SOURCE        input resource         [default: %s]
  -o,--output TARGET       output target          [default: %s]
 """.format(defaultInType, defaultSource, defaultTarget) +
-    "\ntranslatable resources:\n" + Translator.help
+    "\ntranslatable resources:\n" + Modelers.getHelp
 
   type OptionMap = Map[Symbol, Any]
 
@@ -106,7 +106,7 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
     if (args.length == 0 | options.contains('help)) println(usage)
     else if (options.contains('version)) println(Version.get)
-    else if (options.contains('core)) Translator.createCoreModel
+    else if (options.contains('core)) Modelers.getCoreModel
     else {
       val t = options.getOrElse('intype, defaultInType).toString
       val i = options.getOrElse('source, defaultSource).toString
@@ -114,7 +114,7 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
       println("translating [%s] as [%s] to [%s]".format(i, t, o))
 
-      Translator.createModel(t, i, o)
+      Modelers.getModel(t, i, o)
     }
   }
 
