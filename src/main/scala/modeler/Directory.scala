@@ -109,7 +109,7 @@ permissions and limitations under the License.
 
       def assignAttributes(p: Path) = {
         val pSize = if (p.size.nonEmpty) p.size.get.toString else "0"
-    
+
         m.createResource(genNodeUri(p), OWL2.NamedIndividual)
           .addProperty(RDF.`type`, TGM.Object)
           .addProperty(TGM.name, p.name, XSDnormalizedString)
@@ -128,12 +128,11 @@ permissions and limitations under the License.
           i.name, i.path, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
           i.lastModified, i.canRead, i.canWrite, i.canExecute))
 
-        m.add(m.createStatement(
-          m.createResource(ns + Hash.getMD5(i.parent.get.path)),
-          TGM.contain,
-          m.createResource(genNodeUri(i))))
-
         assignAttributes(i)
+        m.add(m.createStatement(
+          m.getResource(genNodeUri(i.parent.get)),
+          TGM.contain,
+          m.getResource(genNodeUri(i))))
       }
     } else {
       logger.info("[%s] is not a directory".format(p.name))
