@@ -26,7 +26,8 @@ trait Modeler {
 object Modelers {
 
   private val modelerMap: Map[String, Modeler] = Map(
-    "directory" -> Directory)
+    "Directory" -> Directory,
+    "DirectoryEx" -> DirectoryEx)
 
   def getModeler(t: String) = modelerMap.getOrElse(t, Unknown)
 

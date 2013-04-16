@@ -63,7 +63,7 @@ import core.Translator
 
 object TrigramTranslator {
 
-  val defaultInType = "directory"
+  val defaultInType = "Directory"
   val defaultSource = "."
   val defaultTarget = "model.rdf"
 

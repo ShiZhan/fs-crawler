@@ -1,5 +1,5 @@
 /**
- * Adapter to translate directory
+ * Modeler to translate directory
  */
 package modeler
 
