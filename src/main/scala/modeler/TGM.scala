@@ -13,9 +13,10 @@ import com.hp.hpl.jena.vocabulary.{ XSD => JenaXSD }
  * 2. patch XSD vocabulary from Jena, map java variables to immutable values.
  */
 object TGM {
-  val base = "https://sites.google.com/site/ontology2013/trigram.owl"
-  val ns = base + "#"
+
   val local = "trigram.owl"
+  val base = "https://sites.google.com/site/ontology2013/" + local
+  val ns = base + "#"
 
   private val model = ModelFactory.createDefaultModel
   val Import = model.createResource(base)
@@ -36,13 +37,17 @@ object TGM {
   val canRead = model.createProperty(ns + "canRead")
   val canWrite = model.createProperty(ns + "canWrite")
   val canExecute = model.createProperty(ns + "canExecute")
+
 }
 
 /*
  * Patch for mapping Jena XSD var to Scala XSD val
+ * conform FP fashion
  */
 object XSD {
+
   def getURI = JenaXSD.getURI
+
   val xfloat = JenaXSD.xfloat
   val xdouble = JenaXSD.xdouble
   val xint = JenaXSD.xint
@@ -87,4 +92,5 @@ object XSD {
   val gYear = JenaXSD.gYear
   val gYearMonth = JenaXSD.gYearMonth
   val gMonthDay = JenaXSD.gMonthDay
+
 }

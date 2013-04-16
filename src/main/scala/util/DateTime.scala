@@ -16,4 +16,6 @@ object DateTime {
 
   def get = dateFormat.format(Calendar.getInstance.getTime)
 
+  def get(i: Long) = dateFormat.format(i)
+
 }

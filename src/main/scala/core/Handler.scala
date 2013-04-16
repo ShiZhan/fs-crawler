@@ -104,8 +104,8 @@ class Handler(location: String) extends Store(location) {
   def enterDSCLI(mode: String) =
     handlerMap.getOrElse(mode, handlerMapDefault) match { case (h, s) => h(mode + " > ") }
 
-  val help = handlerMap.flatMap {
-    case (m, (h, s)) => List("  %s: \t %s".format(m, s))
+  val help = handlerMap.map {
+    case (m, (h, s)) => "  %s: \t %s".format(m, s)
   }.mkString("\n")
 
 }

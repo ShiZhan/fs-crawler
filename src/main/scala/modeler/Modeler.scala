@@ -31,9 +31,7 @@ object Modelers {
   def getModeler(t: String) = modelerMap.getOrElse(t, Unknown)
 
   def getModelerHelp =
-    modelerMap.flatMap {
-      case (s, a) => List("  %s: \t %s".format(s, a.usage))
-    }.mkString("\n")
+    modelerMap.map { case (s, a) => "  %s: \t %s".format(s, a.usage) }.mkString("\n")
 
   def getCoreModel = modelerMap.foldLeft(Unknown.core)((r, c) => r.union(c._2.core))
 
