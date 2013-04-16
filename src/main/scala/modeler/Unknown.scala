@@ -8,10 +8,8 @@ import util.Logging
 
 /**
  * @author ShiZhan
- * unknown resource modeler
- * providing empty core model and translated model
- * also function as default object for modeler map
- * and dummy model for merging core models
+ * providing empty core model and translated model, also function as default
+ * object for modeler map and dummy model for merging core models
  */
 object Unknown extends Modeler with Logging {
 
@@ -19,7 +17,6 @@ object Unknown extends Modeler with Logging {
 
   def core = ModelFactory.createDefaultModel
 
-  def translate(i: String, o: String) =
-    logger.info("unkown resource: " + i)
+  def translate(i: String, o: String) = logger.info("unkown resource: " + i)
 
 }

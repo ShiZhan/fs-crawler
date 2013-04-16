@@ -93,7 +93,7 @@ permissions and limitations under the License.
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.path))
 
-      val base = "http://localhost/directory/" + 1
+      val base = "http://localhost/directory/" + i
       val ns = base + "#"
 
       val m = ModelFactory.createDefaultModel

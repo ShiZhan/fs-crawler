@@ -26,7 +26,7 @@ usage: Trigram [-h] [-v] [-i]
  -v,--version             show program version
  -i,--import MODEL        import model
 
- no argument              enter console
+ run with no argument     enter console
 """
 
   type OptionMap = Map[Symbol, Any]
