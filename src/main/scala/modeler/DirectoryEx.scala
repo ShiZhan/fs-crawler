@@ -43,7 +43,7 @@ object DirectoryEx extends Modeler with Logging {
 
   private def individualT =
     (base: String, nodeId: String, trigramBase: String, contains: String,
-      name: String, size: Long, lastModified: String, isDirectory: Boolean, 
+      name: String, size: Long, lastModified: String, isDirectory: Boolean,
       canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
   <owl:NamedIndividual rdf:about="$base#$nodeId">
     <rdf:type rdf:resource="$trigramBase#Object"/>
@@ -84,11 +84,17 @@ object DirectoryEx extends Modeler with Logging {
 
       for (i <- ps) {
         val nodeId = Hash.getMD5(i.path)
-        val size = if (p.size.nonEmpty) p.size.get else 0
-        val individual = individualT(
-          base, nodeId, TGM.base, "",
-          i.name, size, DateTime.get(i.lastModified), i.isDirectory,
-          i.canRead, i.canWrite, i.canExecute)
+
+        val isDirectory = i.isDirectory
+
+        val contains = if (isDirectory) "" else ""
+
+        val size = if (i.size.nonEmpty) i.size.get else 0
+        val dateTime = DateTime.get(i.lastModified)
+
+        val individual = individualT(base, nodeId, TGM.base, contains, i.name,
+          size, dateTime, isDirectory, i.canRead, i.canWrite, i.canExecute)
+
         m.write(individual.getBytes)
       }
 
