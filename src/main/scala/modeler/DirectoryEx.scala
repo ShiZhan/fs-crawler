@@ -14,61 +14,51 @@ import util.{ Logging, Version, DateTime, Hash }
  */
 object DirectoryEx extends Modeler with Logging {
 
-  private val license = """
-Copyright 2013 Shi.Zhan.
-Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0.
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing
-permissions and limitations under the License. 
-"""
-
-  private val headerT = """
+  private def headerT =
+    (trigramBase: String, base: String, version: String, dateTime: String) => s"""
 <rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:tgm="https://sites.google.com/site/ontology2013/trigram.owl#"
+    xmlns:tgm="$trigramBase#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <owl:Ontology rdf:about="http://localhost/directory/temp">
-    <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl"/>
+  <owl:Ontology rdf:about="$base">
+    <owl:imports rdf:resource="$trigramBase"/>
     <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >version 0.1 beta (source repo not available)</owl:versionInfo>
+    >$version</owl:versionInfo>
     <dc:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >TriGraM directory model</dc:description>
     <dc:date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
-    >2013-04-16T22:07:54</dc:date>
+    >$dateTime</dc:date>
   </owl:Ontology>
 """
 
-  private val footerT = "</rdf:RDF>"
+  private def containT = (base: String, nodeId: String) => s"""
+    <tgm:contain rdf:resource="$base#$nodeId"/>
+"""
 
-  private val individualT = """
-  <owl:NamedIndividual rdf:about="http://localhost/directory/temp#3d801aa532c1cec3ee82d87a99fdf63f">
-    <tgm:canRead rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >true</tgm:canRead>
-    <tgm:lastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
-    >2013-04-16T21:11:44</tgm:lastModified>
+  private def individualT =
+    (base: String, nodeId: String, trigramBase: String, contains: String,
+      name: String, size: Long, lastModified: String,
+      canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
+  <owl:NamedIndividual rdf:about="$base#$nodeId">
+    <rdf:type rdf:resource="$trigramBase#Object"/>
     <tgm:name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
-    >temp</tgm:name>
-    <tgm:canWrite rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >true</tgm:canWrite>
-    <tgm:canExecute rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >true</tgm:canExecute>
+    >$name</tgm:name>
     <tgm:size rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
-    >0</tgm:size>
-    <rdf:type rdf:resource="https://sites.google.com/site/ontology2013/trigram.owl#Object"/>
-
+    >$size</tgm:size>
+    <tgm:lastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
+    >$lastModified</tgm:lastModified>
+    <tgm:canRead rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canRead</tgm:canRead>
+    <tgm:canWrite rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canWrite</tgm:canWrite>
+    <tgm:canExecute rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canExecute</tgm:canExecute>
+  $contains
   </owl:NamedIndividual>
 """
-  private val containT = """
-    <tgm:contain rdf:resource="http://localhost/directory/temp#a4252f3f211ffd9be44fdf33feda5ef2"/>
-"""
+
+  private val footerT = "</rdf:RDF>"
 
   def usage = "Translate *HUGE* directory structure into TriGraM model"
 
@@ -80,6 +70,12 @@ permissions and limitations under the License.
     val ps = p.***
 
     logger.info("creating model for *HUGE* directory")
+
+    val m = new java.io.FileOutputStream(o, true)
+
+    m.write("hello".getBytes)
+
+    m.close
   }
 
 }
