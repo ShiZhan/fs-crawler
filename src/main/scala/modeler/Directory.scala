@@ -50,6 +50,7 @@ permissions and limitations under the License.
     m.createResource(TGM.canRead.getURI, OWL.DatatypeProperty)
     m.createResource(TGM.canWrite.getURI, OWL.DatatypeProperty)
     m.createResource(TGM.canExecute.getURI, OWL.DatatypeProperty)
+    m.createResource(TGM.isDirectory.getURI, OWL.DatatypeProperty)
 
     m.createResource(TGM.contain.getURI, OWL.ObjectProperty)
 
@@ -79,6 +80,10 @@ permissions and limitations under the License.
         .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
         .addProperty(OWL2.onDataRange, XSD.xboolean))
       .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, TGM.isDirectory)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.xboolean))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
         .addProperty(OWL.onProperty, TGM.contain)
         .addProperty(OWL.allValuesFrom, TGM.Object))
 
@@ -87,13 +92,13 @@ permissions and limitations under the License.
     m
   }
 
-  def translate(i: String, o: String) = {
-    val p = Path(i)
+  def translate(input: String, output: String) = {
+    val p = Path(input)
 
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.path))
 
-      val base = "http://localhost/directory/" + i
+      val base = "http://localhost/directory/" + input
       val ns = base + "#"
 
       val m = ModelFactory.createDefaultModel
@@ -118,6 +123,7 @@ permissions and limitations under the License.
           .addProperty(TGM.canRead, p.canRead.toString, XSDboolean)
           .addProperty(TGM.canWrite, p.canWrite.toString, XSDboolean)
           .addProperty(TGM.canExecute, p.canExecute.toString, XSDboolean)
+          .addProperty(TGM.isDirectory, p.isDirectory.toString, XSDboolean)
       }
 
       assignAttributes(p)
@@ -135,7 +141,7 @@ permissions and limitations under the License.
           m.getResource(genNodeUri(i))))
       }
 
-      m.write(new java.io.FileOutputStream(o), "RDF/XML-ABBREV")
+      m.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
 
       logger.info("[%d] triples written".format(m.size))
     } else {

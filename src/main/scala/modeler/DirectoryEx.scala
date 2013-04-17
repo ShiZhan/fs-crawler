@@ -14,9 +14,14 @@ import util.{ Logging, Version, DateTime, Hash }
  */
 object DirectoryEx extends Modeler with Logging {
 
+  def usage = "Translate *HUGE* directory structure into TriGraM model"
+
+  // the same with Directory modeler, no need to add more statements.
+  def core = ModelFactory.createDefaultModel
+
   private def headerT =
-    (trigramBase: String, base: String, version: String, dateTime: String) => s"""
-<rdf:RDF
+    (trigramBase: String, base: String, version: String, dateTime: String) =>
+      s"""<rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:tgm="$trigramBase#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
@@ -32,13 +37,13 @@ object DirectoryEx extends Modeler with Logging {
   </owl:Ontology>
 """
 
-  private def containT = (base: String, nodeId: String) => s"""
-    <tgm:contain rdf:resource="$base#$nodeId"/>
+  private def containT = (base: String, subNodeId: String) => s"""
+    <tgm:contain rdf:resource="$base#$subNodeId"/>
 """
 
   private def individualT =
     (base: String, nodeId: String, trigramBase: String, contains: String,
-      name: String, size: Long, lastModified: String,
+      name: String, size: Long, lastModified: String, isDirectory: Boolean, 
       canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
   <owl:NamedIndividual rdf:about="$base#$nodeId">
     <rdf:type rdf:resource="$trigramBase#Object"/>
@@ -54,28 +59,45 @@ object DirectoryEx extends Modeler with Logging {
     >$canWrite</tgm:canWrite>
     <tgm:canExecute rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
     >$canExecute</tgm:canExecute>
+    <tgm:isDirectory rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$isDirectory</tgm:isDirectory>
   $contains
   </owl:NamedIndividual>
 """
 
   private val footerT = "</rdf:RDF>"
 
-  def usage = "Translate *HUGE* directory structure into TriGraM model"
+  def translate(input: String, output: String) = {
+    val p = Path(input)
 
-  // the same with Directory modeler, no need to add more statements.
-  def core = ModelFactory.createDefaultModel
+    if (p.isDirectory) {
+      logger.info("creating model for *HUGE* directory")
 
-  def translate(i: String, o: String) = {
-    val p = Path(i)
-    val ps = p.***
+      val m = new java.io.FileOutputStream(output)
 
-    logger.info("creating model for *HUGE* directory")
+      val base = "http://localhost/directory/" + input
+      val header = headerT(TGM.base, base, Version.get, DateTime.get)
 
-    val m = new java.io.FileOutputStream(o, true)
+      m.write(header.getBytes)
 
-    m.write("hello".getBytes)
+      val ps = p.***
 
-    m.close
+      for (i <- ps) {
+        val nodeId = Hash.getMD5(i.path)
+        val size = if (p.size.nonEmpty) p.size.get else 0
+        val individual = individualT(
+          base, nodeId, TGM.base, "",
+          i.name, size, DateTime.get(i.lastModified), i.isDirectory,
+          i.canRead, i.canWrite, i.canExecute)
+        m.write(individual.getBytes)
+      }
+
+      m.write(footerT.getBytes)
+
+      m.close
+    } else {
+      logger.info("[%s] is not a directory".format(p.name))
+    }
   }
 
 }

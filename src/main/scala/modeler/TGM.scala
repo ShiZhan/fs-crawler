@@ -38,6 +38,8 @@ object TGM {
   val canWrite = model.createProperty(ns + "canWrite")
   val canExecute = model.createProperty(ns + "canExecute")
 
+  val isDirectory = model.createProperty(ns + "isDirectory")
+
 }
 
 /*
