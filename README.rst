@@ -15,7 +15,7 @@ The original motivation is described in `my thsis`_.
 
 Preliminary version was developed as a simple XQuery program during 2011.2~2011.8, and can be run from xquilla command line, the input source file is from DMTF CIM model and must be compiled by OpenPegasus, and the basic idea is to use translated semantic model in helping storage resource management.
 
-In late 2011, switch the whole toolchain to Python and RDFLib_ for flexible development, called SEED_.
+In late 2011, switch the whole toolchain to Python and RDFLib_ for flexible development, called SEED, aims at efficient metadata storage for distributed file systems.
 
 In late 2012, considering the scalability issues, the main framework switched once more, to Scala_ + Jena_, for an easy integration with TDB_.
 
@@ -42,6 +42,8 @@ How to use
 3. use "compile" or "package".
 
 4. use loaders in "bin" to execute, "trigram" for \*\NIX and "trigram.cmd" for Windows.
+
+5. use "translator" to translate various resources to semantic models, the models can then be imported into trigram.
 
 NOTE:
 
