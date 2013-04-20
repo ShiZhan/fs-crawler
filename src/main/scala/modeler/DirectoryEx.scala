@@ -4,7 +4,7 @@
 package modeler
 
 import scalax.file.{ Path, PathSet }
-import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
+import com.hp.hpl.jena.rdf.model.ModelFactory
 import util.{ Logging, Version, DateTime, Hash }
 
 /**
@@ -86,8 +86,10 @@ object DirectoryEx extends Modeler with Logging {
         val nodeId = Hash.getMD5(i.path)
 
         val isDirectory = i.isDirectory
-
-        val contains = if (isDirectory) "" else ""
+        val contains = if (isDirectory) {
+          val iSub = i * "*"
+          iSub.map(s => containT(base, Hash.getMD5(s.path))).mkString
+        } else ""
 
         val size = if (i.size.nonEmpty) i.size.get else 0
         val dateTime = DateTime.get(i.lastModified)
