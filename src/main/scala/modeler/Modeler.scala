@@ -3,7 +3,7 @@
  */
 package modeler
 
-import com.hp.hpl.jena.rdf.model.Model
+import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
 import util.Logging
 
 /**
@@ -12,15 +12,18 @@ import util.Logging
  * 1. PREPARATION:
  *    add vocabulary (if needed) to TGM.scala
  * 2. BUILD:
- *    extends from Modeler trait and implement all 3 methods
+ *    extends from Modeler trait and assign a unique "key"
+ *    implement at least "translate" methods
+ *    key:       unique identifier
  *    usage:     help information
  *    core:      build TBOX for modeling this category
  *    translate: build ABOX for modeling this category
  *    then add this modeler into modelerMap
  */
 trait Modeler {
-  def usage: String
-  def core: Model
+  val key: String = "BaseModeler"
+  val usage: String = null
+  def core: Model = ModelFactory.createDefaultModel
   def translate(input: String, output: String): Unit
 }
 
@@ -30,8 +33,8 @@ trait Modeler {
 object Modelers extends Logging {
 
   private val modelerMap: Map[String, Modeler] = Map(
-    "Directory" -> Directory,
-    "DirectoryEx" -> DirectoryEx)
+    Directory.key -> Directory,
+    DirectoryEx.key -> DirectoryEx)
 
   def getModel(t: String, i: String, o: String) =
     modelerMap.getOrElse(t, Unknown).translate(i, o)

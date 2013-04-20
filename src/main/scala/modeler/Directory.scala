@@ -15,6 +15,10 @@ import util.{ Logging, Version, DateTime, Hash }
  */
 object Directory extends Modeler with Logging {
 
+  override val key = "Directory"
+
+  override val usage = "Translate directory structure into TriGraM model"
+
   private val license = """
 Copyright 2013 Shi.Zhan.
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -30,9 +34,7 @@ See the License for the specific language governing
 permissions and limitations under the License. 
 """
 
-  def usage = "Translate directory structure into TriGraM model"
-
-  def core = {
+  override def core = {
     logger.info("initialize core model")
 
     val m = ModelFactory.createDefaultModel

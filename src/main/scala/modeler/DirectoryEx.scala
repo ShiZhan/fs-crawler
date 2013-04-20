@@ -4,7 +4,6 @@
 package modeler
 
 import scalax.file.{ Path, PathSet }
-import com.hp.hpl.jena.rdf.model.ModelFactory
 import util.{ Logging, Version, DateTime, Hash }
 
 /**
@@ -14,10 +13,11 @@ import util.{ Logging, Version, DateTime, Hash }
  */
 object DirectoryEx extends Modeler with Logging {
 
-  def usage = "Translate *HUGE* directory structure into TriGraM model"
+  override val key = "DirectoryEx"
 
-  // the same with Directory modeler, no need to add more statements.
-  def core = ModelFactory.createDefaultModel
+  override val usage = "Translate *HUGE* directory structure into TriGraM model"
+
+  // the core model is the same with Directory modeler, no need to add more statements.
 
   private def headerT =
     (trigramBase: String, base: String, version: String, dateTime: String) =>
@@ -38,8 +38,7 @@ object DirectoryEx extends Modeler with Logging {
 """
 
   private def containT = (base: String, subNodeId: String) => s"""
-    <tgm:contain rdf:resource="$base#$subNodeId"/>
-"""
+    <tgm:contain rdf:resource="$base#$subNodeId"/>"""
 
   private def individualT =
     (base: String, nodeId: String, trigramBase: String, contains: String,
