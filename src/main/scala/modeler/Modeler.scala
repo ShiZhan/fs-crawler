@@ -9,11 +9,12 @@ import util.Logging
 /**
  * @author ShiZhan
  * interface for modelers, for adding more, follow these steps:
- * 1. PREPARATION:
- *    add vocabulary (if needed) to TGM.scala
- * 2. BUILD:
- *    extends from Modeler trait and assign a unique "key"
- *    implement at least "translate" methods
+ * 1. extends from Modeler trait and assign (override) a unique "key"
+ * 2. [optional] add vocabulary
+ * 3. [optional] generate core model/ABOX by overriding "core" method
+ * 4. [optional] add help information by overriding "usage"
+ * 5. implement "translate" method
+ * 
  *    key:       unique identifier
  *    usage:     help information
  *    core:      build TBOX for modeling this category
