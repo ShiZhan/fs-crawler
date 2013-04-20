@@ -13,7 +13,7 @@ object DirectoryFull {
     if (args.length < 1)
       println("run with <directory>")
     else {
-      val ps = Path(args(0)).***
+      val ps = Path(args(0)) ** "*"
       ps.foreach(println)
       println("Total: " + ps.size)
     }

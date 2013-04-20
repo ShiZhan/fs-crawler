@@ -80,7 +80,7 @@ object DirectoryEx extends Modeler with Logging {
 
       m.write(header.getBytes)
 
-      val ps = p.***
+      val ps = p ** "*"
 
       for (i <- ps) {
         val nodeId = Hash.getMD5(i.path)
