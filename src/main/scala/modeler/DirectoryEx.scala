@@ -66,7 +66,7 @@ object DirectoryEx extends Modeler with Logging {
 
   private val footerT = "</rdf:RDF>"
 
-  def translate(input: String, output: String) = {
+  def aBox(input: String, output: String) = {
     val p = Path(input)
 
     if (p.isDirectory) {

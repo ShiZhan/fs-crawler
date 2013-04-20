@@ -34,7 +34,7 @@ See the License for the specific language governing
 permissions and limitations under the License. 
 """
 
-  override def core = {
+  override def tBox = {
     logger.info("initialize core model")
 
     val m = ModelFactory.createDefaultModel
@@ -94,7 +94,7 @@ permissions and limitations under the License.
     m
   }
 
-  def translate(input: String, output: String) = {
+  def aBox(input: String, output: String) = {
     val p = Path(input)
 
     if (p.isDirectory) {

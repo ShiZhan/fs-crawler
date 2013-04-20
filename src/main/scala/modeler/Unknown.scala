@@ -12,6 +12,6 @@ import util.Logging
  */
 object Unknown extends Modeler with Logging {
 
-  def translate(i: String, o: String) = logger.info("unkown resource: " + i)
+  def aBox(i: String, o: String) = logger.info("unkown resource: " + i)
 
 }
