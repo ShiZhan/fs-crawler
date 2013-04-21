@@ -69,12 +69,15 @@ object TrigramTranslator {
 
   val usage = """
 usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
- -h,--help                print this message
- -v,--version             show program version
- -c,--core                write core model to    [trigram.owl]
- -t,--type TYPE           type of input resource [default: %s]
- -i,--input SOURCE        input resource         [default: %s]
- -o,--output TARGET       output target          [default: %s]
+ -h,--help                Print this message
+ -v,--version             Show program version
+ -m,--meta                1. If this flag is set, the translator will generate
+                          meta-model (TBox) for given type [-t].
+                          2. If not, the translator will translate specified
+                          source [-i] as type [-t] to target model [-o] (ABox)
+ -t,--type TYPE           Type of input resource [default: %s]
+ -i,--input SOURCE        Input resource         [default: %s]
+ -o,--output TARGET       Output target          [default: %s]
 """.format(defaultInType, defaultSource, defaultTarget) +
     "\ntranslatable resources:\n" + Modelers.getHelp
 
@@ -87,8 +90,8 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
       case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
       case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
       case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "-c" :: tail => nextOption(map ++ Map('core -> true), tail)
-      case "--core" :: tail => nextOption(map ++ Map('core -> true), tail)
+      case "-m" :: tail => nextOption(map ++ Map('meta -> true), tail)
+      case "--meta" :: tail => nextOption(map ++ Map('meta -> true), tail)
       case "-t" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
       case "--type" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
       case "-i" :: i :: tail => nextOption(map ++ Map('source -> i), tail)
@@ -106,15 +109,20 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
     if (args.length == 0 | options.contains('help)) println(usage)
     else if (options.contains('version)) println(Version.get)
-    else if (options.contains('core)) Modelers.getCoreModel
-    else {
+    else if (options.contains('meta)) {
+      val t = options.getOrElse('intype, defaultInType).toString
+
+      println("generating TBox [%s]".format(t))
+
+      Modelers.getTBox(t)
+    } else {
       val t = options.getOrElse('intype, defaultInType).toString
       val i = options.getOrElse('source, defaultSource).toString
       val o = options.getOrElse('target, defaultTarget).toString
 
-      println("translating [%s] as [%s] to [%s]".format(i, t, o))
+      println("translating [%s] as [%s] to ABox [%s]".format(i, t, o))
 
-      Modelers.getModel(t, i, o)
+      Modelers.getABox(t, i, o)
     }
   }
 

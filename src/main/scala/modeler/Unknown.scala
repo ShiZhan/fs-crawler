@@ -11,7 +11,9 @@ import util.Logging
  * object for modeler map and dummy model for merging core models
  */
 object Unknown extends Modeler with Logging {
+  
+  def tBox = logger.info("TBox unkown")
 
-  def aBox(i: String, o: String) = logger.info("unkown resource: " + i)
+  def aBox(i: String, o: String) = logger.info("ABox unkown")
 
 }
