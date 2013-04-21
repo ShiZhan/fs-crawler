@@ -4,6 +4,7 @@
 package modeler
 
 import scalax.file.{ Path, PathSet }
+import java.io.{ FileOutputStream, OutputStreamWriter, BufferedWriter }
 import util.{ Logging, Version, DateTime, Hash }
 
 /**
@@ -71,12 +72,13 @@ object DirectoryEx extends Modeler with Logging {
 
       val footerT = "</rdf:RDF>"
 
-      val m = new java.io.FileOutputStream(output)
+      val m = new BufferedWriter(
+        new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
       val base = p.toURI.toString
       val header = headerT(DIR.base, base, Version.get, DateTime.get)
 
-      m.write(header.getBytes)
+      m.write(header)
 
       val ps = p ** "*"
 
@@ -95,10 +97,10 @@ object DirectoryEx extends Modeler with Logging {
         val individual = individualT(base, nodeId, DIR.base, contains, i.name,
           size, dateTime, isDirectory, i.canRead, i.canWrite, i.canExecute)
 
-        m.write(individual.getBytes)
+        m.write(individual)
       }
 
-      m.write(footerT.getBytes)
+      m.write(footerT)
 
       m.close
 
