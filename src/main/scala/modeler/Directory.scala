@@ -69,7 +69,7 @@ permissions and limitations under the License.
 
     val m = ModelFactory.createDefaultModel
 
-    m.setNsPrefix("tgm", DIR.ns)
+    m.setNsPrefix("dir", DIR.ns)
     m.createResource(DIR.base, OWL.Ontology)
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM core model", XSDstring)
@@ -135,7 +135,7 @@ permissions and limitations under the License.
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix("tgm", DIR.ns)
+      m.setNsPrefix("dir", DIR.ns)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM directory model", XSDstring)

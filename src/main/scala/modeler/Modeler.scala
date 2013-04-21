@@ -36,7 +36,7 @@ object Modelers extends Logging {
     DirectoryEx.key -> DirectoryEx)
 
   def getHelp =
-    modelerMap.map { case (s, a) => "  %s: \t %s".format(s, a.usage) }.mkString("\n")
+    modelerMap.map { case (s, m) => "  %s: \t %s".format(s, m.usage) }.mkString("\n")
 
   def getTBox(t: String) =
     modelerMap.getOrElse(t, Unknown).tBox

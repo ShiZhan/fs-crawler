@@ -26,14 +26,14 @@ object DirectoryEx extends Modeler with Logging {
       logger.info("creating model for *HUGE* directory")
 
       def headerT =
-        (trigramBase: String, base: String, version: String, dateTime: String) =>
+        (TBoxBase: String, base: String, version: String, dateTime: String) =>
           s"""<rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:tgm="$trigramBase#"
+    xmlns:dir="$TBoxBase#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dc="http://purl.org/dc/elements/1.1/">
   <owl:Ontology rdf:about="$base">
-    <owl:imports rdf:resource="$trigramBase"/>
+    <owl:imports rdf:resource="$TBoxBase"/>
     <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >$version</owl:versionInfo>
     <dc:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -43,28 +43,28 @@ object DirectoryEx extends Modeler with Logging {
   </owl:Ontology>"""
 
       def containT = (base: String, subNodeId: String) => s"""
-    <tgm:contain rdf:resource="$base#$subNodeId"/>"""
+    <dir:contain rdf:resource="$base#$subNodeId"/>"""
 
       def individualT =
-        (base: String, nodeId: String, trigramBase: String, contains: String,
+        (base: String, nodeId: String, TBoxBase: String, contains: String,
           name: String, size: Long, lastModified: String, isDirectory: Boolean,
           canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
   <owl:NamedIndividual rdf:about="$base#$nodeId">
-    <rdf:type rdf:resource="$trigramBase#Object"/>
-    <tgm:name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
-    >$name</tgm:name>
-    <tgm:size rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
-    >$size</tgm:size>
-    <tgm:lastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
-    >$lastModified</tgm:lastModified>
-    <tgm:canRead rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canRead</tgm:canRead>
-    <tgm:canWrite rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canWrite</tgm:canWrite>
-    <tgm:canExecute rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canExecute</tgm:canExecute>
-    <tgm:isDirectory rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$isDirectory</tgm:isDirectory>
+    <rdf:type rdf:resource="$TBoxBase#Object"/>
+    <dir:name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
+    >$name</dir:name>
+    <dir:size rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
+    >$size</dir:size>
+    <dir:lastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
+    >$lastModified</dir:lastModified>
+    <dir:canRead rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canRead</dir:canRead>
+    <dir:canWrite rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canWrite</dir:canWrite>
+    <dir:canExecute rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canExecute</dir:canExecute>
+    <dir:isDirectory rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$isDirectory</dir:isDirectory>
   $contains
   </owl:NamedIndividual>
 """
@@ -101,6 +101,8 @@ object DirectoryEx extends Modeler with Logging {
       m.write(footerT.getBytes)
 
       m.close
+
+      logger.info("[%d] individuals written".format(ps.size))
     } else {
       logger.info("[%s] is not a directory".format(p.name))
     }
