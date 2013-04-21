@@ -79,7 +79,7 @@ usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -i,--input SOURCE        Input resource         [default: %s]
  -o,--output TARGET       Output target          [default: %s]
 """.format(defaultInType, defaultSource, defaultTarget) +
-    "\ntranslatable resources:\n" + Modelers.getHelp
+    "\nsupported types:\n" + Modelers.getHelp
 
   type OptionMap = Map[Symbol, Any]
 

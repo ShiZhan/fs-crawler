@@ -16,7 +16,7 @@ object DirectoryEx extends Modeler with Logging {
 
   override val key = "direx"
 
-  override val usage = "Translate *HUGE* directory structure into TriGraM model"
+  override val usage = "Translate *HUGE* directory structure"
 
   def tBox = Directory.tBox
 

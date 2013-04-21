@@ -47,7 +47,7 @@ object Directory extends Modeler with Logging {
 
   override val key = "dir"
 
-  override val usage = "Translate directory structure into TriGraM model"
+  override val usage = "Translate directory structure"
 
   def tBox = {
     logger.info("initialize core model")
