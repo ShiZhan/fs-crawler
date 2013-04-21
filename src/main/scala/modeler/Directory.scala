@@ -15,7 +15,7 @@ import util.{ Logging, Version, DateTime, Hash }
  */
 object DIR {
 
-  val local = Directory.key + ".owl"
+  val local = "tgm" + Directory.key + ".owl"
   val base = "https://sites.google.com/site/ontology2013/" + local
   val ns = base + "#"
 
@@ -45,7 +45,7 @@ object DIR {
 
 object Directory extends Modeler with Logging {
 
-  override val key = "Directory"
+  override val key = "dir"
 
   override val usage = "Translate directory structure into TriGraM model"
 
@@ -130,7 +130,7 @@ permissions and limitations under the License.
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.path))
 
-      val base = "http://localhost/directory/" + input
+      val base = p.toURI.toString
       val ns = base + "#"
 
       val m = ModelFactory.createDefaultModel

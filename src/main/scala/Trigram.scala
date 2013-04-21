@@ -60,10 +60,10 @@ usage: Trigram [-h] [-v] [-i]
 }
 
 import modeler.Modelers
+import modeler.Directory.{ key => defaultInType }
 
 object TrigramTranslator {
 
-  val defaultInType = "Directory"
   val defaultSource = "."
   val defaultTarget = "model.rdf"
 

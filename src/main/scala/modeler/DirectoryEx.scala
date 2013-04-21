@@ -13,7 +13,7 @@ import util.{ Logging, Version, DateTime, Hash }
  */
 object DirectoryEx extends Modeler with Logging {
 
-  override val key = "DirectoryEx"
+  override val key = "direx"
 
   override val usage = "Translate *HUGE* directory structure into TriGraM model"
 
@@ -29,9 +29,9 @@ object DirectoryEx extends Modeler with Logging {
         (TBoxBase: String, base: String, version: String, dateTime: String) =>
           s"""<rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:dir="$TBoxBase#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
-    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dir="$TBoxBase#">
   <owl:Ontology rdf:about="$base">
     <owl:imports rdf:resource="$TBoxBase"/>
     <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -73,7 +73,7 @@ object DirectoryEx extends Modeler with Logging {
 
       val m = new java.io.FileOutputStream(output)
 
-      val base = "http://localhost/directory/" + input
+      val base = p.toURI.toString
       val header = headerT(DIR.base, base, Version.get, DateTime.get)
 
       m.write(header.getBytes)
