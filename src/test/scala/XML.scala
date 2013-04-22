@@ -39,7 +39,7 @@ object TravelClasses {
     else {
       val i = XML.loadFile(args(0))
       val classes = i \\ "VALUE.OBJECT" \ "CLASS"
-      for(c <- classes){
+      for (c <- classes) {
         val cName = (c \ "@NAME").toString
         val cSuperName = (c \ "@SUPERCLASS").toString
         val cQualifier = c \ "QUALIFIER"
@@ -50,5 +50,5 @@ object TravelClasses {
           println(cName + " : " + cIsAsso + "|" + cSuperName)
       }
     }
-  
+
 }
