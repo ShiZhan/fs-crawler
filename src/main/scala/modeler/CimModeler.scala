@@ -3,7 +3,7 @@
  */
 package modeler
 
-import scala.xml._
+import scala.xml.XML
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -38,8 +38,13 @@ object CimModeler extends Modeler with Logging {
 
     val i = XML.loadFile(input).toSeq
     val classes = i \\ "VALUE.OBJECT" \ "CLASS"
+    val references = classes.flatMap(c => c \ "PROPERTY.REFERENCE")
+    val property = classes.flatMap(c => c \ "PROPERTY")
+    val proarray = classes.flatMap(c => c \ "PROPERTY.ARRAY")
+    val properties = property ++ proarray
 
-    logger.info("[%d] classes read".format(classes.length))
+    logger.info("[%d] classes [%d] references [%d] data type properties".
+      format(classes.length, references.length, properties.length))
 
     val o = ModelFactory.createDefaultModel
 

@@ -38,7 +38,6 @@ object DIR {
   val canRead = model.createProperty(ns + "canRead")
   val canWrite = model.createProperty(ns + "canWrite")
   val canExecute = model.createProperty(ns + "canExecute")
-
   val isDirectory = model.createProperty(ns + "isDirectory")
 
 }
@@ -160,7 +159,7 @@ permissions and limitations under the License.
 
       assignAttributes(p)
 
-      val ps = p.***
+      val ps = p ** "*"
       for (i <- ps) {
         logger.info("[%s/%s] in [%s]: %d|%d|%s|%s|%s".format(
           i.name, i.path, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
