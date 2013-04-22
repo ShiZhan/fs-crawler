@@ -4,7 +4,9 @@
 @REM use absolute directory to load compiled classes
 @echo off
 setlocal
+@REM for translating big in-memory models
 set JAVA_OPTS=%JAVA_OPTS% -Xms1024m -Xmx1024m
+
 set CP=
 set TGM_ROOT=%~dp0
 for /f delims^=^"^ tokens^=2 %%i in ('find "lib" "%TGM_ROOT%.classpath"') do call :concat %%i
