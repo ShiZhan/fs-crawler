@@ -85,8 +85,10 @@ permissions and limitations under the License.
       else
         m.getResource(CIM ## cSuperName)
 
-      val cComment = cQualifier.filter(q => (q \ "@NAME").toString == "Description")
-        .map(d => d.text).mkString
+      val cComment = ("" /: cQualifier) { (r, q) =>
+        if ((q \ "@NAME").toString == "Description") q.text
+        else r
+      }
 
       val cClass = m.createResource(CIM ## cName, OWL.Class)
         .addProperty(RDFS.subClassOf, cSuper)
