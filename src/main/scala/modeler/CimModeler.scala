@@ -74,6 +74,19 @@ permissions and limitations under the License.
     val cAsso = m.createResource(CIM ## "CIM_Association", OWL.Class)
       .addProperty(RDFS.subClassOf, cMeta)
 
+    for (oP <- objProps) {
+      m.createProperty(CIM ## oP)
+        .addProperty(RDF.`type`, OWL.ObjectProperty)
+        .addProperty(RDFS.range, cMeta)
+        .addProperty(RDFS.domain, cAsso)
+    }
+
+    for (dP <- datProps) {
+      m.createProperty(CIM ## dP)
+        .addProperty(RDF.`type`, OWL.DatatypeProperty)
+        .addProperty(RDFS.domain, cMeta)
+    }
+
     for (c <- classes) {
       val cName = (c \ "@NAME").toString
       val cSuperName = (c \ "@SUPERCLASS").toString
@@ -93,19 +106,6 @@ permissions and limitations under the License.
       val cClass = m.createResource(CIM ## cName, OWL.Class)
         .addProperty(RDFS.subClassOf, cSuper)
         .addLiteral(RDFS.comment, cComment)
-    }
-
-    for (oP <- objProps) {
-      m.createProperty(CIM ## oP)
-        .addProperty(RDF.`type`, OWL.ObjectProperty)
-        .addProperty(RDFS.range, cMeta)
-        .addProperty(RDFS.domain, cAsso)
-    }
-
-    for (dP <- datProps) {
-      m.createProperty(CIM ## dP)
-        .addProperty(RDF.`type`, OWL.DatatypeProperty)
-        .addProperty(RDFS.domain, cMeta)
     }
 
     if (m.isEmpty)
