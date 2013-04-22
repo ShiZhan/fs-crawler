@@ -3,6 +3,7 @@
  */
 package modeler
 
+import scala.xml._
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -35,7 +36,20 @@ object CimModeler extends Modeler with Logging {
   def aBox(input: String, output: String) = {
     logger.info("translate CIM schema from [" + input + "] to [" + output + "]")
 
-    logger.info("Work in Progress")
+    val i = XML.loadFile(input).toSeq
+    val classes = i \\ "VALUE.OBJECT" \ "CLASS"
+
+    logger.info("[%d] classes read".format(classes.length))
+
+    val o = ModelFactory.createDefaultModel
+
+    if (o.isEmpty)
+      logger.info("Nothing translated")
+    else {
+      o.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
+
+      logger.info("[%d] triples generated".format(o.size))
+    }
   }
 
 }
