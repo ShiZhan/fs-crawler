@@ -41,11 +41,11 @@ object CimModeler extends Modeler with Logging {
     val classes = xml \\ "VALUE.OBJECT" \ "CLASS"
     val rNodes = classes.flatMap(c => c \ "PROPERTY.REFERENCE")
     val pNodes = classes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
-    val objProp = rNodes.map(r => (r \ "@NAME").toString).distinct
-    val datProp = pNodes.map(p => (p \ "@NAME").toString).distinct
+    val objProps = rNodes.map(r => (r \ "@NAME").toString).distinct
+    val datProps = pNodes.map(p => (p \ "@NAME").toString).distinct
 
     logger.info("[%d] classes [%d] object properties [%d] data type properties".
-      format(classes.length, objProp.length, datProp.length))
+      format(classes.length, objProps.length, datProps.length))
 
     val license = """
 Copyright 2013 Shi.Zhan.
@@ -93,6 +93,19 @@ permissions and limitations under the License.
       val cClass = m.createResource(CIM ## cName, OWL.Class)
         .addProperty(RDFS.subClassOf, cSuper)
         .addLiteral(RDFS.comment, cComment)
+    }
+
+    for (oP <- objProps) {
+      m.createProperty(CIM ## oP)
+        .addProperty(RDF.`type`, OWL.ObjectProperty)
+        .addProperty(RDFS.range, cMeta)
+        .addProperty(RDFS.domain, cAsso)
+    }
+
+    for (dP <- datProps) {
+      m.createProperty(CIM ## dP)
+        .addProperty(RDF.`type`, OWL.DatatypeProperty)
+        .addProperty(RDFS.domain, cMeta)
     }
 
     if (m.isEmpty)
