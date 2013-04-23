@@ -37,7 +37,7 @@ object CimModeler extends Modeler with Logging {
 
   override val key = "cim"
 
-  override val usage = "Translate DMTF CIM schema http://dmtf.org/standards/cim"
+  override val usage = "Translate DMTF CIM schema from http://dmtf.org/standards/cim"
 
   def tBox = {
     logger.info("prepare meta-model for CIM schema translation")

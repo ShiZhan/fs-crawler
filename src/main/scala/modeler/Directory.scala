@@ -160,21 +160,26 @@ permissions and limitations under the License.
       assignAttributes(p)
 
       val ps = p ** "*"
+      val total = ps.size
+      val delta = total / 100
+      var progress = 0
+      println("[%d] objects in [%s]".format(total, p.path))
       for (i <- ps) {
-        logger.info("[%s/%s] in [%s]: %d|%d|%s|%s|%s".format(
-          i.name, i.path, i.parent.get.name, if (i.size.nonEmpty) i.size.get else 0,
-          i.lastModified, i.canRead, i.canWrite, i.canExecute))
-
         assignAttributes(i)
         m.add(m.createStatement(
           m.getResource(genNodeUri(i.parent.get)),
           DIR.contain,
           m.getResource(genNodeUri(i))))
+
+        progress += 1
+        val rate = progress * 100 / total
+        if (progress % delta == 0) print("progress [%2d%%]\r".format(rate))
       }
+      println
 
       m.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
 
-      logger.info("[%d] triples written".format(m.size))
+      logger.info("[%d] triples generated".format(m.size))
     } else {
       logger.info("[%s] is not a directory".format(p.name))
     }

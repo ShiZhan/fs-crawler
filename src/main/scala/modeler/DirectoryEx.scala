@@ -81,7 +81,10 @@ object DirectoryEx extends Modeler with Logging {
       m.write(header)
 
       val ps = p ** "*"
-
+      val total = ps.size
+      val delta = total / 100
+      var progress = 0
+      println("[%d] objects in [%s]".format(total, p.path))
       for (i <- ps) {
         val nodeId = Hash.getMD5(i.path)
 
@@ -98,13 +101,18 @@ object DirectoryEx extends Modeler with Logging {
           size, dateTime, isDirectory, i.canRead, i.canWrite, i.canExecute)
 
         m.write(individual)
+
+        progress += 1
+        val rate = progress * 100 / total
+        if (progress % delta == 0) print("progress [%2d%%]\r".format(rate))
       }
+      println
 
       m.write(footerT)
 
       m.close
 
-      logger.info("[%d] individuals written".format(ps.size))
+      logger.info("[%d] individuals generated".format(ps.size))
     } else {
       logger.info("[%s] is not a directory".format(p.name))
     }
