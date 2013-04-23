@@ -95,11 +95,12 @@ permissions and limitations under the License.
 
     for (c <- classes) {
       val cName = (c \ "@NAME").text
+      val cClass = m.createResource(CIM ## cName, OWL.Class)
+
       val cSuperName = (c \ "@SUPERCLASS").text
       val cQualifier = c \ "QUALIFIER"
       val cIsAsso = cQualifier.map(q => (q \ "@NAME").text).contains("Association")
-
-      val cSuper =
+      val cSuperReso =
         if (cSuperName.isEmpty)
           if (cIsAsso) cAsso else cMeta
         else
@@ -108,10 +109,35 @@ permissions and limitations under the License.
       val cComment = getQualifier(cQualifier, "Description")
       val cVersion = getQualifier(cQualifier, "Version")
 
-      val cClass = m.createResource(CIM ## cName, OWL.Class)
-        .addProperty(RDFS.subClassOf, cSuper)
+      cClass.addProperty(RDFS.subClassOf, cSuperReso)
         .addLiteral(RDFS.comment, cComment)
         .addLiteral(OWL.versionInfo, cVersion)
+
+      val cReferences = c \ "PROPERTY.REFERENCE"
+      for (cR <- cReferences) {
+        val cRName = (cR \ "@NAME").text
+        val cRClass = (cR \ "@REFERENCECLASS").text
+        val cObjProp = m.getProperty(CIM ## cRName)
+        val cRefReso = m.getResource(CIM ## cRClass)
+        val r = m.createResource(OWL.Restriction)
+          .addProperty(OWL.onProperty, cObjProp)
+          .addProperty(OWL.allValuesFrom, cRefReso)
+
+        cClass.addProperty(RDFS.subClassOf, r)
+      }
+
+      val cProperties = c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY"
+      for (cP <- cProperties) {
+        val cPName = (cP \ "@NAME").text
+        val cPType = (cP \ "@TYPE").text
+        val cDatProp = m.getProperty(CIM ## cPName)
+        val cDatType = XSD.anyURI
+        val r = m.createResource(OWL.Restriction)
+          .addProperty(OWL.onProperty, cDatProp)
+          .addProperty(OWL.allValuesFrom, cDatType)
+
+        cClass.addProperty(RDFS.subClassOf, r)
+      }
     }
 
     if (m.isEmpty)
