@@ -175,7 +175,7 @@ permissions and limitations under the License.
         if (progress % delta == 0)
           print("progress [%2d%%]\r".format(progress * 100 / total))
       }
-      println
+      println("progress [100%]")
 
       m.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
 

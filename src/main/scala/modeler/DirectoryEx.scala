@@ -106,7 +106,7 @@ object DirectoryEx extends Modeler with Logging {
         if (progress % delta == 0)
           print("progress [%2d%%]\r".format(progress * 100 / total))
       }
-      println
+      println("progress [100%]")
 
       m.write(footerT)
 
