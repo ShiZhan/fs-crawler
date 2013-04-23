@@ -98,11 +98,8 @@ permissions and limitations under the License.
         .addProperty(RDFS.domain, cMeta)
     }
 
-    def getQualifier(ns: NodeSeq, qname: String) =
-      ("" /: ns) { (r, q) =>
-        if ((q \ "@NAME").text == qname) q.text
-        else r
-      }
+    def pickNodeValue(ns: NodeSeq, att: String, attName: String) =
+      ("" /: ns) { (r, q) => if ((q \ att).text == attName) q.text else r }
 
     for (c <- classes) {
       val cName = (c \ "@NAME").text
@@ -110,15 +107,15 @@ permissions and limitations under the License.
 
       val cSuperName = (c \ "@SUPERCLASS").text
       val cQualifier = c \ "QUALIFIER"
-      val cIsAsso = cQualifier.map(q => (q \ "@NAME").text).contains("Association")
+      val cIsAsso = "true" == pickNodeValue(cQualifier, "@NAME", "Association")
       val cSuperReso =
         if (cSuperName.isEmpty)
           if (cIsAsso) cAsso else cMeta
         else
           m.getResource(CIM ## cSuperName)
 
-      val cComment = getQualifier(cQualifier, "Description")
-      val cVersion = getQualifier(cQualifier, "Version")
+      val cComment = pickNodeValue(cQualifier, "@NAME", "Description")
+      val cVersion = pickNodeValue(cQualifier, "@NAME", "Version")
 
       cClass.addProperty(RDFS.subClassOf, cSuperReso)
         .addLiteral(RDFS.comment, cComment)
@@ -148,6 +145,15 @@ permissions and limitations under the License.
           .addProperty(OWL.allValuesFrom, cDatType)
 
         cClass.addProperty(RDFS.subClassOf, r)
+
+        val cPQualifier = cP \ "QUALIFIER"
+        val cPComment = pickNodeValue(cPQualifier, "@NAME", "Description")
+
+        m.createResource(OWL2.Axiom)
+          .addLiteral(RDFS.comment, cPComment)
+          .addProperty(OWL2.annotatedProperty, RDFS.subClassOf)
+          .addProperty(OWL2.annotatedSource, cClass)
+          .addProperty(OWL2.annotatedTarget, r)
       }
     }
 
