@@ -3,7 +3,7 @@
  */
 package modeler
 
-import scala.xml.XML
+import scala.xml.{ XML, NodeSeq }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -41,8 +41,8 @@ object CimModeler extends Modeler with Logging {
     val classes = xml \\ "VALUE.OBJECT" \ "CLASS"
     val rNodes = classes.flatMap(c => c \ "PROPERTY.REFERENCE")
     val pNodes = classes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
-    val objProps = rNodes.map(r => (r \ "@NAME").toString).distinct
-    val datProps = pNodes.map(p => (p \ "@NAME").toString).distinct
+    val objProps = rNodes.map(r => (r \ "@NAME").text).distinct
+    val datProps = pNodes.map(p => (p \ "@NAME").text).distinct
 
     logger.info("[%d] classes [%d] object properties [%d] data type properties".
       format(classes.length, objProps.length, datProps.length))
@@ -87,25 +87,31 @@ permissions and limitations under the License.
         .addProperty(RDFS.domain, cMeta)
     }
 
-    for (c <- classes) {
-      val cName = (c \ "@NAME").toString
-      val cSuperName = (c \ "@SUPERCLASS").toString
-      val cQualifier = c \ "QUALIFIER"
-      val cIsAsso = cQualifier.map(q => (q \ "@NAME").toString).contains("Association")
-
-      val cSuper = if (cSuperName.isEmpty)
-        if (cIsAsso) cAsso else cMeta
-      else
-        m.getResource(CIM ## cSuperName)
-
-      val cComment = ("" /: cQualifier) { (r, q) =>
-        if ((q \ "@NAME").toString == "Description") q.text
+    def getQualifier(ns: NodeSeq, qname: String) =
+      ("" /: ns) { (r, q) =>
+        if ((q \ "@NAME").text == qname) q.text
         else r
       }
+
+    for (c <- classes) {
+      val cName = (c \ "@NAME").text
+      val cSuperName = (c \ "@SUPERCLASS").text
+      val cQualifier = c \ "QUALIFIER"
+      val cIsAsso = cQualifier.map(q => (q \ "@NAME").text).contains("Association")
+
+      val cSuper =
+        if (cSuperName.isEmpty)
+          if (cIsAsso) cAsso else cMeta
+        else
+          m.getResource(CIM ## cSuperName)
+
+      val cComment = getQualifier(cQualifier, "Description")
+      val cVersion = getQualifier(cQualifier, "Version")
 
       val cClass = m.createResource(CIM ## cName, OWL.Class)
         .addProperty(RDFS.subClassOf, cSuper)
         .addLiteral(RDFS.comment, cComment)
+        .addLiteral(OWL.versionInfo, cVersion)
     }
 
     if (m.isEmpty)
