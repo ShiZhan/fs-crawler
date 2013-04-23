@@ -4,7 +4,7 @@
 package modeler
 
 import scala.xml.{ XML, NodeSeq }
-import com.hp.hpl.jena.rdf.model.ModelFactory
+import com.hp.hpl.jena.rdf.model.{ ModelFactory, Resource }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import util.{ Logging, Version, DateTime }
@@ -20,6 +20,17 @@ object CIM {
   val ns = base + "#"
 
   def ##(name: String) = ns + name
+
+  private val dataType: Map[String, Resource] = Map(
+    "string" -> XSD.xstring,
+    "boolean" -> XSD.xboolean,
+    "datetime" -> XSD.dateTime,
+    "uint16" -> XSD.unsignedShort,
+    "uint32" -> XSD.unsignedLong,
+    "uint64" -> XSD.unsignedInt)
+
+  def ^^(t: String) = dataType.getOrElse(t, XSD.anyURI)
+
 }
 
 object CimModeler extends Modeler with Logging {
@@ -131,7 +142,7 @@ permissions and limitations under the License.
         val cPName = (cP \ "@NAME").text
         val cPType = (cP \ "@TYPE").text
         val cDatProp = m.getProperty(CIM ## cPName)
-        val cDatType = XSD.anyURI
+        val cDatType = CIM ^^ cPType
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cDatProp)
           .addProperty(OWL.allValuesFrom, cDatType)
