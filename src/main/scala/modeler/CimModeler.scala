@@ -132,6 +132,15 @@ permissions and limitations under the License.
           .addProperty(OWL.allValuesFrom, cRefReso)
 
         cClass.addProperty(RDFS.subClassOf, r)
+
+        val cRQualifier = cR \ "QUALIFIER"
+        val cRComment = pickNodeValue(cRQualifier, "@NAME", "Description")
+
+        m.createResource(OWL2.Axiom)
+          .addLiteral(RDFS.comment, cRComment)
+          .addProperty(OWL2.annotatedProperty, RDFS.subClassOf)
+          .addProperty(OWL2.annotatedSource, cClass)
+          .addProperty(OWL2.annotatedTarget, r)
       }
 
       val cProperties = c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY"
