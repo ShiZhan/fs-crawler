@@ -159,11 +159,15 @@ permissions and limitations under the License.
 
       assignAttributes(p)
 
+      logger.info("reading directory ...")
+
       val ps = p ** "*"
       val total = ps.size
       val delta = if (total < 100) 1 else total / 100
       var progress = 0
-      println("[%d] objects in [%s]".format(total, p.path))
+
+      logger.info("[%d] objects".format(total))
+
       for (i <- ps) {
         assignAttributes(i)
         m.add(m.createStatement(
@@ -173,9 +177,9 @@ permissions and limitations under the License.
 
         progress += 1
         if (progress % delta == 0)
-          print("progress [%2d%%]\r".format(progress * 100 / total))
+          print("translating [%2d%%]\r".format(progress * 100 / total))
       }
-      println("progress [100%]")
+      println("translating [100%]")
 
       m.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
 

@@ -24,7 +24,7 @@ object DirectoryEx extends Modeler with Logging {
     val p = Path(new java.io.File(input))
 
     if (p.isDirectory) {
-      logger.info("creating model for *HUGE* directory")
+      logger.info("creating model for *HUGE* directory [%s]".format(p.path))
 
       def headerT =
         (TBoxBase: String, base: String, version: String, dateTime: String) =>
@@ -80,11 +80,15 @@ object DirectoryEx extends Modeler with Logging {
 
       m.write(header)
 
+      logger.info("reading directory ...")
+
       val ps = p ** "*"
       val total = ps.size
       val delta = if (total < 100) 1 else total / 100
       var progress = 0
-      println("[%d] objects in [%s]".format(total, p.path))
+
+      logger.info("[%d] objects".format(total))
+
       for (i <- ps) {
         val nodeId = Hash.getMD5(i.path)
 
@@ -104,9 +108,9 @@ object DirectoryEx extends Modeler with Logging {
 
         progress += 1
         if (progress % delta == 0)
-          print("progress [%2d%%]\r".format(progress * 100 / total))
+          print("translating [%2d%%]\r".format(progress * 100 / total))
       }
-      println("progress [100%]")
+      println("translating [100%]")
 
       m.write(footerT)
 
