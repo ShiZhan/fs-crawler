@@ -3,8 +3,9 @@
  */
 package modeler
 
-import scalax.file.{ Path, PathSet }
+import scala.xml.Utility.escape
 import java.io.{ FileOutputStream, OutputStreamWriter, BufferedWriter }
+import scalax.file.{ Path, PathSet }
 import util.{ Logging, Version, DateTime, Hash }
 
 /**
@@ -98,10 +99,11 @@ object DirectoryEx extends Modeler with Logging {
           iSub.map(s => containT(base, Hash.getMD5(s.path))).mkString
         } else ""
 
+        val name = escape(i.name)
         val size = if (i.size.nonEmpty) i.size.get else 0
         val dateTime = DateTime.get(i.lastModified)
 
-        val individual = individualT(base, nodeId, DIR.base, contains, i.name,
+        val individual = individualT(base, nodeId, DIR.base, contains, name,
           size, dateTime, isDirectory, i.canRead, i.canWrite, i.canExecute)
 
         m.write(individual)
