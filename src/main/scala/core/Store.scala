@@ -1,5 +1,5 @@
 /**
- * Apache Jena wrapper
+ * Apache Jena TDB wrapper class
  */
 package core
 
@@ -28,6 +28,8 @@ import com.hp.hpl.jena.update.{
 /**
  * @author ShiZhan
  * triple store operations
+ * wrapper of Apache Jena TDB
+ * each instance stands for a TDB assembly
  */
 class Store(val location: String) {
 

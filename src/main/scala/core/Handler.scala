@@ -19,7 +19,7 @@ class Handler(location: String) extends Store(location) {
   private val handlerMapDefault = (handlerUnknown _, null)
 
   private def readSPARQL = {
-    print("SPARQL input, end with Ctrl+E <- ")
+    println("input SPARQL below, end with Ctrl+E.")
     io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
   }
 
