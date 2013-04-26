@@ -12,11 +12,10 @@ class Handler(location: String) extends Store(location) {
 
   type Handler = String => Unit
   type HandlerMap = Map[String, (Handler, String)]
-  private val handlerMap: HandlerMap = Map(
+  private val hMap: HandlerMap = Map(
     "query" -> (handlerQuery, "SPARQL query interpreter"),
-    "update" -> (handlerUpdate, "SPARQL update interpreter"),
-    "rest" -> (handlerRest, "perform RESTful operation"))
-  private val handlerMapDefault = (handlerUnknown _, null)
+    "update" -> (handlerUpdate, "SPARQL update interpreter"))
+  private val hMapDefault = (handlerUnknown _, null)
 
   private def readSPARQL = {
     println("input SPARQL below, end with Ctrl+E.")
@@ -68,43 +67,15 @@ class Handler(location: String) extends Store(location) {
     }
   }
 
-  def handlerRest(prompt: String): Unit = {
-    print(prompt)
-
-    for (input <- io.Source.stdin.getLines) {
-      val output = input.split(" ").toList match {
-        case "exit" :: Nil => return
-        case "head" :: obj :: Nil => "HEAD object [%s]".format(obj)
-        case "get" :: obj :: Nil => "GET object [%s]".format(obj)
-        case "put" :: obj :: Nil => "PUT object [%s]".format(obj)
-        case "post" :: obj :: Nil => "POST object [%s]".format(obj)
-        case "delete" :: obj :: Nil => "DELETE object [%s]".format(obj)
-        case "" :: Nil => null
-        case _ => "Unknown REST command: " + input + "\n" +
-          "Available commands:\n" +
-          "[head] object: \t briefing of object\n" +
-          "[get] object: \t get object, list collection content\n" +
-          "[put] object: \t replace or create object or collection\n" +
-          "[post] object: \t create new entry in collection\n" +
-          "[delete] object: \t delete collection or object\n" +
-          "NOTE:\n" +
-          "just demo, no wildcard/additional parameter support.\n" +
-          "use [exit] to go back"
-      }
-      if (output != null) println(output)
-
-      print(prompt)
-    }
-  }
-
-  def handlerUnknown(prompt: String) = println("No valid command handler is associated\n" +
-    "Available handlers: " +
-    handlerMap.flatMap { case (k, v) => List(k) }.mkString("[", "] [", "]"))
+  def handlerUnknown(prompt: String) =
+    println("No valid command handler is associated\n" +
+      "Available handlers: " +
+      hMap.map { case (k, v) => List(k) }.mkString("[", "] [", "]"))
 
   def enterDSCLI(mode: String) =
-    handlerMap.getOrElse(mode, handlerMapDefault) match { case (h, s) => h(mode + " > ") }
+    hMap.getOrElse(mode, hMapDefault) match { case (h, s) => h(mode + " > ") }
 
-  val help = handlerMap.map {
+  val help = hMap.map {
     case (m, (h, s)) => "  %s: \t %s".format(m, s)
   }.mkString("\n")
 
