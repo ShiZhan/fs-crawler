@@ -19,7 +19,8 @@ object DSLModel {
     val m = DSLElement(model)
     val base = "http://localhost/test"
 
-    val r = m ++ (base, OWL.Ontology) -- (DC.date) --> (DateTime.get, XSDdateTime)
+    val r = m ++ (base, OWL.Ontology)
+    r -- (DC.date) --> (DateTime.get, XSDdateTime)
     r -- (DC.description) --> ("test model", XSDstring)
     r -- (DT.license) --> ("Apache 2", XSDstring)
     r -- (OWL.versionInfo) --> (Version.get, XSDstring)

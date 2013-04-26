@@ -3,6 +3,7 @@
  */
 package modeler.DSL
 
+import scala.collection.JavaConversions._
 import com.hp.hpl.jena.rdf.model.{ Model, RDFNode, Resource, Property }
 import com.hp.hpl.jena.datatypes.RDFDatatype
 
@@ -18,7 +19,7 @@ class DSLModel(m: Model) {
   def ++(s: String, r: Resource) = DSLElement(m.createResource(s, r))
   def ++() = DSLElement(m.createResource)
 
-  override def toString = m.toString
+  override def toString = m.listStatements.toList.mkString("\n")
 }
 
 class DSLResource(r: Resource) {
