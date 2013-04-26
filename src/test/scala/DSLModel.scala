@@ -2,7 +2,7 @@
  * DSL test
  */
 
-import modeler.DSL._
+import dsl._
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -19,7 +19,7 @@ object DSLModel {
     val m = DSLElement(model)
     val base = "http://localhost/test"
 
-    val r = m ++ (base, OWL.Ontology)
+    val r = m <-- (base, OWL.Ontology)
     r -- (DC.date) --> (DateTime.get, XSDdateTime)
     r -- (DC.description) --> ("test model", XSDstring)
     r -- (DT.license) --> ("Apache 2", XSDstring)
