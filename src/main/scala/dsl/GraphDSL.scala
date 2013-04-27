@@ -45,6 +45,7 @@ class DSLResource(r: Resource) {
 
 class DSLTarget(r: Resource, p: Property) {
 
+  def -->(n: DSLResource) = DSLElement(r.addProperty(p, n get))
   def -->(n: RDFNode) = DSLElement(r.addProperty(p, n))
   def -->(s: String) = DSLElement(r.addProperty(p, s))
   def -->(s: String, t: RDFDatatype) = DSLElement(r.addProperty(p, s, t))
