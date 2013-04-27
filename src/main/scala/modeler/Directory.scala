@@ -53,7 +53,7 @@ object Directory extends Modeler with Logging {
 
     val license = """
 Copyright 2013 Shi.Zhan.
-Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
