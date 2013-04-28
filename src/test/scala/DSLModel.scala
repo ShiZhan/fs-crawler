@@ -38,58 +38,49 @@ object DSLModel {
 
     (
       (m <-- (DIR.Object.getURI, OWL.Class))
+      -- RDFS.subClassOf --> (
+        (m <-- OWL.Restriction)
+        -- OWL.onProperty --> DIR.name
+        -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
+        -- OWL2.onDataRange --> modeler.XSD.normalizedString)
         -- RDFS.subClassOf --> (
           (m <-- OWL.Restriction)
-            -- OWL.onProperty --> DIR.name
-            -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
-            -- OWL2.onDataRange --> modeler.XSD.normalizedString
-        )
-        -- RDFS.subClassOf --> (
-          (m <-- OWL.Restriction)
-            -- OWL.onProperty --> DIR.size
-            -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
-            -- OWL2.onDataRange --> modeler.XSD.unsignedLong
-        )
-        -- RDFS.subClassOf --> (
-          (m <-- OWL.Restriction)
+          -- OWL.onProperty --> DIR.size
+          -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
+          -- OWL2.onDataRange --> modeler.XSD.unsignedLong)
+          -- RDFS.subClassOf --> (
+            (m <-- OWL.Restriction)
             -- OWL.onProperty --> DIR.lastModified
             -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
-            -- OWL2.onDataRange --> modeler.XSD.dateTime
-        )
-        -- RDFS.subClassOf --> (
-          (m <-- OWL.Restriction)
-            -- OWL.onProperty --> DIR.canRead
-            -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
-            -- OWL2.onDataRange --> modeler.XSD.xboolean
-        )
-        -- RDFS.subClassOf --> (
-          (m <-- OWL.Restriction)
-            -- OWL.onProperty --> DIR.canWrite
-            -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
-            -- OWL2.onDataRange --> modeler.XSD.xboolean
-        )
-        -- RDFS.subClassOf --> (
-          (m <-- OWL.Restriction)
-            -- OWL.onProperty --> DIR.canExecute
-            -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
-            -- OWL2.onDataRange --> modeler.XSD.xboolean
-        )
-        -- RDFS.subClassOf --> (
-          (m <-- OWL.Restriction)
-            -- OWL.onProperty --> DIR.isDirectory
-            -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
-            -- OWL2.onDataRange --> modeler.XSD.xboolean
-        )
-        -- RDFS.subClassOf --> (
-          (m <-- OWL.Restriction)
-            -- OWL.onProperty --> DIR.contain
-            -- OWL.allValuesFrom --> DIR.Object
-        )
-    )
+            -- OWL2.onDataRange --> modeler.XSD.dateTime)
+            -- RDFS.subClassOf --> (
+              (m <-- OWL.Restriction)
+              -- OWL.onProperty --> DIR.canRead
+              -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
+              -- OWL2.onDataRange --> modeler.XSD.xboolean)
+              -- RDFS.subClassOf --> (
+                (m <-- OWL.Restriction)
+                -- OWL.onProperty --> DIR.canWrite
+                -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
+                -- OWL2.onDataRange --> modeler.XSD.xboolean)
+                -- RDFS.subClassOf --> (
+                  (m <-- OWL.Restriction)
+                  -- OWL.onProperty --> DIR.canExecute
+                  -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
+                  -- OWL2.onDataRange --> modeler.XSD.xboolean)
+                  -- RDFS.subClassOf --> (
+                    (m <-- OWL.Restriction)
+                    -- OWL.onProperty --> DIR.isDirectory
+                    -- OWL2.cardinality --> ("1", XSDnonNegativeInteger)
+                    -- OWL2.onDataRange --> modeler.XSD.xboolean)
+                    -- RDFS.subClassOf --> (
+                      (m <-- OWL.Restriction)
+                      -- OWL.onProperty --> DIR.contain
+                      -- OWL.allValuesFrom --> DIR.Object))
 
     println(m)
 
-//    m.get.write(new java.io.FileOutputStream(DIR.local), "RDF/XML-ABBREV")
+    //    m.get.write(new java.io.FileOutputStream(DIR.local), "RDF/XML-ABBREV")
   }
 
 }

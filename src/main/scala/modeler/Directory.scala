@@ -75,13 +75,9 @@ permissions and limitations under the License.
       .addProperty(DT.license, license, XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
-    m.createResource(DIR.name.getURI, OWL.DatatypeProperty)
-    m.createResource(DIR.size.getURI, OWL.DatatypeProperty)
-    m.createResource(DIR.lastModified.getURI, OWL.DatatypeProperty)
-    m.createResource(DIR.canRead.getURI, OWL.DatatypeProperty)
-    m.createResource(DIR.canWrite.getURI, OWL.DatatypeProperty)
-    m.createResource(DIR.canExecute.getURI, OWL.DatatypeProperty)
-    m.createResource(DIR.isDirectory.getURI, OWL.DatatypeProperty)
+    List(DIR.name, DIR.size, DIR.lastModified,
+      DIR.canRead, DIR.canWrite, DIR.canExecute, DIR.isDirectory)
+      .foreach(p => m.createResource(p.getURI, OWL.DatatypeProperty))
 
     m.createResource(DIR.contain.getURI, OWL.ObjectProperty)
 
@@ -162,6 +158,7 @@ permissions and limitations under the License.
       logger.info("reading directory ...")
 
       val ps = p ** "*"
+
       val total = ps.size
       val delta = if (total < 100) 1 else total / 100
       var progress = 0

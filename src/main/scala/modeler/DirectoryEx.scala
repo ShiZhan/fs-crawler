@@ -84,6 +84,7 @@ object DirectoryEx extends Modeler with Logging {
       logger.info("reading directory ...")
 
       val ps = p ** "*"
+
       val total = ps.size
       val delta = if (total < 100) 1 else total / 100
       var progress = 0
