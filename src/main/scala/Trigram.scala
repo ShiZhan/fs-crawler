@@ -15,7 +15,8 @@
  * 2. show version
  * 3. translate specified source to TriGraM model
  */
-import core.{ Console, Importer }
+import core.Console
+import core.Store.defaultLocation
 import util.Version
 
 object Trigram {
@@ -53,7 +54,10 @@ usage: Trigram [-h] [-v] [-i]
 
       if (options.contains('help)) println(usage)
       else if (options.contains('version)) println(Version.get)
-      else if (options.contains('resource)) Importer.load(options('resource).toString)
+      else if (options.contains('resource)) {
+        val modelFile = options('resource).toString
+        tdb.tdbloader.main("--loc=" + defaultLocation, modelFile)
+      }
     }
   }
 
