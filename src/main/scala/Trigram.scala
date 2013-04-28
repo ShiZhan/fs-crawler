@@ -5,7 +5,7 @@
  * provides 3 entries:
  * 1. show help
  * 2. show version
- * 3. get data from specified model and put into local storage
+ * 3. import specified model into local storage
  * default entry:
  *    enter console
  *
@@ -27,7 +27,7 @@ usage: Trigram [-h] [-v] [-i]
  -v,--version             show program version
  -i,--import MODEL        import model
 
- run with no argument     enter console
+ no argument              enter console
 """
 
   type OptionMap = Map[Symbol, Any]

@@ -10,5 +10,4 @@ package core
  * 2. start TDB server over HTTP (maybe Jena Fuseki)
  */
 object Swarmer {
-
 }
