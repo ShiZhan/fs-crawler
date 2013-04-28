@@ -5,10 +5,11 @@ package core
 
 /**
  * @author ShiZhan
- * extents Store class with Domain Specific Command handlers
+ * implements Domain Specific Command handlers
+ * translates DSL commands into triple store operations
  * for use in Console application
  */
-class Handler(location: String) extends Store(location) {
+class Handler(store: Store) {
 
   type Handler = String => Unit
   type HandlerMap = Map[String, (Handler, String)]
@@ -36,7 +37,7 @@ class Handler(location: String) extends Store(location) {
       }
 
       try {
-        val result = sparqlQuery(sparql)
+        val result = store.sparqlQuery(sparql)
         println("\nSPARQL: " + sparql + "\nResult: " + result)
       } catch {
         case e: Exception => println(e)
@@ -57,7 +58,7 @@ class Handler(location: String) extends Store(location) {
       }
 
       try {
-        sparqlUpdate(sparql)
+        store.sparqlUpdate(sparql)
         println("\nSPARQL: " + sparql + "\nExecuted normally")
       } catch {
         case e: Exception => println(e)
@@ -79,4 +80,8 @@ class Handler(location: String) extends Store(location) {
     case (m, (h, s)) => "  %s: \t %s".format(m, s)
   }.mkString("\n")
 
+}
+
+object Handler {
+  def apply(store: Store) = new Handler(store)
 }

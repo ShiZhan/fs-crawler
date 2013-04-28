@@ -9,7 +9,6 @@ import com.hp.hpl.jena.tdb.TDBFactory
 import com.hp.hpl.jena.query.{
   QueryFactory,
   QueryExecutionFactory,
-  ResultSetFormatter,
   ReadWrite
 }
 import com.hp.hpl.jena.query.Query.{
@@ -39,7 +38,7 @@ class Store(val location: String) {
   def querySelect(sparql: String) = {
     val query = QueryFactory.create(sparql)
     val qExec = QueryExecutionFactory.create(query, store)
-    val resultList = ResultSetFormatter.toList(qExec.execSelect).toList
+    val resultList = qExec.execSelect.toList
     qExec.close
     resultList
   }
@@ -72,7 +71,7 @@ class Store(val location: String) {
     val query = QueryFactory.create(sparql)
     val qExec = QueryExecutionFactory.create(query, store)
     val result = query.getQueryType match {
-      case QueryTypeSelect => ResultSetFormatter.toList(qExec.execSelect).toList
+      case QueryTypeSelect => qExec.execSelect.toList
       case QueryTypeConstruct => qExec.execConstruct
       case QueryTypeDescribe => qExec.execDescribe
       case QueryTypeAsk => qExec.execAsk
@@ -104,4 +103,6 @@ class Store(val location: String) {
 
 object Store {
   val defaultLocation = "data/"
+  def apply() = new Store(defaultLocation)
+  def apply(loc: String) = new Store(loc)
 }

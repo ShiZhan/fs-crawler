@@ -11,7 +11,10 @@ import util.Version
  * Console command loop
  * main entry to Domain Specific Command Line Interface
  */
-object Console extends Handler(Store.defaultLocation) {
+object Console {
+
+  private val store = Store()
+  private val handler = Handler(store)
 
   private val consoleUsage = """ [Console Usage]
   help               print this message
@@ -30,16 +33,16 @@ object Console extends Handler(Store.defaultLocation) {
     for (line <- io.Source.stdin.getLines) {
       val output = line.split(" ").toList match {
         case "exit" :: Nil =>
-          close; return
+          store.close; return
 
         case "help" :: Nil => consoleUsage
         case "version" :: Nil => Version.get
 
         case "test" :: Nil => "internal test command"
 
-        case "modes" :: Nil => help
+        case "modes" :: Nil => handler.help
         case "mode" :: mode :: Nil =>
-          enterDSCLI(mode)
+          handler.enterDSCLI(mode)
           "return to default console"
 
         case "" :: Nil => null
