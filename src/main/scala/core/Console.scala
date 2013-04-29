@@ -18,7 +18,7 @@ object Console {
 
   private val consoleUsage = """ [Console Usage]
   help               print this message
-  version            show program version
+  status             show program status
   modes              list available command modes
   mode <mode>        enter <mode> to execute "Domain Specific Command"
   exit               exit console"""
@@ -36,7 +36,10 @@ object Console {
           store.close; return
 
         case "help" :: Nil => consoleUsage
-        case "version" :: Nil => Version.get
+        case "status" :: Nil =>
+          "trigram version: " + Version.get + "\n" +
+            "jena version:    " + com.hp.hpl.jena.Jena.VERSION + "\n" +
+            "data location:   " + store.location
 
         case "test" :: Nil => "internal test command"
 
