@@ -26,9 +26,11 @@ object ARC {
   val ArchiveFile = model.createResource(ns + "ArchiveFile")
   val ArchiveEntry = model.createResource(ns + "ArchiveEntry")
 
+  val hasEntry = model.createProperty(ns + "hasEntry")
   val name = model.createProperty(ns + "name")
   val size = model.createProperty(ns + "size")
-  val hasEntry = model.createProperty(ns + "hasEntry")
+  val lastModified = model.createProperty(ns + "lastModified")
+  val isDirectory = model.createProperty(ns + "isDirectory")
 
 }
 
@@ -65,6 +67,36 @@ permissions and limitations under the License.
       .addProperty(DT.license, license, XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
+    m.createResource(ARC.hasEntry.getURI, OWL.ObjectProperty)
+
+    List(ARC.name, ARC.size, ARC.lastModified, ARC.isDirectory)
+      .foreach(p => m.createResource(p.getURI, OWL.DatatypeProperty))
+
+    m.createResource(ARC.ArchiveFile.getURI, OWL.Class)
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.hasEntry)
+        .addProperty(OWL.allValuesFrom, ARC.ArchiveEntry))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.name)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.normalizedString))
+    m.createResource(ARC.ArchiveEntry.getURI, OWL.Class)
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.name)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.normalizedString))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.size)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.unsignedLong))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.lastModified)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.dateTime))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.isDirectory)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.xboolean))
 
     m.write(new java.io.FileOutputStream(ARC.local), "RDF/XML-ABBREV")
 

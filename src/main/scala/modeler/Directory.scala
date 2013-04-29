@@ -75,13 +75,16 @@ permissions and limitations under the License.
       .addProperty(DT.license, license, XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
+    m.createResource(DIR.contain.getURI, OWL.ObjectProperty)
+
     List(DIR.name, DIR.size, DIR.lastModified,
       DIR.canRead, DIR.canWrite, DIR.canExecute, DIR.isDirectory)
       .foreach(p => m.createResource(p.getURI, OWL.DatatypeProperty))
 
-    m.createResource(DIR.contain.getURI, OWL.ObjectProperty)
-
     m.createResource(DIR.Object.getURI, OWL.Class)
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, DIR.contain)
+        .addProperty(OWL.allValuesFrom, DIR.Object))
       .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
         .addProperty(OWL.onProperty, DIR.name)
         .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
@@ -110,9 +113,6 @@ permissions and limitations under the License.
         .addProperty(OWL.onProperty, DIR.isDirectory)
         .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
         .addProperty(OWL2.onDataRange, XSD.xboolean))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.contain)
-        .addProperty(OWL.allValuesFrom, DIR.Object))
 
     m.write(new java.io.FileOutputStream(DIR.local), "RDF/XML-ABBREV")
 
