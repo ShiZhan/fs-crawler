@@ -3,6 +3,7 @@
  */
 package core
 
+import com.hp.hpl.jena.Jena
 import util.Version
 
 /**
@@ -38,7 +39,7 @@ object Console {
         case "help" :: Nil => consoleUsage
         case "status" :: Nil =>
           "trigram version: " + Version.get + "\n" +
-            "jena version:    " + com.hp.hpl.jena.Jena.VERSION + "\n" +
+            "jena version:    " + Jena.VERSION + "\n" +
             "data location:   " + store.location
 
         case "test" :: Nil => "internal test command"

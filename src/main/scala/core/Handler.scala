@@ -36,7 +36,7 @@ class Handler(store: Store) {
 
       try {
         val result = store.queryAny(sparql)
-        println("\nSPARQL: " + sparql + "\nResult: " + result)
+        println("\nResult: " + result)
       } catch {
         case e: Exception => println(e)
       }
@@ -72,7 +72,7 @@ class Handler(store: Store) {
       hMap.map { case (k, v) => List(k) }.mkString("[", "] [", "]"))
 
   def enterCLI(mode: String) =
-    hMap.getOrElse(mode, hMapDefault) match { case (h, s) => h(mode + " > ") }
+    hMap.getOrElse(mode, hMapDefault)._1(mode + " > ")
 
   val help = hMap.map {
     case (m, (h, s)) => "  %s: \t %s".format(m, s)
