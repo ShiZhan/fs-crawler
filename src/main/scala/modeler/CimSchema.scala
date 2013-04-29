@@ -15,7 +15,7 @@ import util.{ Logging, Version, DateTime }
  */
 object CIM {
 
-  val local = "tgm" + CimModeler.key + ".owl"
+  val local = "tgm" + CimSchema.key + ".owl"
   val base = "https://sites.google.com/site/ontology2013/" + local
   val ns = base + "#"
 
@@ -33,7 +33,7 @@ object CIM {
 
 }
 
-object CimModeler extends Modeler with Logging {
+object CimSchema extends Modeler with Logging {
 
   override val key = "cim"
 
@@ -99,7 +99,7 @@ permissions and limitations under the License.
     }
 
     def pickNodeValue(ns: NodeSeq, att: String, attName: String) =
-      ("" /: ns) { (r, q) => if ((q \ att).text == attName) q.text else r }
+      ("" /: ns) { (r, n) => if ((n \ att).text == attName) n.text else r }
 
     for (c <- classes) {
       val cName = (c \ "@NAME").text
