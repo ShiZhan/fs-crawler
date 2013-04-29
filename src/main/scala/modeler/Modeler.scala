@@ -34,7 +34,8 @@ object Modelers extends Logging {
   private val modelerMap: Map[String, Modeler] = Map(
     Directory.key -> Directory,
     DirectoryEx.key -> DirectoryEx,
-    CimSchema.key -> CimSchema)
+    CimSchema.key -> CimSchema,
+    Archive.key -> Archive)
 
   def getHelp =
     modelerMap.map { case (s, m) => "  %s:   \t%s".format(s, m.usage) }.mkString("\n")
