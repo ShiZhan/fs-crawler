@@ -5,9 +5,7 @@ package core
 
 /**
  * @author ShiZhan
- * implements Domain Specific Command handlers
- * translates DSL commands into triple store operations
- * for use in Console application
+ * command handlers for reading and executing SPARQL in triple store
  */
 class Handler(store: Store) {
 
@@ -37,7 +35,7 @@ class Handler(store: Store) {
       }
 
       try {
-        val result = store.sparqlQuery(sparql)
+        val result = store.queryAny(sparql)
         println("\nSPARQL: " + sparql + "\nResult: " + result)
       } catch {
         case e: Exception => println(e)
@@ -58,7 +56,7 @@ class Handler(store: Store) {
       }
 
       try {
-        store.sparqlUpdate(sparql)
+        store.update(sparql)
         println("\nSPARQL: " + sparql + "\nExecuted normally")
       } catch {
         case e: Exception => println(e)
@@ -73,7 +71,7 @@ class Handler(store: Store) {
       "Available handlers: " +
       hMap.map { case (k, v) => List(k) }.mkString("[", "] [", "]"))
 
-  def enterDSCLI(mode: String) =
+  def enterCLI(mode: String) =
     hMap.getOrElse(mode, hMapDefault) match { case (h, s) => h(mode + " > ") }
 
   val help = hMap.map {

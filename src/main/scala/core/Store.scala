@@ -26,7 +26,7 @@ import com.hp.hpl.jena.update.{
 
 /**
  * @author ShiZhan
- * triple store operations
+ * SPARQL QUERY and UPDATE operations
  * wrapper of Apache Jena TDB, each instance stands for a TDB assembly
  */
 class Store(val location: String) {
@@ -67,7 +67,7 @@ class Store(val location: String) {
     resultModel
   }
 
-  def sparqlQuery(sparql: String): Any = {
+  def queryAny(sparql: String): Any = {
     val query = QueryFactory.create(sparql)
     val qExec = QueryExecutionFactory.create(query, store)
     val result = query.getQueryType match {
@@ -81,12 +81,12 @@ class Store(val location: String) {
     result
   }
 
-  def sparqlUpdate(sparql: String) = {
+  def update(sparql: String) = {
     val graphStore = GraphStoreFactory.create(store)
     UpdateAction.parseExecute(sparql, graphStore)
   }
 
-  def sparqlUpdateTxn(sparql: String) = {
+  def updateTxn(sparql: String) = {
     store.begin(ReadWrite.WRITE)
     try {
       val update = UpdateFactory.create(sparql)

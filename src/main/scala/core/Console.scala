@@ -9,7 +9,7 @@ import util.Version
  * @author ShiZhan
  * 2013
  * Console command loop
- * main entry to Domain Specific Command Line Interface
+ * main entry to Command Line Interface
  */
 object Console {
 
@@ -45,7 +45,7 @@ object Console {
 
         case "modes" :: Nil => handler.help
         case "mode" :: mode :: Nil =>
-          handler.enterDSCLI(mode)
+          handler.enterCLI(mode)
           "return to default console"
 
         case "" :: Nil => null
