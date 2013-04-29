@@ -12,7 +12,14 @@ import java.io.{
 }
 import org.apache.commons.compress.archivers._
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
+import com.hp.hpl.jena.vocabulary.{
+  RDF,
+  RDFS,
+  OWL,
+  OWL2,
+  DC_11 => DC,
+  DCTerms => DT
+}
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import util.{ Logging, Version, DateTime, Hash }
 
@@ -73,6 +80,7 @@ permissions and limitations under the License.
       .addProperty(DC.description, "TriGraM Archive model", XSDstring)
       .addProperty(DT.license, license, XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
+
     m.createResource(ARC.hasEntry.getURI, OWL.ObjectProperty)
     List(ARC.name, ARC.size, ARC.lastModified, ARC.isDirectory)
       .foreach(p => m.createResource(p.getURI, OWL.DatatypeProperty))
@@ -85,6 +93,15 @@ permissions and limitations under the License.
         .addProperty(OWL.onProperty, ARC.name)
         .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
         .addProperty(OWL2.onDataRange, XSD.normalizedString))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.size)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.unsignedLong))
+      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
+        .addProperty(OWL.onProperty, ARC.lastModified)
+        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
+        .addProperty(OWL2.onDataRange, XSD.dateTime))
+
     m.createResource(ARC.ArchiveEntry.getURI, OWL.Class)
       .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
         .addProperty(OWL.onProperty, ARC.name)
@@ -134,14 +151,31 @@ permissions and limitations under the License.
       val aIS = aSF.createArchiveInputStream(bFIS)
       val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
+      def genNodeUri(s: String) = ns + Hash.getMD5(s)
+
+      val archiveFile = m.createResource(genNodeUri(base), OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, ARC.ArchiveFile)
+        .addProperty(ARC.name, f.getAbsolutePath, XSDnormalizedString)
+        .addProperty(ARC.size, f.length.toString, XSDunsignedLong)
+        .addProperty(ARC.lastModified, DateTime.get(f.lastModified), XSDdateTime)
+
       for (e <- iAIS) {
+        val eName = e.getName
+        val eSize = e.getSize.toString
+        val eModi = DateTime.get(e.getLastModifiedDate)
+        val eNode = m.createResource(genNodeUri(eName), OWL2.NamedIndividual)
+          .addProperty(RDF.`type`, ARC.ArchiveEntry)
+          .addProperty(ARC.name, eName, XSDnormalizedString)
+          .addProperty(ARC.size, eSize, XSDunsignedLong)
+          .addProperty(ARC.lastModified, eModi, XSDdateTime)
+          .addProperty(ARC.isDirectory, e.isDirectory.toString, XSDboolean)
 
-        logger.info("Name [%s] Size [%d] Modified [%s] Dir [%s]".
-          format(e.getName, e.getSize, e.getLastModifiedDate, e.isDirectory))
-
+        archiveFile.addProperty(ARC.hasEntry, eNode)
       }
 
       m.write(new FileOutputStream(o), "RDF/XML-ABBREV")
+
+      logger.info("[%d] triples generated".format(m.size))
     }
   }
 

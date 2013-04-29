@@ -3,7 +3,7 @@
  */
 package util
 
-import java.util.Calendar
+import java.util.{ Calendar, Date }
 import java.text.SimpleDateFormat
 
 /**
@@ -15,7 +15,7 @@ object DateTime {
   private val dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
   def get = dateFormat.format(Calendar.getInstance.getTime)
-
+  def get(d: Date) = dateFormat.format(d)
   def get(i: Long) = dateFormat.format(i)
 
 }
