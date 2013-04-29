@@ -3,6 +3,7 @@
  */
 package modeler
 
+import java.io.{ File, FileInputStream, InputStreamReader, BufferedInputStream }
 import org.apache.commons.compress.archivers._
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
@@ -104,7 +105,21 @@ permissions and limitations under the License.
   }
 
   def aBox(i: String, o: String) = {
-    logger.info("Model zipped files")
+    val f = new File(i)
+    if (!f.exists)
+      logger.error("input source does not exist")
+    else if (!f.isFile)
+      logger.error("input source is not file")
+    else {
+      logger.info("Model zipped file [%s]".format(f.getAbsolutePath))
+
+      val bFIS = new BufferedInputStream(new FileInputStream(f))
+      val aSF = new ArchiveStreamFactory
+      val aIS = aSF.createArchiveInputStream(bFIS)
+      val iAIS = Iterator.continually { aIS.getNextEntry }
+
+      iAIS.takeWhile(_ != null).foreach(entry => println(entry.getName))
+    }
   }
 
 }
