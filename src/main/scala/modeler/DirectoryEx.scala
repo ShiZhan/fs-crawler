@@ -4,7 +4,7 @@
 package modeler
 
 import scala.xml.Utility.escape
-import java.io.{ FileOutputStream, OutputStreamWriter, BufferedWriter }
+import java.io.{ File, FileOutputStream, OutputStreamWriter, BufferedWriter }
 import scalax.file.{ Path, PathSet }
 import util.{ Logging, Version, DateTime, Hash }
 
@@ -22,7 +22,7 @@ object DirectoryEx extends Modeler with Logging {
   def tBox = Directory.tBox
 
   def aBox(input: String, output: String) = {
-    val p = Path(new java.io.File(input))
+    val p = Path(new File(input))
 
     if (p.isDirectory) {
       logger.info("creating model for *HUGE* directory [%s]".format(p.path))

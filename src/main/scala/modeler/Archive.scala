@@ -10,7 +10,7 @@ import java.io.{
   InputStreamReader,
   BufferedInputStream
 }
-import org.apache.commons.compress.archivers._
+import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{
   RDF,
@@ -125,8 +125,8 @@ permissions and limitations under the License.
     logger.info("created [%d] triples in TBox [%s]".format(m.size, ARC.local))
   }
 
-  def aBox(i: String, o: String) = {
-    val f = new File(i)
+  def aBox(input: String, output: String) = {
+    val f = new File(input)
     if (!f.exists)
       logger.error("input source does not exist")
     else if (!f.isFile)
@@ -173,7 +173,7 @@ permissions and limitations under the License.
         archiveFile.addProperty(ARC.hasEntry, eNode)
       }
 
-      m.write(new FileOutputStream(o), "RDF/XML-ABBREV")
+      m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
       logger.info("[%d] triples generated".format(m.size))
     }

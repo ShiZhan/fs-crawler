@@ -20,7 +20,7 @@ import util.Logging
  *    then add this modeler into modelerMap
  */
 trait Modeler {
-  val key: String = "BaseModeler"
+  val key: String = "base"
   val usage: String = null
   def tBox: Unit
   def aBox(input: String, output: String): Unit

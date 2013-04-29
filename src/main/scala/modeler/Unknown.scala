@@ -7,8 +7,8 @@ import util.Logging
 
 /**
  * @author ShiZhan
- * providing empty core model and translated model, also function as default
- * object for modeler map and dummy model for merging core models
+ * providing empty core model and translated model,
+ * also function as default object for modeler map
  */
 object Unknown extends Modeler with Logging {
 

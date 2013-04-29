@@ -3,6 +3,7 @@
  */
 package modeler
 
+import java.io.{ File, FileOutputStream }
 import scalax.file.{ Path, PathSet }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
@@ -114,13 +115,13 @@ permissions and limitations under the License.
         .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
         .addProperty(OWL2.onDataRange, XSD.xboolean))
 
-    m.write(new java.io.FileOutputStream(DIR.local), "RDF/XML-ABBREV")
+    m.write(new FileOutputStream(DIR.local), "RDF/XML-ABBREV")
 
     logger.info("created [%d] triples in TBox [%s]".format(m.size, DIR.local))
   }
 
   def aBox(input: String, output: String) = {
-    val p = Path(new java.io.File(input))
+    val p = Path(new File(input))
 
     if (p.isDirectory) {
       logger.info("creating model for directory [%s]".format(p.path))
@@ -178,7 +179,7 @@ permissions and limitations under the License.
       }
       println("translating [100%]")
 
-      m.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
+      m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
       logger.info("[%d] triples generated".format(m.size))
     } else {
