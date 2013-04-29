@@ -4,7 +4,6 @@
 package core
 
 import scala.collection.JavaConversions._
-import com.hp.hpl.jena.rdf.model.Model
 import com.hp.hpl.jena.tdb.TDBFactory
 import com.hp.hpl.jena.query.{
   QueryFactory,
