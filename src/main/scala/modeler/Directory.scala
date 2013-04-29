@@ -130,10 +130,10 @@ permissions and limitations under the License.
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix("dir", DIR.ns)
+      m.setNsPrefix(key, DIR.ns)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
-        .addProperty(DC.description, "TriGraM directory model", XSDstring)
+        .addProperty(DC.description, "TriGraM Directory model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
         .addProperty(OWL.imports, DIR.Import)
 
