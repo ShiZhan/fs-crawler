@@ -3,7 +3,13 @@
  */
 package modeler
 
-import java.io.{ File, FileInputStream, InputStreamReader, BufferedInputStream }
+import java.io.{
+  File,
+  FileInputStream,
+  FileOutputStream,
+  InputStreamReader,
+  BufferedInputStream
+}
 import org.apache.commons.compress.archivers._
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
@@ -53,7 +59,7 @@ You may obtain a copy of the License at
     http://www.apache.org/licenses/LICENSE-2.0.
 
 Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+software distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing
 permissions and limitations under the License. 
@@ -64,12 +70,10 @@ permissions and limitations under the License.
     m.setNsPrefix(key, ARC.ns)
     m.createResource(ARC.base, OWL.Ontology)
       .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM Zipped Archive model", XSDstring)
+      .addProperty(DC.description, "TriGraM Archive model", XSDstring)
       .addProperty(DT.license, license, XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
-
     m.createResource(ARC.hasEntry.getURI, OWL.ObjectProperty)
-
     List(ARC.name, ARC.size, ARC.lastModified, ARC.isDirectory)
       .foreach(p => m.createResource(p.getURI, OWL.DatatypeProperty))
 
@@ -113,12 +117,31 @@ permissions and limitations under the License.
     else {
       logger.info("Model zipped file [%s]".format(f.getAbsolutePath))
 
+      val base = f.toURI.toString
+      val ns = base + "#"
+
+      val m = ModelFactory.createDefaultModel
+
+      m.setNsPrefix(key, ARC.ns)
+      m.createResource(base, OWL.Ontology)
+        .addProperty(DC.date, DateTime.get, XSDdateTime)
+        .addProperty(DC.description, "TriGraM Archive model", XSDstring)
+        .addProperty(OWL.versionInfo, Version.get, XSDstring)
+        .addProperty(OWL.imports, ARC.Import)
+
       val bFIS = new BufferedInputStream(new FileInputStream(f))
       val aSF = new ArchiveStreamFactory
       val aIS = aSF.createArchiveInputStream(bFIS)
-      val iAIS = Iterator.continually { aIS.getNextEntry }
+      val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
-      iAIS.takeWhile(_ != null).foreach(entry => println(entry.getName))
+      for (e <- iAIS) {
+
+        logger.info("Name [%s] Size [%d] Modified [%s] Dir [%s]".
+          format(e.getName, e.getSize, e.getLastModifiedDate, e.isDirectory))
+
+      }
+
+      m.write(new FileOutputStream(o), "RDF/XML-ABBREV")
     }
   }
 
