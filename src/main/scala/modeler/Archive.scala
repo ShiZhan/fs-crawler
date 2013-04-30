@@ -160,17 +160,18 @@ permissions and limitations under the License.
         .addProperty(ARC.lastModified, DateTime.get(f.lastModified), XSDdateTime)
 
       for (e <- iAIS) {
-        val eName = e.getName
-        val eSize = e.getSize.toString
-        val eModi = DateTime.get(e.getLastModifiedDate)
-        val eNode = m.createResource(genNodeUri(eName), OWL2.NamedIndividual)
+        val name = e.getName
+        val size = e.getSize.toString
+        val lastM = DateTime.get(e.getLastModifiedDate)
+        val isDir = e.isDirectory.toString
+        val entry = m.createResource(genNodeUri(name), OWL2.NamedIndividual)
           .addProperty(RDF.`type`, ARC.ArchiveEntry)
-          .addProperty(ARC.name, eName, XSDnormalizedString)
-          .addProperty(ARC.size, eSize, XSDunsignedLong)
-          .addProperty(ARC.lastModified, eModi, XSDdateTime)
-          .addProperty(ARC.isDirectory, e.isDirectory.toString, XSDboolean)
+          .addProperty(ARC.name, name, XSDnormalizedString)
+          .addProperty(ARC.size, size, XSDunsignedLong)
+          .addProperty(ARC.lastModified, lastM, XSDdateTime)
+          .addProperty(ARC.isDirectory, isDir, XSDboolean)
 
-        archiveFile.addProperty(ARC.hasEntry, eNode)
+        archiveFile.addProperty(ARC.hasEntry, entry)
       }
 
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")

@@ -119,7 +119,7 @@ object DirectoryEx extends Modeler with Logging {
 
       m.close
 
-      logger.info("[%d] individuals generated".format(ps.size))
+      logger.info("[%d] individuals generated".format(total))
     } else {
       logger.info("[%s] is not a directory".format(p.name))
     }

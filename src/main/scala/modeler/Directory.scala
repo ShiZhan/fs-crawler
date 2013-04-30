@@ -141,17 +141,23 @@ permissions and limitations under the License.
       def genNodeUri(p: Path) = ns + Hash.getMD5(p.path)
 
       def assignAttributes(p: Path) = {
-        val pSize = if (p.size.nonEmpty) p.size.get.toString else "0"
+        val name = p.name
+        val size = if (p.size.nonEmpty) p.size.get.toString else "0"
+        val lastMod = DateTime.get(p.lastModified)
+        val canRead = p.canRead.toString
+        val canWrite = p.canWrite.toString
+        val canExecute = p.canExecute.toString
+        val isDirectory = p.isDirectory.toString
 
         m.createResource(genNodeUri(p), OWL2.NamedIndividual)
           .addProperty(RDF.`type`, DIR.Object)
-          .addProperty(DIR.name, p.name, XSDnormalizedString)
-          .addProperty(DIR.size, pSize, XSDunsignedLong)
-          .addProperty(DIR.lastModified, DateTime.get(p.lastModified), XSDdateTime)
-          .addProperty(DIR.canRead, p.canRead.toString, XSDboolean)
-          .addProperty(DIR.canWrite, p.canWrite.toString, XSDboolean)
-          .addProperty(DIR.canExecute, p.canExecute.toString, XSDboolean)
-          .addProperty(DIR.isDirectory, p.isDirectory.toString, XSDboolean)
+          .addProperty(DIR.name, name, XSDnormalizedString)
+          .addProperty(DIR.size, size, XSDunsignedLong)
+          .addProperty(DIR.lastModified, lastMod, XSDdateTime)
+          .addProperty(DIR.canRead, canRead, XSDboolean)
+          .addProperty(DIR.canWrite, canWrite, XSDboolean)
+          .addProperty(DIR.canExecute, canExecute, XSDboolean)
+          .addProperty(DIR.isDirectory, isDirectory, XSDboolean)
       }
 
       assignAttributes(p)
@@ -168,10 +174,11 @@ permissions and limitations under the License.
 
       for (i <- ps) {
         assignAttributes(i)
-        m.add(m.createStatement(
-          m.getResource(genNodeUri(i.parent.get)),
-          DIR.contain,
-          m.getResource(genNodeUri(i))))
+
+        val dir = m.getResource(genNodeUri(i.parent.get))
+        val current = m.getResource(genNodeUri(i))
+        val stmt = m.createStatement(dir, DIR.contain, current)
+        m.add(stmt)
 
         progress += 1
         if (progress % delta == 0)
