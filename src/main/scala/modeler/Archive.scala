@@ -52,7 +52,7 @@ object Archive extends Modeler with Logging {
 
   override val key = "arc"
 
-  override val usage = "Translate archive file contents"
+  override val usage = "Translate archive file contents (ar|cpio|jar|tar|zip)"
 
   def tBox = {
     logger.info("initialize core model")
