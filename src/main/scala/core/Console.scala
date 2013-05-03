@@ -3,6 +3,7 @@
  */
 package core
 
+import java.io.File
 import com.hp.hpl.jena.Jena
 import com.hp.hpl.jena.tdb.TDB
 import util.Version
@@ -44,7 +45,7 @@ object Console {
             "Jena core build:   " + Jena.BUILD_DATE + "\n" +
             "Jena TDB version:  " + TDB.VERSION + "\n" +
             "Jena TDB build:    " + TDB.BUILD_DATE + "\n" +
-            "data location:     " + store.location
+            "data location:     " + new File(store.location).getAbsoluteFile
 
         case "test" :: Nil => "internal test command"
 
