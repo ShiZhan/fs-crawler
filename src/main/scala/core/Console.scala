@@ -4,6 +4,7 @@
 package core
 
 import com.hp.hpl.jena.Jena
+import com.hp.hpl.jena.tdb.TDB
 import util.Version
 
 /**
@@ -21,7 +22,7 @@ object Console {
   help               print this message
   status             show program status
   modes              list available command modes
-  mode <mode>        enter <mode> to execute "Domain Specific Command"
+  mode <mode>        enter <mode> to execute specific commands
   exit               exit console"""
 
   private val consoleTitle = "TriGraM Console"
@@ -38,9 +39,12 @@ object Console {
 
         case "help" :: Nil => consoleUsage
         case "status" :: Nil =>
-          "trigram version: " + Version.get + "\n" +
-            "jena version:    " + Jena.VERSION + "\n" +
-            "data location:   " + store.location
+          "trigram version :  " + Version.get + "\n" +
+            "Jena core version: " + Jena.VERSION + "\n" +
+            "Jena core build:   " + Jena.BUILD_DATE + "\n" +
+            "Jena TDB version:  " + TDB.VERSION + "\n" +
+            "Jena TDB build:    " + TDB.BUILD_DATE + "\n" +
+            "data location:     " + store.location
 
         case "test" :: Nil => "internal test command"
 
