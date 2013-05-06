@@ -72,7 +72,7 @@ object TrigramTranslator {
   val defaultTarget = "model.rdf"
 
   val usage = """
-usage: TrigramTranslator [-h] [-v] [-c] [-t] TYPE [-i] INPUT [-o] OUTPUT
+usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -h,--help                Print this message
  -v,--version             Show program version
  -m,--meta                1. If this flag is set, the translator will generate

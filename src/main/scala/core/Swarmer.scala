@@ -13,6 +13,6 @@ import util.Logging
  */
 object Swarmer extends Logging {
 
-  logger.info("TODO: make storage query and update distributely")
+  logger.info("TODO: make storage query and update distributedly")
 
 }
