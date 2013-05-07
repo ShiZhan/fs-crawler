@@ -151,9 +151,7 @@ permissions and limitations under the License.
       val aIS = aSF.createArchiveInputStream(bFIS)
       val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
-      def genNodeUri(s: String) = ns + Hash.getMD5(s)
-
-      val archiveFile = m.createResource(genNodeUri(base), OWL2.NamedIndividual)
+      val archiveFile = m.createResource(ns + aIS.toString, OWL2.NamedIndividual)
         .addProperty(RDF.`type`, ARC.ArchiveFile)
         .addProperty(ARC.name, f.getAbsolutePath, XSDnormalizedString)
         .addProperty(ARC.size, f.length.toString, XSDunsignedLong)
@@ -161,10 +159,11 @@ permissions and limitations under the License.
 
       for (e <- iAIS) {
         val name = e.getName
+        val uri = ns + Hash.getMD5(name)
         val size = e.getSize.toString
         val lastM = DateTime.get(e.getLastModifiedDate)
         val isDir = e.isDirectory.toString
-        val entry = m.createResource(genNodeUri(name), OWL2.NamedIndividual)
+        val entry = m.createResource(uri, OWL2.NamedIndividual)
           .addProperty(RDF.`type`, ARC.ArchiveEntry)
           .addProperty(ARC.name, name, XSDnormalizedString)
           .addProperty(ARC.size, size, XSDunsignedLong)
