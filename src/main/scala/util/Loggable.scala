@@ -22,6 +22,8 @@ object Logging {
     else
       className
 
-  def getLogger(logging: AnyRef) = LoggerFactory.getLogger(loggerNameForClass(logging.getClass.getName))
+  def getLogger(logging: AnyRef) =
+    LoggerFactory.getLogger(
+      loggerNameForClass(logging.getClass.getName))
 
 }

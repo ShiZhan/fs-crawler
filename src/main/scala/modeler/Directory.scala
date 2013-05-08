@@ -117,14 +117,14 @@ permissions and limitations under the License.
 
     m.write(new FileOutputStream(DIR.local), "RDF/XML-ABBREV")
 
-    logger.info("created [%d] triples in TBox [%s]".format(m.size, DIR.local))
+    logger.info("created [{}] triples in TBox [{}]", m.size, DIR.local)
   }
 
   def aBox(input: String, output: String) = {
     val p = Path(new File(input))
 
     if (p.isDirectory) {
-      logger.info("creating model for directory [%s]".format(p.path))
+      logger.info("creating model for directory [{}]", p.path)
 
       val base = p.toURI.toString
       val ns = base + "#"
@@ -170,7 +170,7 @@ permissions and limitations under the License.
       val delta = if (total < 100) 1 else total / 100
       var progress = 0
 
-      logger.info("[%d] objects".format(total))
+      logger.info("[{}] objects", total)
 
       for (i <- ps) {
         assignAttributes(i)
@@ -188,9 +188,9 @@ permissions and limitations under the License.
 
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
-      logger.info("[%d] triples generated".format(m.size))
+      logger.info("[{}] triples generated", m.size)
     } else {
-      logger.info("[%s] is not a directory".format(p.name))
+      logger.info("[{}] is not a directory", p.name)
     }
   }
 

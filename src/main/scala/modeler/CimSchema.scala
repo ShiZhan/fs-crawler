@@ -46,7 +46,7 @@ object CimSchema extends Modeler with Logging {
   }
 
   def aBox(input: String, output: String) = {
-    logger.info("translate CIM schema from [" + input + "] to [" + output + "]")
+    logger.info("translate [{}] from [{}] to [{}]", key, input, output)
 
     val xml = XML.loadFile(input)
     val cim = xml \\ "CIM"
@@ -56,11 +56,14 @@ object CimSchema extends Modeler with Logging {
       val cimVer = cim.head \ "@CIMVERSION" text
       val dtdVer = cim.head \ "@DTDVERSION" text
 
-      logger.info("CIM version [%s] DTD version [%s]".format(cimVer, dtdVer))
+      logger.info("[{}] version [{}] DTD version [{}]", key, cimVer, dtdVer)
 
       cim2rdf(cim, output)
     }
   }
+
+  def pickNodeValue(ns: NodeSeq, att: String, attName: String) =
+    ("" /: ns) { (r, n) => if ((n \ att).text == attName) n.text else r }
 
   def cim2rdf(cim: NodeSeq, output: String) = {
     val classes = cim \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
@@ -111,9 +114,6 @@ permissions and limitations under the License.
         .addProperty(RDF.`type`, OWL.DatatypeProperty)
         .addProperty(RDFS.domain, cMeta)
     }
-
-    def pickNodeValue(ns: NodeSeq, att: String, attName: String) =
-      ("" /: ns) { (r, n) => if ((n \ att).text == attName) n.text else r }
 
     for (c <- classes) {
       val cName = (c \ "@NAME").text
@@ -185,7 +185,7 @@ permissions and limitations under the License.
     else {
       m.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
 
-      logger.info("[%d] triples generated".format(m.size))
+      logger.info("[{}] triples generated", m.size)
     }
   }
 

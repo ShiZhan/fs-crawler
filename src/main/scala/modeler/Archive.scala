@@ -122,7 +122,7 @@ permissions and limitations under the License.
 
     m.write(new java.io.FileOutputStream(ARC.local), "RDF/XML-ABBREV")
 
-    logger.info("created [%d] triples in TBox [%s]".format(m.size, ARC.local))
+    logger.info("created [{}] triples in TBox [{}]", m.size, ARC.local)
   }
 
   def aBox(input: String, output: String) = {
@@ -132,7 +132,7 @@ permissions and limitations under the License.
     else if (!f.isFile)
       logger.error("input source is not file")
     else {
-      logger.info("Model zipped file [%s]".format(f.getAbsolutePath))
+      logger.info("Model zipped file [{}]", f.getAbsolutePath)
 
       val base = f.toURI.toString
       val ns = base + "#"
@@ -175,7 +175,7 @@ permissions and limitations under the License.
 
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
-      logger.info("[%d] triples generated".format(m.size))
+      logger.info("[{}] triples generated", m.size)
     }
   }
 

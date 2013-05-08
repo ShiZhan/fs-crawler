@@ -3,14 +3,12 @@
  */
 package modeler
 
-import util.Logging
-
 /**
  * @author ShiZhan
  * interface for modelers, for adding more, follow these steps:
  * 1. extends from Modeler trait and assign (override) a unique "key"
- * 2. [optional] add help information by overriding "usage"
- * 3. implement "tBox" and "aBox" method [optional] with additional vocabulary
+ * 2. add help information by overriding "usage"
+ * 3. implement "tBox" and "aBox" method with [optional] additional vocabulary
  *
  *    key:       unique identifier
  *    usage:     help information
@@ -29,7 +27,7 @@ trait Modeler {
 /**
  * managing modelers for translating various resources to RDF model
  */
-object Modelers extends Logging {
+object Modelers {
 
   private val modelerMap: Map[String, Modeler] = Map(
     Directory.key -> Directory,
