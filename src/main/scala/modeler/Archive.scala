@@ -151,7 +151,7 @@ permissions and limitations under the License.
       val aIS = aSF.createArchiveInputStream(bFIS)
       val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
-      val archiveFile = m.createResource(ns + aIS.toString, OWL2.NamedIndividual)
+      val archiveFile = m.createResource(ns + aIS, OWL2.NamedIndividual)
         .addProperty(RDF.`type`, ARC.ArchiveFile)
         .addProperty(ARC.name, f.getAbsolutePath, XSDnormalizedString)
         .addProperty(ARC.size, f.length.toString, XSDunsignedLong)
