@@ -3,7 +3,7 @@
  */
 package modeler
 
-import scala.xml.{ XML, NodeSeq }
+import scala.xml.{ XML, NodeSeq, Elem }
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Resource }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -49,6 +49,20 @@ object CimSchema extends Modeler with Logging {
     logger.info("translate CIM schema from [" + input + "] to [" + output + "]")
 
     val xml = XML.loadFile(input)
+    val cimHeader = xml \\ "CIM" head
+    val cimVer = cimHeader \ "@CIMVERSION" text
+    val dtdVer = cimHeader \ "@DTDVERSION" text
+
+    if (cimVer != null && dtdVer != null) {
+      logger.info("CIM version [%s] DTD version [%s]".format(cimVer, dtdVer))
+
+      cim2rdf(xml, output)
+    } else {
+      logger.info("input XML file is not a valid CIM Schema")
+    }
+  }
+
+  def cim2rdf(xml: Elem, output: String) = {
     val classes = xml \\ "VALUE.OBJECT" \ "CLASS"
     val rNodes = classes.flatMap(c => c \ "PROPERTY.REFERENCE")
     val pNodes = classes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
