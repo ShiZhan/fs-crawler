@@ -5,7 +5,7 @@ package modeler
 
 import scala.xml.Utility.escape
 import java.io.{ File, FileOutputStream, OutputStreamWriter, BufferedWriter }
-import scalax.file.{ Path, PathSet }
+import scalax.file.Path
 import util.{ Logging, Version, DateTime, Hash }
 
 /**

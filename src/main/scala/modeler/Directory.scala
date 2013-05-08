@@ -4,7 +4,7 @@
 package modeler
 
 import java.io.{ File, FileOutputStream }
-import scalax.file.{ Path, PathSet }
+import scalax.file.Path
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._

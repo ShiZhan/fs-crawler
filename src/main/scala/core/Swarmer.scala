@@ -15,4 +15,6 @@ object Swarmer extends Logging {
 
   logger.info("TODO: make storage query and update distributedly")
 
+  logger.info("TODO: initialize AKKA actor system")
+
 }

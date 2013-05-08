@@ -66,8 +66,8 @@ object CimSchema extends Modeler with Logging {
     val classes = cim \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
     val rNodes = classes.flatMap(c => c \ "PROPERTY.REFERENCE")
     val pNodes = classes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
-    val objProps = rNodes.map(r => (r \ "@NAME").text).distinct
-    val datProps = pNodes.map(p => (p \ "@NAME").text).distinct
+    val objProps = rNodes.map(r => r \ "@NAME" text) distinct
+    val datProps = pNodes.map(p => p \ "@NAME" text) distinct
 
     logger.info("[%d] classes [%d] object properties [%d] data type properties".
       format(classes.length, objProps.length, datProps.length))
