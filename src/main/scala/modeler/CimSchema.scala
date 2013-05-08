@@ -49,16 +49,16 @@ object CimSchema extends Modeler with Logging {
     logger.info("translate CIM schema from [" + input + "] to [" + output + "]")
 
     val xml = XML.loadFile(input)
-    val cimHeader = xml \\ "CIM" head
-    val cimVer = cimHeader \ "@CIMVERSION" text
-    val dtdVer = cimHeader \ "@DTDVERSION" text
+    val cimHeader = xml \\ "CIM"
+    if (cimHeader.isEmpty) {
+      logger.info("input XML file is not a valid CIM Schema")
+    } else {
+      val cimVer = cimHeader.head \ "@CIMVERSION" text
+      val dtdVer = cimHeader.head \ "@DTDVERSION" text
 
-    if (cimVer != null && dtdVer != null) {
       logger.info("CIM version [%s] DTD version [%s]".format(cimVer, dtdVer))
 
       cim2rdf(xml, output)
-    } else {
-      logger.info("input XML file is not a valid CIM Schema")
     }
   }
 
