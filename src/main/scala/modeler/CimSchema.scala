@@ -72,8 +72,9 @@ object CimSchema extends Modeler with Logging {
     val objProps = rNodes.map(r => r \ "@NAME" text) distinct
     val datProps = pNodes.map(p => p \ "@NAME" text) distinct
 
-    logger.info("[%d] classes [%d] object properties [%d] data type properties".
-      format(classes.length, objProps.length, datProps.length))
+    logger.info("[{}] classes", classes.length)
+    logger.info("[{}] object properties [{}] data type properties",
+      objProps.length, datProps.length)
 
     val license = """
 Copyright 2013 Shi.Zhan.
