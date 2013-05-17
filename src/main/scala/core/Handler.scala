@@ -74,9 +74,7 @@ class Handler(store: Store) {
   def enterCLI(mode: String) =
     hMap.getOrElse(mode, hMapDefault)._1(mode + " > ")
 
-  val help = hMap.map {
-    case (m, (h, s)) => "  %s: \t %s".format(m, s)
-  }.mkString("\n")
+  val help = hMap.map { case (m, (h, s)) => "  " + m + ":\t " + s }.mkString("\n")
 
 }
 

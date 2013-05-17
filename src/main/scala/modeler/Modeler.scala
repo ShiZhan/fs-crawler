@@ -36,7 +36,7 @@ object Modelers {
     Archive.key -> Archive)
 
   def getHelp =
-    modelerMap.map { case (s, m) => "  %s:   \t%s".format(s, m.usage) }.mkString("\n")
+    modelerMap.map { case (s, m) => "  " + s + ":   \t" + m.usage }.mkString("\n")
 
   def getTBox(t: String) =
     modelerMap.getOrElse(t, Unknown).tBox
