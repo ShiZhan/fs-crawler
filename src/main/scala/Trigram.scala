@@ -15,11 +15,11 @@
  * 2. show version
  * 3. translate specified source to TriGraM model
  */
-import core.Console
-import core.Store.defaultLocation
-import util.Version
-
 object Trigram {
+
+  import core.Console
+  import core.Store.defaultLocation
+  import util.Version
 
   val usage = """
 usage: Trigram [-h] [-v] [-i]
@@ -63,10 +63,11 @@ usage: Trigram [-h] [-v] [-i]
 
 }
 
-import modeler.Modelers
-import modeler.Directory.{ key => defaultInType }
-
 object TrigramTranslator {
+
+  import modeler.Modelers
+  import modeler.Directory.{ key => defaultInType }
+  import util.Version
 
   val defaultSource = "."
   val defaultTarget = "model.rdf"
@@ -128,6 +129,15 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
       Modelers.getABox(t, i, o)
     }
+  }
+
+}
+
+object TrigramThinker {
+
+  def main(args: Array[String]) = {
+    println("TriGraM thinker")
+
   }
 
 }
