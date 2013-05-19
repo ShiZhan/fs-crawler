@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+cygwin=false
+
+case "`uname`" in
+  CYGWIN*) cygwin=true;;
+  Darwin) darwin=true;;
+esac
+
+# for translating big in-memory models
+JAVA_OPTS=" -Xms1024m -Xmx1024m "$JAVA_OPTS
+TGM_ROOT=$(dirname `which $0`)
+
+if $cygwin; then
+  CP=`cat $TGM_ROOT/.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s;",$2}'`
+  scala -cp "$CP;`cygpath -alm $TGM_ROOT`/target/scala-2.10/classes" TrigramThinker "$@" 
+else
+  CP=`cat $TGM_ROOT/.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s:",$2}'`
+  scala -cp "$CP:$TGM_ROOT/target/scala-2.10/classes" TrigramThinker "$@" 
+fi
