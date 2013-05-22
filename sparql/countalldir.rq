@@ -1,3 +1,3 @@
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX dir: <https://sites.google.com/site/ontology2013/tgmdir.owl#>
-SELECT (count(?dir) as ?c) WHERE { ?dir dir:isDirectory "true"^^xsd:boolean }
+SELECT (COUNT(?dir) AS ?c) WHERE { ?dir dir:isDirectory "true"^^xsd:boolean }
