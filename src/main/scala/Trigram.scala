@@ -135,9 +135,12 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
 object TrigramThinker {
 
-  def main(args: Array[String]) = {
-    println("TriGraM thinker")
+  val usage = """
+usage: Thinker [rule] [model]
+"""
 
-  }
+  def main(args: Array[String]) =
+    if (args.length < 2) println(usage)
+    else riotcmd.infer.main("--rdfs=" + args(0), args(1))
 
 }
