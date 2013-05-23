@@ -19,16 +19,18 @@ object Trigram {
 
   import tdb.tdbloader.{ main => loader }
   import tdb.tdbquery.{ main => query }
+  import tdb.tdbupdate.{ main => update }
   import core.Console
   import core.Store.defaultLocation
   import util.Version
 
   val usage = """
-usage: Trigram [-h] [-v] [-i] [-q]
+usage: Trigram [-h] [-v] [-i] [-q] [-u]
  -h,--help                print this message
  -v,--version             show program version
  -i,--import MODEL        import model
- -q,--query SPARQL        query repository
+ -q,--query SPARQL        http://www.w3.org/TR/sparql11-query/
+ -u,--update SPARQL       http://www.w3.org/TR/sparql11-update/
 
  no argument              enter console
 """
@@ -44,8 +46,10 @@ usage: Trigram [-h] [-v] [-i] [-q]
       case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
       case "-i" :: m :: tail => nextOption(map ++ Map('model -> m), tail)
       case "--import" :: m :: tail => nextOption(map ++ Map('model -> m), tail)
-      case "-q" :: q :: tail => nextOption(map ++ Map('sparql -> q), tail)
-      case "--query" :: q :: tail => nextOption(map ++ Map('sparql -> q), tail)
+      case "-q" :: q :: tail => nextOption(map ++ Map('query -> q), tail)
+      case "--query" :: q :: tail => nextOption(map ++ Map('query -> q), tail)
+      case "-u" :: u :: tail => nextOption(map ++ Map('update -> u), tail)
+      case "--update" :: u :: tail => nextOption(map ++ Map('update -> u), tail)
       case option :: tail => println("Incorrect option: " + option); sys.exit(1)
     }
   }
@@ -62,9 +66,12 @@ usage: Trigram [-h] [-v] [-i] [-q]
       else if (options.contains('model)) {
         val modelFile = options('model).toString
         loader("--loc=" + defaultLocation, modelFile)
-      } else if (options.contains('sparql)) {
-        val queryFile = options('sparql).toString
+      } else if (options.contains('query)) {
+        val queryFile = options('query).toString
         query("--loc=" + defaultLocation, "--query=" + queryFile)
+      } else if (options.contains('update)) {
+        val updateFile = options('update).toString
+        update("--loc=" + defaultLocation, "--query=" + updateFile)
       }
     }
   }
