@@ -17,15 +17,18 @@
  */
 object Trigram {
 
+  import tdb.tdbloader.{ main => loader }
+  import tdb.tdbquery.{ main => query }
   import core.Console
   import core.Store.defaultLocation
   import util.Version
 
   val usage = """
-usage: Trigram [-h] [-v] [-i]
+usage: Trigram [-h] [-v] [-i] [-q]
  -h,--help                print this message
  -v,--version             show program version
  -i,--import MODEL        import model
+ -q,--query SPARQL        query repository
 
  no argument              enter console
 """
@@ -39,8 +42,10 @@ usage: Trigram [-h] [-v] [-i]
       case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
       case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
       case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "-i" :: m :: tail => nextOption(map ++ Map('resource -> m), tail)
-      case "--import" :: m :: tail => nextOption(map ++ Map('resource -> m), tail)
+      case "-i" :: m :: tail => nextOption(map ++ Map('model -> m), tail)
+      case "--import" :: m :: tail => nextOption(map ++ Map('model -> m), tail)
+      case "-q" :: q :: tail => nextOption(map ++ Map('sparql -> q), tail)
+      case "--query" :: q :: tail => nextOption(map ++ Map('sparql -> q), tail)
       case option :: tail => println("Incorrect option: " + option); sys.exit(1)
     }
   }
@@ -54,9 +59,12 @@ usage: Trigram [-h] [-v] [-i]
 
       if (options.contains('help)) println(usage)
       else if (options.contains('version)) println(Version.get)
-      else if (options.contains('resource)) {
-        val modelFile = options('resource).toString
-        tdb.tdbloader.main("--loc=" + defaultLocation, modelFile)
+      else if (options.contains('model)) {
+        val modelFile = options('model).toString
+        loader("--loc=" + defaultLocation, modelFile)
+      } else if (options.contains('sparql)) {
+        val queryFile = options('sparql).toString
+        query("--loc=" + defaultLocation, "--query=" + queryFile)
       }
     }
   }
