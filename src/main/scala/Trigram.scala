@@ -71,7 +71,7 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
         query("--loc=" + defaultLocation, "--query=" + queryFile)
       } else if (options.contains('update)) {
         val updateFile = options('update).toString
-        update("--loc=" + defaultLocation, "--query=" + updateFile)
+        update("--loc=" + defaultLocation, "--update=" + updateFile)
       }
     }
   }
