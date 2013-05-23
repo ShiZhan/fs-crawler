@@ -80,7 +80,7 @@ object TrigramTranslator {
   val defaultSource = "."
   val defaultTarget = "model.rdf"
 
-  val usage = """
+  val usage = s"""
 usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -h,--help                Print this message
  -v,--version             Show program version
@@ -88,11 +88,10 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
                           meta-model (TBox) for given type [-t].
                           2. If not, the translator will translate specified
                           source [-i] as type [-t] to target model [-o] (ABox)
- -t,--type TYPE           Type of input resource [default: %s]
- -i,--input SOURCE        Input resource         [default: %s]
- -o,--output TARGET       Output target          [default: %s]
-""".format(defaultInType, defaultSource, defaultTarget) +
-    "\nsupported types:\n" + Modelers.getHelp
+ -t,--type TYPE           Type of input resource [default: $defaultInType]
+ -i,--input SOURCE        Input resource         [default: $defaultSource]
+ -o,--output TARGET       Output target          [default: $defaultTarget]
+""" + "\nsupported types:\n" + Modelers.getHelp
 
   type OptionMap = Map[Symbol, Any]
 
