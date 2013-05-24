@@ -6,6 +6,8 @@
  * 1. show help
  * 2. show version
  * 3. import specified model into local storage
+ * 4. query local storage
+ * 5. update local storage
  * default entry:
  *    enter console
  *
@@ -81,9 +83,9 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
 object TrigramTranslator {
 
   import modeler.Modelers
-  import modeler.Directory.{ key => defaultInType }
   import util.Version
 
+  val defaultInType = modeler.Directory.key
   val defaultSource = "."
   val defaultTarget = "model.rdf"
 
@@ -98,7 +100,9 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -t,--type TYPE           Type of input resource [default: $defaultInType]
  -i,--input SOURCE        Input resource         [default: $defaultSource]
  -o,--output TARGET       Output target          [default: $defaultTarget]
-""" + "\nsupported types:\n" + Modelers.getHelp
+
+ supported types:
+""" + Modelers.getHelp
 
   type OptionMap = Map[Symbol, Any]
 
@@ -150,7 +154,7 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
 object TrigramThinker {
 
   val usage = """
-usage: Thinker [schema] [model]
+usage: Thinker [TBox] [ABox]
 """
 
   def main(args: Array[String]) =
