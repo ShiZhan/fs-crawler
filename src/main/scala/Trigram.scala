@@ -150,7 +150,7 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
 object TrigramThinker {
 
   val usage = """
-usage: Thinker [rule] [model]
+usage: Thinker [schema] [model]
 """
 
   def main(args: Array[String]) =
