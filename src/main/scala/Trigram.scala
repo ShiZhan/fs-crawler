@@ -153,12 +153,14 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
 object TrigramThinker {
 
+  import core.Thinker
+
   val usage = """
-usage: Thinker [TBox] [ABox]
+usage: Thinker [TBox] [ABox] [output]
 """
 
   def main(args: Array[String]) =
-    if (args.length < 2) println(usage)
-    else riotcmd.infer.main("--rdfs=" + args(0), args(1))
+    if (args.length < 3) println(usage)
+    else Thinker.inferAndSave(args(0), args(1), args(2))
 
 }
