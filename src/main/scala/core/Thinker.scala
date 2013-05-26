@@ -5,6 +5,7 @@ package core
 
 import java.io.FileOutputStream
 import com.hp.hpl.jena.rdf.model.ModelFactory
+import com.hp.hpl.jena.reasoner.ReasonerRegistry
 import com.hp.hpl.jena.util.FileManager
 import util.Logging
 
@@ -15,9 +16,19 @@ import util.Logging
 object Thinker extends Logging {
 
   def infer(schema: String, data: String) = {
-    val s = FileManager.get.loadModel("file:" + schema)
-    val d = FileManager.get.loadModel("file:" + data)
+    val fm = FileManager.get
+    val s = fm.loadModel("file:" + schema)
+    val d = fm.loadModel("file:" + data)
     ModelFactory.createRDFSModel(s, d)
+  }
+
+  def inferOWL(schema: String, data: String) = {
+    val fm = FileManager.get
+    val s = fm.loadModel("file:" + schema)
+    val d = fm.loadModel("file:" + data)
+    val baseReasoner = ReasonerRegistry.getOWLReasoner
+    val reasoner = baseReasoner.bindSchema(s)
+    ModelFactory.createInfModel(reasoner, d)
   }
 
   def inferAndSave(schema: String, data: String, output: String) = {
