@@ -33,7 +33,8 @@ object Modelers {
     Directory.key -> Directory,
     DirectoryEx.key -> DirectoryEx,
     CimSchema.key -> CimSchema,
-    Archive.key -> Archive)
+    Archive.key -> Archive,
+    SevenZip.key -> SevenZip)
 
   def getHelp =
     modelerMap.map { case (s, m) => "  " + s + ":   \t" + m.usage }.mkString("\n")
