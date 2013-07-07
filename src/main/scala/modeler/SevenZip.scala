@@ -161,7 +161,6 @@ permissions and limitations under the License.
         .addProperty(OWL.onProperty, SeZ.crc)
         .addProperty(OWL2.maxCardinality, "1", XSDnonNegativeInteger)
         .addProperty(OWL2.onDataRange, XSD.hexBinary))
-      // http://www.w3.org/TR/xmlschema-2/#hexBinary
       .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
         .addProperty(OWL.onProperty, SeZ.method)
         .addProperty(OWL2.maxCardinality, "1", XSDnonNegativeInteger)
@@ -187,46 +186,22 @@ permissions and limitations under the License.
     else if (!f.isFile)
       logger.error("input source is not file")
     else {
-      logger.info("Model zipped file [{}]", f.getAbsolutePath)
+      logger.info("Model 7-Zip file content [{}]", f.getAbsolutePath)
 
+      val bFIS = new BufferedInputStream(new FileInputStream(f))
       val base = f.toURI.toString
       val ns = base + "#"
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix(key, ARC.ns)
+      m.setNsPrefix(key, SeZ.ns)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
-        .addProperty(DC.description, "TriGraM Archive model", XSDstring)
+        .addProperty(DC.description, "TriGraM 7-Zip Archive model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, ARC.Import)
+        .addProperty(OWL.imports, SeZ.Import)
 
-      val bFIS = new BufferedInputStream(new FileInputStream(f))
-      val aSF = new ArchiveStreamFactory
-      val aIS = aSF.createArchiveInputStream(bFIS)
-      val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
-      val archiveFile = m.createResource(ns + aIS, OWL2.NamedIndividual)
-        .addProperty(RDF.`type`, ARC.ArchiveFile)
-        .addProperty(ARC.name, f.getAbsolutePath, XSDnormalizedString)
-        .addProperty(ARC.size, f.length.toString, XSDunsignedLong)
-        .addProperty(ARC.lastModified, DateTime.get(f.lastModified), XSDdateTime)
-
-      for (e <- iAIS) {
-        val name = e.getName
-        val uri = ns + Hash.getMD5(name)
-        val size = e.getSize.toString
-        val lastM = DateTime.get(e.getLastModifiedDate)
-        val isDir = e.isDirectory.toString
-        val entry = m.createResource(uri, OWL2.NamedIndividual)
-          .addProperty(RDF.`type`, ARC.ArchiveEntry)
-          .addProperty(ARC.name, name, XSDnormalizedString)
-          .addProperty(ARC.size, size, XSDunsignedLong)
-          .addProperty(ARC.lastModified, lastM, XSDdateTime)
-          .addProperty(ARC.isDirectory, isDir, XSDboolean)
-
-        archiveFile.addProperty(ARC.hasEntry, entry)
-      }
 
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
