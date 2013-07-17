@@ -23,3 +23,16 @@ project/plugins/project/
 
 # eclipse
 .cache
+
+# LaTeX intermediate files
+*.aux
+*.log
+*.nav
+*.out
+*.pdf
+*.snm
+*.toc
+*.bbl
+*.blg
+*.vrb
+*.spl
