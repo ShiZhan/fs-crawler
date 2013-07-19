@@ -6,7 +6,6 @@
   <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\org.apache.jena\jena-core\jars\jena-core-2.10.0.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\org.apache.jena\jena-iri\jars\jena-iri-0.9.5.jar" kind="lib"></classpathentry>
-  <classpathentry path="d:\java\sbt\.ivy2\cache\log4j\log4j\bundles\log4j-1.2.16.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\xerces\xercesImpl\jars\xercesImpl-2.10.0.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\xml-apis\xml-apis\jars\xml-apis-1.4.01.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\org.apache.jena\jena-arq\jars\jena-arq-2.10.0.jar" kind="lib"></classpathentry>
@@ -14,8 +13,9 @@
   <classpathentry path="d:\java\sbt\.ivy2\cache\org.apache.httpcomponents\httpcore\jars\httpcore-4.2.2.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\commons-codec\commons-codec\jars\commons-codec-1.6.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\org.apache.jena\jena-tdb\jars\jena-tdb-0.10.0.jar" kind="lib"></classpathentry>
-  <classpathentry path="d:\java\sbt\.ivy2\cache\org.slf4j\slf4j-api\jars\slf4j-api-1.7.2.jar" kind="lib"></classpathentry>
-  <classpathentry path="d:\java\sbt\.ivy2\cache\org.slf4j\slf4j-simple\jars\slf4j-simple-1.7.2.jar" kind="lib"></classpathentry>
+  <classpathentry path="d:\java\sbt\.ivy2\cache\org.slf4j\slf4j-api\jars\slf4j-api-1.7.5.jar" kind="lib"></classpathentry>
+  <classpathentry path="d:\java\sbt\.ivy2\cache\org.slf4j\slf4j-log4j12\jars\slf4j-log4j12-1.7.5.jar" kind="lib"></classpathentry>
+  <classpathentry path="d:\java\sbt\.ivy2\cache\log4j\log4j\bundles\log4j-1.2.17.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\com.github.scala-incubator.io\scala-io-file_2.10\jars\scala-io-file_2.10-0.4.2.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\com.github.scala-incubator.io\scala-io-core_2.10\jars\scala-io-core_2.10-0.4.2.jar" kind="lib"></classpathentry>
   <classpathentry path="d:\java\sbt\.ivy2\cache\com.jsuereth\scala-arm_2.10\jars\scala-arm_2.10-1.3.jar" kind="lib"></classpathentry>
