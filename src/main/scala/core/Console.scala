@@ -29,6 +29,14 @@ object Console {
   private val consoleTitle = "TriGraM Console"
   private val consolePrompt = "# "
 
+  private val status =
+    "trigram version :  " + Version.get + "\n" +
+      "Jena core version: " + Jena.VERSION + "\n" +
+      "Jena core build:   " + Jena.BUILD_DATE + "\n" +
+      "Jena TDB version:  " + TDB.VERSION + "\n" +
+      "Jena TDB build:    " + TDB.BUILD_DATE + "\n" +
+      "data location:     " + new File(store.location).getAbsoluteFile
+
   def run: Unit = {
     println(consoleTitle)
     print(consolePrompt)
@@ -39,13 +47,7 @@ object Console {
           store.close; return
 
         case "help" :: Nil => consoleUsage
-        case "status" :: Nil =>
-          "trigram version :  " + Version.get + "\n" +
-            "Jena core version: " + Jena.VERSION + "\n" +
-            "Jena core build:   " + Jena.BUILD_DATE + "\n" +
-            "Jena TDB version:  " + TDB.VERSION + "\n" +
-            "Jena TDB build:    " + TDB.BUILD_DATE + "\n" +
-            "data location:     " + new File(store.location).getAbsoluteFile
+        case "status" :: Nil => status
 
         case "test" :: Nil => "internal test command"
 
