@@ -51,6 +51,7 @@ object Thinker extends Logging {
   }
 
   def inferAndSave(schema: String, data: String, output: String) = {
+    logger.info("infer input [{}]", schema + '+' + data)
     val infModel = inferRDFS(schema, data)
     val validity = infModel.validate
     if (validity.isValid) {
