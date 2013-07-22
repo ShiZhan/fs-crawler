@@ -1,5 +1,5 @@
 @echo off
-@echo automatic build up a simple test environment in %~dp0test
+@echo automatic build up a simple test environment in %cd%test
 
 setlocal
 
