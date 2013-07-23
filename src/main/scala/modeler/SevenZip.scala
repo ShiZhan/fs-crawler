@@ -201,7 +201,6 @@ permissions and limitations under the License.
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
         .addProperty(OWL.imports, SeZ.Import)
 
-
       // read text
 
       // translate to individual

@@ -55,11 +55,15 @@ object Thinker extends Logging {
     val infModel = inferRDFS(schema, data)
     val validity = infModel.validate
     if (validity.isValid) {
-      val m = infModel.getRawModel
+      val m = infModel.getDeductionsModel
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
       logger.info("[{}] triples written to [{}]", m.size, output)
-    } else
-      logger.info("inferred mode invalid")
+    } else {
+      logger.info("conflict:")
+      val reports = Iterator.continually { validity.getReports }.takeWhile(_.hasNext)
+      val detail = reports.map(_.next).mkString("\n")
+      logger.info(detail)
+    }
   }
 
 }
