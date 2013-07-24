@@ -50,12 +50,13 @@ object Thinker extends Logging {
     ModelFactory.createOntologyModel(ontModelSpec, m)
   }
 
-  def inferAndSave(schema: String, data: String, output: String) = {
+  def inferAndSave(schema: String, data: String) = {
     logger.info("infer input [{}]", schema + '+' + data)
     val infModel = inferRDFS(schema, data)
     val validity = infModel.validate
     if (validity.isValid) {
       val m = infModel.getDeductionsModel
+      val output = data + "-deduction.rdf"
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
       logger.info("[{}] triples written to [{}]", m.size, output)
     } else {

@@ -156,11 +156,11 @@ object TrigramThinker {
   import core.Thinker
 
   val usage = """
-usage: Thinker [TBox] [ABox] [output]
+usage: Thinker [TBox] [ABox]
 """
 
   def main(args: Array[String]) =
-    if (args.length < 3) println(usage)
-    else Thinker.inferAndSave(args(0), args(1), args(2))
+    if (args.length < 2) println(usage)
+    else Thinker.inferAndSave(args(0), args(1))
 
 }
