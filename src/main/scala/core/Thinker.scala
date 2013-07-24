@@ -56,7 +56,7 @@ object Thinker extends Logging {
     val validity = infModel.validate
     if (validity.isValid) {
       val m = infModel.getDeductionsModel
-      val output = data + "-deduction.rdf"
+      val output = data + "-deduction.owl"
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
       logger.info("[{}] triples written to [{}]", m.size, output)
     } else {

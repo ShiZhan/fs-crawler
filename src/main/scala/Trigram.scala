@@ -87,7 +87,7 @@ object TrigramTranslator {
 
   val defaultInType = modeler.Directory.key
   val defaultSource = "."
-  val defaultTarget = "model.rdf"
+  val defaultTarget = "model.owl"
 
   val usage = s"""
 usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
