@@ -55,6 +55,8 @@ How to use
 5.  use "translator" to translate various resources to semantic models,
     the models can then be imported into trigram.
 
+6.  use "thinker" to do inference on semantic models (Work In Progress).
+
 NOTE:
 
 1.  the loaders will read classpath from .classpath file generated in
