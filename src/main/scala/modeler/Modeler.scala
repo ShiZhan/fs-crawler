@@ -33,6 +33,7 @@ object Modelers {
     Directory.key -> Directory,
     DirectoryEx.key -> DirectoryEx,
     CimSchema.key -> CimSchema,
+    CimSchemaEx.key -> CimSchemaEx,
     Archive.key -> Archive)
 
   def getHelp =

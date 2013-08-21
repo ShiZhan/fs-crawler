@@ -13,32 +13,11 @@ import util.{ Logging, Version, DateTime }
  * @author ShiZhan
  * translate DMTF CIM schema [http://dmtf.org/standards/cim] into TriGraM model
  */
-object CIM {
+object CimSchemaEx extends Modeler with Logging {
 
-  val path = "https://sites.google.com/site/ontology2013/"
-  val local = "tgm" + CimSchema.key + ".owl"
-  val base = path + local
-  val ns = base + "#"
+  override val key = "cimex"
 
-  def ##(name: String) = ns + name
-
-  private val dataType: Map[String, Resource] = Map(
-    "string" -> XSD.xstring,
-    "boolean" -> XSD.xboolean,
-    "datetime" -> XSD.dateTime,
-    "uint16" -> XSD.unsignedShort,
-    "uint32" -> XSD.unsignedLong,
-    "uint64" -> XSD.unsignedInt)
-
-  def ^^(t: String) = dataType.getOrElse(t, XSD.anyURI)
-
-}
-
-object CimSchema extends Modeler with Logging {
-
-  override val key = "cim"
-
-  override val usage = "Translate DMTF CIM schema from http://dmtf.org/standards/cim"
+  override val usage = "Translate DMTF CIM schema to a group of inter-related models"
 
   def tBox = {
     logger.info("prepare meta-model for CIM schema translation")
@@ -47,7 +26,7 @@ object CimSchema extends Modeler with Logging {
   }
 
   def aBox(input: String, output: String) = {
-    logger.info("translate [{}] from [{}] to [{}]", key, input, output)
+    logger.info("translate [{}] from [{}] to model group [{}]", key, input, output)
 
     val xml = XML.loadFile(input)
     val cim = xml \\ "CIM"
@@ -65,6 +44,9 @@ object CimSchema extends Modeler with Logging {
 
   def readValue(ns: NodeSeq, att: String, attName: String) =
     ("" /: ns) { (r, n) => if ((n \ att).text == attName) n.text else r }
+
+  def outputTo(p: String, f: String) =
+    new java.io.FileOutputStream(new java.io.File(p, f))
 
   def cim2rdf(cim: NodeSeq, output: String) = {
     val classes = cim \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
@@ -92,48 +74,111 @@ See the License for the specific language governing
 permissions and limitations under the License. 
 """
 
-    val m = ModelFactory.createDefaultModel
-    m.setNsPrefix(key, CIM.ns)
-    m.createResource(CIM.base, OWL.Ontology)
+    // all models should be put here
+    val uriPrefix = "https://sites.google.com/site/ontology2013/"
+
+    // prepare for the base model
+    val baseFN = "CIM_Base.owl"
+    val baseURI = uriPrefix + baseFN
+    val baseNS = baseURI + "#"
+    val baseABRV = "cb"
+    val baseStore = new java.io.FileOutputStream(new java.io.File(output, baseFN))
+
+    // create & fill the model
+    val baseModel = ModelFactory.createDefaultModel
+    baseModel.setNsPrefix(baseABRV, baseNS)
+    baseModel.createResource(baseURI, OWL.Ontology)
       .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM model of CIM schema", XSDstring)
+      .addProperty(DC.description, "CIM Base model", XSDstring)
       .addProperty(DT.license, license, XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
-    val cMeta = m.createResource(CIM ## "CIM_Meta_Class", OWL.Class)
-    val cAsso = m.createResource(CIM ## "CIM_Association", OWL.Class)
+    val cMeta = baseModel.createResource(baseNS + "CIM_Meta_Class", OWL.Class)
+    val cAsso = baseModel.createResource(baseNS + "CIM_Association", OWL.Class)
       .addProperty(RDFS.subClassOf, cMeta)
 
+    // generate base URI import resource for later use
+    val baseImport = baseModel.createResource(baseURI)
+
+    // write base concepts to one model, for direct import later.
+    baseModel.write(baseStore, "RDF/XML-ABBREV")
+
+    // prepare for the properties model
+    val propFN = "CIM_Properties.owl"
+    val propURI = uriPrefix + propFN
+    val propNS = propURI + "#"
+    val propABRV = "prop"
+    val propStore = new java.io.FileOutputStream(new java.io.File(output, propFN))
+
+    // create & fill the model
+    val propModel = ModelFactory.createDefaultModel
+    propModel.setNsPrefix(propABRV, propNS)
+    propModel.createResource(propURI, OWL.Ontology)
+      .addProperty(DC.date, DateTime.get, XSDdateTime)
+      .addProperty(DC.description, "CIM Property model", XSDstring)
+      .addProperty(DT.license, license, XSDstring)
+      .addProperty(OWL.versionInfo, Version.get, XSDstring)
+      .addProperty(OWL.imports, baseImport)
+
     for (oP <- objProps) {
-      m.createProperty(CIM ## oP)
+      propModel.createProperty(propNS + oP)
         .addProperty(RDF.`type`, OWL.ObjectProperty)
         .addProperty(RDFS.range, cMeta)
         .addProperty(RDFS.domain, cAsso)
     }
 
     for (dP <- datProps) {
-      m.createProperty(CIM ## dP)
+      propModel.createProperty(propNS + dP)
         .addProperty(RDF.`type`, OWL.DatatypeProperty)
         .addProperty(RDFS.domain, cMeta)
     }
 
-    for (c <- classes) {
-      val cName = (c \ "@NAME").text
-      val cClass = m.createResource(CIM ## cName, OWL.Class)
+    // generate properties URI import resource for later use
+    val propImport = propModel.createResource(propURI)
 
+    // write all properties to one model, for direct reference later.
+    propModel.write(propStore, "RDF/XML-ABBREV")
+
+    // iterate though all classes and create individual models accordingly.
+    // CIM 2.37.0 contains [1799] classes
+    for (c <- classes) {
+      // gathering data from input XML model
+      val cName = (c \ "@NAME").text
       val cSuperName = (c \ "@SUPERCLASS").text
       val cQualifier = c \ "QUALIFIER"
       val cIsAsso = "true" == readValue(cQualifier, "@NAME", "Association")
-      val cSuperReso =
-        if (cSuperName.isEmpty)
-          if (cIsAsso) cAsso else cMeta
-        else
-          m.getResource(CIM ## cSuperName)
-
       val cComment = readValue(cQualifier, "@NAME", "Description")
       val cVersion = readValue(cQualifier, "@NAME", "Version")
 
-      cClass.addProperty(RDFS.subClassOf, cSuperReso)
+      logger.info("modelling class [{}]", cName)
+
+      // prepare class model parameters
+      val cFN = cName + ".owl"
+      val cURI = uriPrefix + cFN
+      val cNS = cURI + "#"
+      val cABRV = cName toLowerCase
+      val cStore = new java.io.FileOutputStream(new java.io.File(output, cFN))
+
+      // create & initialize the model
+      val m = ModelFactory.createDefaultModel
+
+      val cSuperRes =
+        if (cSuperName.isEmpty)
+          if (cIsAsso) cAsso else cMeta
+        else
+          m.getResource(uriPrefix + cSuperName + ".owl")
+
+      m.setNsPrefix(cABRV, cNS)
+      m.createResource(cURI, OWL.Ontology)
+        .addProperty(DC.date, DateTime.get, XSDdateTime)
+        .addProperty(DC.description, s"TriGraM model of $cName", XSDstring)
+        .addProperty(DT.license, license, XSDstring)
+        .addProperty(OWL.versionInfo, Version.get, XSDstring)
+        .addProperty(OWL.imports, cSuperRes)
+
+      val cClass = m.createResource(cNS + cName, OWL.Class)
+
+      cClass.addProperty(RDFS.subClassOf, cSuperRes)
         .addLiteral(RDFS.comment, cComment)
         .addLiteral(OWL.versionInfo, cVersion)
 
@@ -141,8 +186,8 @@ permissions and limitations under the License.
       for (cR <- cReferences) {
         val cRName = (cR \ "@NAME").text
         val cRClass = (cR \ "@REFERENCECLASS").text
-        val cObjProp = m.getProperty(CIM ## cRName)
-        val cRefReso = m.getResource(CIM ## cRClass)
+        val cObjProp = m.getProperty(propNS + cRName)
+        val cRefReso = m.getResource(uriPrefix + cRClass + ".owl")
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cObjProp)
           .addProperty(OWL.allValuesFrom, cRefReso)
@@ -163,7 +208,7 @@ permissions and limitations under the License.
       for (cP <- cProperties) {
         val cPName = (cP \ "@NAME").text
         val cPType = (cP \ "@TYPE").text
-        val cDatProp = m.getProperty(CIM ## cPName)
+        val cDatProp = m.getProperty(propNS + cPName)
         val cDatType = CIM ^^ cPType
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cDatProp)
@@ -180,15 +225,13 @@ permissions and limitations under the License.
           .addProperty(OWL2.annotatedSource, cClass)
           .addProperty(OWL2.annotatedTarget, r)
       }
+
+      // write the model
+      m.write(cStore, "RDF/XML-ABBREV")
+
+      logger.info("[{}] triples written to [{}]", m.size, cFN)
     }
 
-    if (m.isEmpty)
-      logger.info("Nothing translated")
-    else {
-      m.write(new java.io.FileOutputStream(output), "RDF/XML-ABBREV")
-
-      logger.info("[{}] triples generated", m.size)
-    }
   }
 
 }
