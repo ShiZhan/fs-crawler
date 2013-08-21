@@ -3,7 +3,7 @@
  */
 package modeler
 
-import java.io.{File, FileOutputStream}
+import java.io.{ File, FileOutputStream }
 import scala.xml.{ XML, NodeSeq }
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Resource }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
@@ -13,6 +13,10 @@ import util.{ Logging, Version, DateTime }
 /**
  * @author ShiZhan
  * translate DMTF CIM schema [http://dmtf.org/standards/cim] into TriGraM model
+ * 
+ * rather than put all the concepts and properties as a whole, this modeler will
+ * translate the all-in-one XML schema into individual yet dependent models.
+ * so the model group can be sized according to specific application domain.
  */
 object CimSchemaEx extends Modeler with Logging {
 
@@ -171,9 +175,9 @@ permissions and limitations under the License.
       // create & initialize the model
       val m = ModelFactory.createDefaultModel
 
-      val cSuperRes =
+      val cImport =
         if (cSuperName.isEmpty)
-          if (cIsAsso) cAsso else cMeta
+          baseImport
         else
           m.getResource(uriPrefix + cSuperName + ".owl")
 
@@ -183,9 +187,14 @@ permissions and limitations under the License.
         .addProperty(DC.description, s"TriGraM model of $cName", XSDstring)
         .addProperty(DT.license, license, XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, cSuperRes)
+        .addProperty(OWL.imports, cImport)
 
       val cClass = m.createResource(cNS + cName, OWL.Class)
+      val cSuperRes =
+        if (cSuperName.isEmpty)
+          if (cIsAsso) cAsso else cMeta
+        else
+          m.getResource(uriPrefix + cSuperName + ".owl#" + cSuperName)
 
       cClass.addProperty(RDFS.subClassOf, cSuperRes)
         .addLiteral(RDFS.comment, cComment)
@@ -196,7 +205,7 @@ permissions and limitations under the License.
         val cRName = (cR \ "@NAME").text
         val cRClass = (cR \ "@REFERENCECLASS").text
         val cObjProp = m.getProperty(propNS + cRName)
-        val cRefReso = m.getResource(uriPrefix + cRClass + ".owl")
+        val cRefReso = m.getResource(uriPrefix + cRClass + ".owl#" + cRClass)
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cObjProp)
           .addProperty(OWL.allValuesFrom, cRefReso)
