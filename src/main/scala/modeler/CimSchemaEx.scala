@@ -3,6 +3,7 @@
  */
 package modeler
 
+import java.io.{File, FileOutputStream}
 import scala.xml.{ XML, NodeSeq }
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Resource }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
@@ -45,9 +46,6 @@ object CimSchemaEx extends Modeler with Logging {
   def readValue(ns: NodeSeq, att: String, attName: String) =
     ("" /: ns) { (r, n) => if ((n \ att).text == attName) n.text else r }
 
-  def outputTo(p: String, f: String) =
-    new java.io.FileOutputStream(new java.io.File(p, f))
-
   def cim2rdf(cim: NodeSeq, output: String) = {
     val classes = cim \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
     val rNodes = classes.flatMap(c => c \ "PROPERTY.REFERENCE")
@@ -74,15 +72,26 @@ See the License for the specific language governing
 permissions and limitations under the License. 
 """
 
-    // all models should be put here
+    // all models should be put here: web and local repository
     val uriPrefix = "https://sites.google.com/site/ontology2013/"
+    val givenPath = new File(output)
+    val repo =
+      if (givenPath.exists)
+        if (givenPath.isFile)
+          ""
+        else
+          output
+      else {
+        givenPath.mkdir
+        output
+      }
 
     // prepare for the base model
     val baseFN = "CIM_Base.owl"
     val baseURI = uriPrefix + baseFN
     val baseNS = baseURI + "#"
     val baseABRV = "cb"
-    val baseStore = new java.io.FileOutputStream(new java.io.File(output, baseFN))
+    val baseStore = new FileOutputStream(new File(repo, baseFN))
 
     // create & fill the model
     val baseModel = ModelFactory.createDefaultModel
@@ -108,7 +117,7 @@ permissions and limitations under the License.
     val propURI = uriPrefix + propFN
     val propNS = propURI + "#"
     val propABRV = "prop"
-    val propStore = new java.io.FileOutputStream(new java.io.File(output, propFN))
+    val propStore = new FileOutputStream(new File(repo, propFN))
 
     // create & fill the model
     val propModel = ModelFactory.createDefaultModel
@@ -157,7 +166,7 @@ permissions and limitations under the License.
       val cURI = uriPrefix + cFN
       val cNS = cURI + "#"
       val cABRV = cName toLowerCase
-      val cStore = new java.io.FileOutputStream(new java.io.File(output, cFN))
+      val cStore = new FileOutputStream(new File(repo, cFN))
 
       // create & initialize the model
       val m = ModelFactory.createDefaultModel
