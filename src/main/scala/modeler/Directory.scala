@@ -43,6 +43,57 @@ object DIR {
 
 }
 
+object DirectoryVocabulary {
+
+  private val uriPrefix = "https://sites.google.com/site/ontology2013/"
+  private val depName = List("CIM_Base", "CIM_Properties",
+    "CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
+  private val depRes = depName.map {
+    case name => {
+      val depFN = name + ".owl"
+      val depURI = uriPrefix + depFN
+      val depNS = depURI + "#"
+      name -> (depFN, depURI, depNS)
+    }
+  } toMap
+  private def getFN(name: String) = depRes.getOrElse(name, ("", "", ""))._1
+  private def getURI(name: String) = depRes.getOrElse(name, ("", "", ""))._2
+  private def getNS(name: String) = depRes.getOrElse(name, ("", "", ""))._3
+
+  private val model = ModelFactory.createDefaultModel
+
+  /*
+   * directory imports & concepts
+   */
+  val baseNS = getNS("CIM_Base")
+  val CIM_Base = model.createResource(getURI("CIM_Base"))
+  val CIM_Meta_Class = model.createResource(baseNS + "CIM_Meta_Class")
+  val CIM_Association = model.createResource(baseNS + "CIM_Association")
+
+  val CIM_DataFile = model.createResource(getURI("CIM_DataFile"))
+  val CIM_Directory = model.createResource(getURI("CIM_Directory"))
+  val CIM_DirectoryContainsFile = model.createResource(getURI("CIM_DirectoryContainsFile"))
+
+  /*
+   * directory vocabulary
+   */
+  val propNS = getNS("CIM_Properties")
+
+  // object property
+  val group = model.createProperty(propNS + "GroupComponent")
+  val part = model.createProperty(propNS + "PartComponent")
+
+  // data type property
+  val name = model.createProperty(propNS + "name")
+  val size = model.createProperty(propNS + "size")
+  val lastModified = model.createProperty(propNS + "lastModified")
+  val canRead = model.createProperty(propNS + "canRead")
+  val canWrite = model.createProperty(propNS + "canWrite")
+  val canExecute = model.createProperty(propNS + "canExecute")
+  val isDirectory = model.createProperty(propNS + "isDirectory")
+
+}
+
 object Directory extends Modeler with Logging {
 
   override val key = "dir"
