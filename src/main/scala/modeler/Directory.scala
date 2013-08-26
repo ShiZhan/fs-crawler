@@ -66,13 +66,19 @@ object DirectoryVocabulary {
    * directory imports & concepts
    */
   val baseNS = getNS("CIM_Base")
-  val CIM_Base = model.createResource(getURI("CIM_Base"))
+  val importBase = model.createResource(getURI("CIM_Base"))
   val CIM_Meta_Class = model.createResource(baseNS + "CIM_Meta_Class")
   val CIM_Association = model.createResource(baseNS + "CIM_Association")
 
-  val CIM_DataFile = model.createResource(getURI("CIM_DataFile"))
-  val CIM_Directory = model.createResource(getURI("CIM_Directory"))
-  val CIM_DirectoryContainsFile = model.createResource(getURI("CIM_DirectoryContainsFile"))
+  val importDataFile = model.createResource(getURI("CIM_DataFile"))
+  val importDirectory = model.createResource(getURI("CIM_Directory"))
+  val importDirectoryContainsFile = model.createResource(getURI("CIM_DirectoryContainsFile"))
+  val CIM_DataFile = model.createResource(
+    getNS("CIM_DataFile") + "CIM_DataFile")
+  val CIM_Directory = model.createResource(
+    getNS("CIM_Directory") + "CIM_Directory")
+  val CIM_DirectoryContainsFile = model.createResource(
+    getNS("CIM_DirectoryContainsFile") + "CIM_DirectoryContainsFile")
 
   /*
    * directory vocabulary

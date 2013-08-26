@@ -13,7 +13,7 @@ import util.{ Logging, Version, DateTime }
 /**
  * @author ShiZhan
  * translate DMTF CIM schema [http://dmtf.org/standards/cim] into TriGraM model
- * 
+ *
  * rather than put all the concepts and properties as a whole, this modeler will
  * translate the all-in-one XML schema into individual yet dependent models.
  * so the model group can be sized according to specific application domain.
