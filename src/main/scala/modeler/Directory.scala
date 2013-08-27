@@ -45,45 +45,33 @@ object DIR {
 
 object DirectoryVocabulary {
 
-  private val uriPrefix = "https://sites.google.com/site/ontology2013/"
-  private val depName = List("CIM_Base", "CIM_Properties",
-    "CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
-  private val depRes = depName.map {
-    case name => {
-      val depFN = name + ".owl"
-      val depURI = uriPrefix + depFN
-      val depNS = depURI + "#"
-      name -> (depFN, depURI, depNS)
-    }
-  } toMap
-  private def getFN(name: String) = depRes.getOrElse(name, ("", "", ""))._1
-  private def getURI(name: String) = depRes.getOrElse(name, ("", "", ""))._2
-  private def getNS(name: String) = depRes.getOrElse(name, ("", "", ""))._3
-
   private val model = ModelFactory.createDefaultModel
 
   /*
    * directory imports & concepts
    */
-  val baseNS = getNS("CIM_Base")
-  val importBase = model.createResource(getURI("CIM_Base"))
-  val CIM_Meta_Class = model.createResource(baseNS + "CIM_Meta_Class")
-  val CIM_Association = model.createResource(baseNS + "CIM_Association")
+  private val uriPrefix = "https://sites.google.com/site/ontology2013/"
 
-  val importDataFile = model.createResource(getURI("CIM_DataFile"))
-  val importDirectory = model.createResource(getURI("CIM_Directory"))
-  val importDirectoryContainsFile = model.createResource(getURI("CIM_DirectoryContainsFile"))
-  val CIM_DataFile = model.createResource(
-    getNS("CIM_DataFile") + "CIM_DataFile")
-  val CIM_Directory = model.createResource(
-    getNS("CIM_Directory") + "CIM_Directory")
-  val CIM_DirectoryContainsFile = model.createResource(
-    getNS("CIM_DirectoryContainsFile") + "CIM_DirectoryContainsFile")
+  private val depRes = List(
+    "CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
+    .map {
+      case name => {
+        val depURI = uriPrefix + name + ".owl"
+        val depImport = model.createResource(depURI)
+        val depClass = model.createResource(depURI + "#" + name)
+        name -> (depImport, depClass)
+      }
+    } toMap
+
+  private val unknown = model.createResource
+
+  def IMPORT(name: String) = depRes.getOrElse(name, (unknown, unknown))._1
+  def CLASS(name: String) = depRes.getOrElse(name, (unknown, unknown))._2
 
   /*
    * directory vocabulary
    */
-  val propNS = getNS("CIM_Properties")
+  private val propNS = uriPrefix + "CIM_Properties.owl#"
 
   private val propertyList = List(
     "AvailableRequestedStates", "AvailableSpace", "BlockSize", "Caption",
@@ -101,6 +89,7 @@ object DirectoryVocabulary {
     .map(n => n -> model.createProperty(propNS + n)) toMap
 
   private val invalidProperty = model.createProperty(propNS + "invalidProperty")
+
   def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
 }
 
