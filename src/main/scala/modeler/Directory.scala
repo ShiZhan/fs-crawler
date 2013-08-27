@@ -85,19 +85,23 @@ object DirectoryVocabulary {
    */
   val propNS = getNS("CIM_Properties")
 
-  // object property
-  val group = model.createProperty(propNS + "GroupComponent")
-  val part = model.createProperty(propNS + "PartComponent")
+  private val propertyList = List(
+    "AvailableRequestedStates", "AvailableSpace", "BlockSize", "Caption",
+    "CasePreserved", "CaseSensitive", "ClusterSize", "CodeSet", "CommunicationStatus",
+    "CompressionMethod", "CreationClassName", "CreationDate", "CSCreationClassName",
+    "CSName", "Description", "DetailedStatus", "ElementName", "EnabledDefault",
+    "EnabledState", "EncryptionMethod", "Executable", "FileSize", "FileSystemSize",
+    "FileSystemType", "FSCreationClassName", "FSName", "Generation", "GroupComponent",
+    "HealthState", "InstallDate", "InstanceID", "InUseCount", "IsFixedSize",
+    "LastAccessed", "LastModified", "MaxFileNameLength", "Name", "NumberOfFiles",
+    "OperatingStatus", "OperationalStatus", "OtherEnabledState", "OtherPersistenceType",
+    "PartComponent", "PersistenceType", "PrimaryStatus", "Readable", "ReadOnly",
+    "RequestedState", "ResizeIncrement", "Root", "Status", "StatusDescriptions",
+    "TimeOfLastStateChange", "TransitioningToState", "Writeable")
+    .map(n => n -> model.createProperty(propNS + n)) toMap
 
-  // data type property
-  val name = model.createProperty(propNS + "name")
-  val size = model.createProperty(propNS + "size")
-  val lastModified = model.createProperty(propNS + "lastModified")
-  val canRead = model.createProperty(propNS + "canRead")
-  val canWrite = model.createProperty(propNS + "canWrite")
-  val canExecute = model.createProperty(propNS + "canExecute")
-  val isDirectory = model.createProperty(propNS + "isDirectory")
-
+  private val invalidProperty = model.createProperty(propNS + "invalidProperty")
+  def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
 }
 
 object Directory extends Modeler with Logging {
