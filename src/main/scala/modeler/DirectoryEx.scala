@@ -19,7 +19,7 @@ object DirectoryEx extends Modeler with Logging {
 
   override val usage = "Translate *HUGE* directory structure"
 
-  def tBox = Directory.tBox
+  def tBox = Directory.tBox // obsolete
 
   def aBox(input: String, output: String) = {
     val p = Path(new File(input))
@@ -28,14 +28,16 @@ object DirectoryEx extends Modeler with Logging {
       logger.info("creating model for *HUGE* directory [{}]", p.path)
 
       def headerT =
-        (TBoxBase: String, base: String, version: String, dateTime: String) =>
+        (base: String, version: String, dateTime: String) =>
           s"""<rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:dir="$TBoxBase#">
+    xmlns:prop="https://sites.google.com/site/ontology2013/CIM_Properties.owl#">
   <owl:Ontology rdf:about="$base">
-    <owl:imports rdf:resource="$TBoxBase"/>
+    <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_DirectoryContainsFile.owl"/>
+    <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_DataFile.owl"/>
+    <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_Directory.owl"/>
     <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >$version</owl:versionInfo>
     <dc:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -48,11 +50,11 @@ object DirectoryEx extends Modeler with Logging {
     <dir:contain rdf:resource="$base#$subNodeId"/>"""
 
       def individualT =
-        (base: String, nodeId: String, TBoxBase: String, contains: String,
-          name: String, size: Long, lastModified: String, isDirectory: Boolean,
+        (base: String, nodeId: String, cim_class: String,
+          name: String, size: Long, lastModified: String,
           canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
   <owl:NamedIndividual rdf:about="$base#$nodeId">
-    <rdf:type rdf:resource="$TBoxBase#Object"/>
+    <rdf:type rdf:resource="$cim_class"/>
     <dir:name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
     >$name</dir:name>
     <dir:size rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
@@ -65,9 +67,6 @@ object DirectoryEx extends Modeler with Logging {
     >$canWrite</dir:canWrite>
     <dir:canExecute rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
     >$canExecute</dir:canExecute>
-    <dir:isDirectory rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$isDirectory</dir:isDirectory>
-  $contains
   </owl:NamedIndividual>
 """
 
@@ -77,7 +76,7 @@ object DirectoryEx extends Modeler with Logging {
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
       val base = p.toURI.toString
-      val header = headerT(DIR.propNS, base, Version.get, DateTime.get)
+      val header = headerT(base, Version.get, DateTime.get)
 
       m.write(header)
 
@@ -104,8 +103,8 @@ object DirectoryEx extends Modeler with Logging {
         val size = if (i.size.nonEmpty) i.size.get else 0
         val dateTime = DateTime.get(i.lastModified)
 
-        val individual = individualT(base, nodeId, DIR.propNS, contains, name,
-          size, dateTime, isDirectory, i.canRead, i.canWrite, i.canExecute)
+        val individual = individualT(base, nodeId, DIR.CLASS("CIM_DataFile").toString,
+          name, size, dateTime, i.canRead, i.canWrite, i.canExecute)
 
         m.write(individual)
 

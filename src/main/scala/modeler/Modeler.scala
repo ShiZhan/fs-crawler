@@ -20,7 +20,7 @@ package modeler
 trait Modeler {
   val key: String = "base"
   val usage: String = null
-  def tBox: Unit
+  def tBox: Unit // obsolete
   def aBox(input: String, output: String): Unit
 }
 
