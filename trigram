@@ -7,14 +7,12 @@ case "`uname`" in
   Darwin) darwin=true;;
 esac
 
-# for querying big models
-JAVA_OPTS=" -Xms1024m -Xmx1024m "$JAVA_OPTS
 TGM_ROOT=$(dirname `which $0`)
 
 if $cygwin; then
   CP=`cat $TGM_ROOT/.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s;",$4}'`
-  scala -cp "$CP;`cygpath -alpm $TGM_ROOT:$TGM_ROOT`/target/scala-2.10/classes" Trigram "$@" 
+  scala -J-Xmx1g -cp "$CP;`cygpath -alpm $TGM_ROOT:$TGM_ROOT`/target/scala-2.10/classes" Trigram "$@" 
 else
   CP=`cat $TGM_ROOT/.classpath | grep 'kind="lib"' | awk -F '"' '{printf"%s:",$4}'`
-  scala -cp "$CP:$TGM_ROOT:$TGM_ROOT/target/scala-2.10/classes" Trigram "$@" 
+  scala -J-Xmx1g -cp "$CP:$TGM_ROOT:$TGM_ROOT/target/scala-2.10/classes" Trigram "$@" 
 fi

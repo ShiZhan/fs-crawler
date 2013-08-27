@@ -5,7 +5,7 @@
 @echo off
 setlocal
 @REM for translating big in-memory models
-set JAVA_OPTS=%JAVA_OPTS% -Xms1024m -Xmx1024m
+set JAVA_OPTS=%JAVA_OPTS% -Xmx1g
 
 set CP=
 set TGM_ROOT=%~dp0
