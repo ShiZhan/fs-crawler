@@ -12,7 +12,7 @@ import util.{ Logging, Version, DateTime, Hash }
 
 /**
  * @author ShiZhan
- * translate directory structure into TriGraM model
+ * translate directory structure into CIM model
  */
 object DIR {
 
