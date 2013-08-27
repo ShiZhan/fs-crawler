@@ -16,35 +16,6 @@ import util.{ Logging, Version, DateTime, Hash }
  */
 object DIR {
 
-  val local = "tgm" + Directory.key + ".owl"
-  val base = "https://sites.google.com/site/ontology2013/" + local
-  val ns = base + "#"
-
-  private val model = ModelFactory.createDefaultModel
-  val Import = model.createResource(base)
-
-  /*
-   * directory vocabulary
-   */
-  // class
-  val Object = model.createResource(ns + "Object")
-
-  // object property
-  val contain = model.createProperty(ns + "contain")
-
-  // data type property
-  val name = model.createProperty(ns + "name")
-  val size = model.createProperty(ns + "size")
-  val lastModified = model.createProperty(ns + "lastModified")
-  val canRead = model.createProperty(ns + "canRead")
-  val canWrite = model.createProperty(ns + "canWrite")
-  val canExecute = model.createProperty(ns + "canExecute")
-  val isDirectory = model.createProperty(ns + "isDirectory")
-
-}
-
-object DirectoryVocabulary {
-
   private val model = ModelFactory.createDefaultModel
 
   /*
@@ -71,7 +42,7 @@ object DirectoryVocabulary {
   /*
    * directory vocabulary
    */
-  private val propNS = uriPrefix + "CIM_Properties.owl#"
+  val propNS = uriPrefix + "CIM_Properties.owl#"
 
   private val propertyList = List(
     "AvailableRequestedStates", "AvailableSpace", "BlockSize", "Caption",
@@ -100,74 +71,7 @@ object Directory extends Modeler with Logging {
   override val usage = "Translate directory structure"
 
   def tBox = {
-    logger.info("initialize core model")
-
-    val license = """
-Copyright 2013 Shi.Zhan.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0.
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing
-permissions and limitations under the License. 
-"""
-
-    val m = ModelFactory.createDefaultModel
-
-    m.setNsPrefix(key, DIR.ns)
-    m.createResource(DIR.base, OWL.Ontology)
-      .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM Directory model", XSDstring)
-      .addProperty(DT.license, license, XSDstring)
-      .addProperty(OWL.versionInfo, Version.get, XSDstring)
-
-    m.createResource(DIR.contain.getURI, OWL.ObjectProperty)
-
-    List(DIR.name, DIR.size, DIR.lastModified,
-      DIR.canRead, DIR.canWrite, DIR.canExecute, DIR.isDirectory)
-      .foreach(p => m.createResource(p.getURI, OWL.DatatypeProperty))
-
-    m.createResource(DIR.Object.getURI, OWL.Class)
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.contain)
-        .addProperty(OWL.allValuesFrom, DIR.Object))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.name)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.normalizedString))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.size)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.unsignedLong))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.lastModified)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.dateTime))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.canRead)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.xboolean))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.canWrite)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.xboolean))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.canExecute)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.xboolean))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, DIR.isDirectory)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.xboolean))
-
-    m.write(new FileOutputStream(DIR.local), "RDF/XML-ABBREV")
-
-    logger.info("created [{}] triples in TBox [{}]", m.size, DIR.local)
+    logger.info("initialize core model [obsolete]")
   }
 
   def aBox(input: String, output: String) = {
@@ -181,12 +85,14 @@ permissions and limitations under the License.
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix(key, DIR.ns)
+      m.setNsPrefix("prop", DIR.propNS)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM Directory model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, DIR.Import)
+        .addProperty(OWL.imports, DIR.IMPORT("CIM_Directory"))
+        .addProperty(OWL.imports, DIR.IMPORT("CIM_DataFile"))
+        .addProperty(OWL.imports, DIR.IMPORT("CIM_DirectoryContainsFile"))
 
       def genNodeUri(p: Path) = ns + Hash.getMD5(p.path)
 
@@ -197,17 +103,30 @@ permissions and limitations under the License.
         val canRead = p.canRead.toString
         val canWrite = p.canWrite.toString
         val canExecute = p.canExecute.toString
-        val isDirectory = p.isDirectory.toString
 
-        m.createResource(genNodeUri(p), OWL2.NamedIndividual)
-          .addProperty(RDF.`type`, DIR.Object)
-          .addProperty(DIR.name, name, XSDnormalizedString)
-          .addProperty(DIR.size, size, XSDunsignedLong)
-          .addProperty(DIR.lastModified, lastMod, XSDdateTime)
-          .addProperty(DIR.canRead, canRead, XSDboolean)
-          .addProperty(DIR.canWrite, canWrite, XSDboolean)
-          .addProperty(DIR.canExecute, canExecute, XSDboolean)
-          .addProperty(DIR.isDirectory, isDirectory, XSDboolean)
+        if (p.isDirectory) {
+          val dirUri = genNodeUri(p)
+          val dirRes = m.createResource(dirUri, OWL2.NamedIndividual)
+            .addProperty(RDF.`type`, DIR.CLASS("CIM_Directory"))
+            .addProperty(DIR.PROP("Name"), name, XSDnormalizedString)
+            .addProperty(DIR.PROP("FileSize"), size, XSDunsignedLong)
+            .addProperty(DIR.PROP("LastModified"), lastMod, XSDdateTime)
+            .addProperty(DIR.PROP("Readable"), canRead, XSDboolean)
+            .addProperty(DIR.PROP("Writeable"), canWrite, XSDboolean)
+            .addProperty(DIR.PROP("Executable"), canExecute, XSDboolean)
+          m.createResource(dirUri + "_dcf", OWL2.NamedIndividual)
+            .addProperty(RDF.`type`, DIR.CLASS("CIM_DirectoryContainsFile"))
+            .addProperty(DIR.PROP("GroupComponent"), dirRes)
+        } else {
+          m.createResource(genNodeUri(p), OWL2.NamedIndividual)
+            .addProperty(RDF.`type`, DIR.CLASS("CIM_DataFile"))
+            .addProperty(DIR.PROP("Name"), name, XSDnormalizedString)
+            .addProperty(DIR.PROP("FileSize"), size, XSDunsignedLong)
+            .addProperty(DIR.PROP("LastModified"), lastMod, XSDdateTime)
+            .addProperty(DIR.PROP("Readable"), canRead, XSDboolean)
+            .addProperty(DIR.PROP("Writeable"), canWrite, XSDboolean)
+            .addProperty(DIR.PROP("Executable"), canExecute, XSDboolean)
+        }
       }
 
       assignAttributes(p)
@@ -225,9 +144,9 @@ permissions and limitations under the License.
       for (i <- ps) {
         assignAttributes(i)
 
-        val dir = m.getResource(genNodeUri(i.parent.get))
+        val dirRef = m.getResource(genNodeUri(i.parent.get) + "_dcf")
         val current = m.getResource(genNodeUri(i))
-        val stmt = m.createStatement(dir, DIR.contain, current)
+        val stmt = m.createStatement(dirRef, DIR.PROP("PartComponent"), current)
         m.add(stmt)
 
         progress += 1

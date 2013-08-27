@@ -77,7 +77,7 @@ object DirectoryEx extends Modeler with Logging {
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
       val base = p.toURI.toString
-      val header = headerT(DIR.base, base, Version.get, DateTime.get)
+      val header = headerT(DIR.propNS, base, Version.get, DateTime.get)
 
       m.write(header)
 
@@ -104,7 +104,7 @@ object DirectoryEx extends Modeler with Logging {
         val size = if (i.size.nonEmpty) i.size.get else 0
         val dateTime = DateTime.get(i.lastModified)
 
-        val individual = individualT(base, nodeId, DIR.base, contains, name,
+        val individual = individualT(base, nodeId, DIR.propNS, contains, name,
           size, dateTime, isDirectory, i.canRead, i.canWrite, i.canExecute)
 
         m.write(individual)
