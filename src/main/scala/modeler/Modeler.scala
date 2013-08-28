@@ -12,16 +12,14 @@ package modeler
  *
  *    key:       unique identifier
  *    usage:     help information
- *    tBox:      build TBOX for modeling this category
- *    aBox:      build ABOX for modeling this category
+ *    run:      build ABOX for modeling this category
  *
  *    then add this modeler into modelerMap
  */
 trait Modeler {
   val key: String = "base"
   val usage: String = null
-  def tBox: Unit // obsolete
-  def aBox(input: String, output: String): Unit
+  def run(input: String, output: String): Unit
 }
 
 /**
@@ -39,10 +37,7 @@ object Modelers {
   def getHelp =
     modelerMap.map { case (s, m) => "  " + s + ":   \t" + m.usage }.mkString("\n")
 
-  def getTBox(t: String) =
-    modelerMap.getOrElse(t, Unknown).tBox
-
-  def getABox(t: String, i: String, o: String) =
-    modelerMap.getOrElse(t, Unknown).aBox(i, o)
+  def run(t: String, i: String, o: String) =
+    modelerMap.getOrElse(t, Unknown).run(i, o)
 
 }

@@ -35,11 +35,7 @@ object Archive extends Modeler with Logging {
 
   override val usage = "Translate archive file contents (ar|cpio|jar|tar|zip)"
 
-  def tBox = {
-    logger.info("initialize core model") // obsolete
-  }
-
-  def aBox(input: String, output: String) = {
+  def run(input: String, output: String) = {
     val f = new File(input)
     if (!f.exists)
       logger.error("input source does not exist")

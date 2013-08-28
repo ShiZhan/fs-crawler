@@ -19,9 +19,7 @@ object DirectoryEx extends Modeler with Logging {
 
   override val usage = "Translate *HUGE* directory structure"
 
-  def tBox = Directory.tBox // obsolete
-
-  def aBox(input: String, output: String) = {
+  def run(input: String, output: String) = {
     val p = Path(new File(input))
 
     if (p.isDirectory) {

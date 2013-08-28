@@ -93,10 +93,6 @@ object TrigramTranslator {
 usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
  -h,--help                Print this message
  -v,--version             Show program version
- -m,--meta                1. If this flag is set, the translator will generate
-                          meta-model (TBox) for given type [-t].
-                          2. If not, the translator will translate specified
-                          source [-i] as type [-t] to target model [-o] (ABox)
  -t,--type TYPE           Type of input resource [default: $defaultInType]
  -i,--input SOURCE        Input resource         [default: $defaultSource]
  -o,--output TARGET       Output target          [default: $defaultTarget]
@@ -113,8 +109,6 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
       case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
       case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
       case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "-m" :: tail => nextOption(map ++ Map('meta -> true), tail)
-      case "--meta" :: tail => nextOption(map ++ Map('meta -> true), tail)
       case "-t" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
       case "--type" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
       case "-i" :: i :: tail => nextOption(map ++ Map('source -> i), tail)
@@ -132,20 +126,14 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
 
     if (args.length == 0 | options.contains('help)) println(usage)
     else if (options.contains('version)) println(Version.get)
-    else if (options.contains('meta)) {
-      val t = options.getOrElse('intype, defaultInType).toString
-
-      println("generating TBox [%s]".format(t))
-
-      Modelers.getTBox(t)
-    } else {
+    else {
       val t = options.getOrElse('intype, defaultInType).toString
       val i = options.getOrElse('source, defaultSource).toString
       val o = options.getOrElse('target, defaultTarget).toString
 
       println("translating [%s] as [%s] to ABox [%s]".format(i, t, o))
 
-      Modelers.getABox(t, i, o)
+      Modelers.run(t, i, o)
     }
   }
 

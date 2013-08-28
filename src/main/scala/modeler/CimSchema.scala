@@ -40,13 +40,7 @@ object CimSchema extends Modeler with Logging {
 
   override val usage = "Translate DMTF CIM schema from http://dmtf.org/standards/cim"
 
-  def tBox = {
-    logger.info("prepare meta-model for CIM schema translation")
-
-    logger.info("TODO: create a meta-model to translate the detail of qualifiers")
-  }
-
-  def aBox(input: String, output: String) = {
+  def run(input: String, output: String) = {
     logger.info("translate [{}] from [{}] to [{}]", key, input, output)
 
     val xml = XML.loadFile(input)

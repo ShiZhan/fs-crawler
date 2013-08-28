@@ -70,11 +70,7 @@ object Directory extends Modeler with Logging {
 
   override val usage = "Translate directory structure"
 
-  def tBox = {
-    logger.info("initialize core model [obsolete]")
-  }
-
-  def aBox(input: String, output: String) = {
+  def run(input: String, output: String) = {
     val p = Path(new File(input))
 
     if (p.isDirectory) {

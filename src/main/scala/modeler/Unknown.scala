@@ -12,8 +12,6 @@ import util.Logging
  */
 object Unknown extends Modeler with Logging {
 
-  def tBox = logger.info("TBox type unkown")
-
-  def aBox(i: String, o: String) = logger.info("ABox type unkown")
+  def run(i: String, o: String) = logger.info("Modeler type unkown")
 
 }
