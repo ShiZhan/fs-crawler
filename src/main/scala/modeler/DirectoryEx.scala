@@ -33,7 +33,10 @@ object DirectoryEx extends Modeler with Logging {
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:prop="https://sites.google.com/site/ontology2013/CIM_Properties.owl#">
+    xmlns:prop="https://sites.google.com/site/ontology2013/CIM_Properties.owl#"
+    xmlns:dir="https://sites.google.com/site/ontology2013/CIM_Directory.owl#"
+    xmlns:df="https://sites.google.com/site/ontology2013/CIM_DataFile.owl#"
+    xmlns:dcf="https://sites.google.com/site/ontology2013/CIM_DirectoryContainsFile.owl#">
   <owl:Ontology rdf:about="$base">
     <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_DirectoryContainsFile.owl"/>
     <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_DataFile.owl"/>
@@ -46,29 +49,37 @@ object DirectoryEx extends Modeler with Logging {
     >$dateTime</dc:date>
   </owl:Ontology>"""
 
-      def containT = (base: String, subNodeId: String) => s"""
-    <dir:contain rdf:resource="$base#$subNodeId"/>"""
-
-      def individualT =
-        (base: String, nodeId: String, cim_class: String,
+      def logicalFileT =
+        (base: String, nodeId: String, cimClass: String,
           name: String, size: Long, lastModified: String,
           canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
   <owl:NamedIndividual rdf:about="$base#$nodeId">
-    <rdf:type rdf:resource="$cim_class"/>
-    <dir:name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
-    >$name</dir:name>
-    <dir:size rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
-    >$size</dir:size>
-    <dir:lastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
-    >$lastModified</dir:lastModified>
-    <dir:canRead rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canRead</dir:canRead>
-    <dir:canWrite rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canWrite</dir:canWrite>
-    <dir:canExecute rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canExecute</dir:canExecute>
+    <rdf:type rdf:resource="$cimClass"/>
+    <prop:Name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
+    >$name</prop:Name>
+    <prop:FileSize rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
+    >$size</prop:FileSize>
+    <prop:LastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
+    >$lastModified</prop:LastModified>
+    <prop:Readable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canRead</prop:Readable>
+    <prop:Writeable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canWrite</prop:Writeable>
+    <prop:Executable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canExecute</prop:Executable>
   </owl:NamedIndividual>
 """
+
+      def partComponentT = (base: String, subNodeId: String) => s"""
+    <df:PartComponent rdf:resource="$base#$subNodeId"/>"""
+
+      def directoryContainsFileT =
+        (base: String, dcfId: String, partComponent: String, dirId: String) => s"""
+  <dcf:CIM_DirectoryContainsFile rdf:about="$base#$dcfId">
+    $partComponent
+    <prop:GroupComponent rdf:resource="$base#$dirId"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  </dcf:CIM_DirectoryContainsFile>"""
 
       val footerT = "</rdf:RDF>"
 
@@ -94,19 +105,25 @@ object DirectoryEx extends Modeler with Logging {
         val nodeId = Hash.getMD5(i.path)
 
         val isDirectory = i.isDirectory
-        val contains = if (isDirectory) {
-          val iSub = i * "*"
-          iSub.map(s => containT(base, Hash.getMD5(s.path))).mkString
-        } else ""
 
+        val cimClass =
+          if (isDirectory) DIR.CLASS("CIM_Directory")
+          else DIR.CLASS("CIM_DataFile")
         val name = escape(i.name)
         val size = if (i.size.nonEmpty) i.size.get else 0
         val dateTime = DateTime.get(i.lastModified)
 
-        val individual = individualT(base, nodeId, DIR.CLASS("CIM_DataFile").toString,
+        val logicalFile = logicalFileT(base, nodeId, cimClass.toString,
           name, size, dateTime, i.canRead, i.canWrite, i.canExecute)
 
-        m.write(individual)
+        val directoryConainsFile = if (isDirectory) {
+          val iSub = i * "*"
+          val partComponent =
+            iSub.map(s => partComponentT(base, Hash.getMD5(s.path))).mkString
+          directoryContainsFileT(base, nodeId + "_dcf", partComponent, nodeId)
+        } else ""
+
+        m.write(logicalFile + directoryConainsFile)
 
         progress += 1
         if (progress % delta == 0)
