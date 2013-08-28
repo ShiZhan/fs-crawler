@@ -28,25 +28,6 @@ import util.{ Logging, Version, DateTime, Hash }
  * translate archive file contents into semantic model
  * can be used with Directory modeler to reveal the detail of a file system
  */
-object ARC {
-
-  val local = "tgm" + Archive.key + ".owl"
-  val base = "https://sites.google.com/site/ontology2013/" + local
-  val ns = base + "#"
-
-  private val model = ModelFactory.createDefaultModel
-  val Import = model.createResource(base)
-
-  val ArchiveFile = model.createResource(ns + "ArchiveFile")
-  val ArchiveEntry = model.createResource(ns + "ArchiveEntry")
-
-  val hasEntry = model.createProperty(ns + "hasEntry")
-  val name = model.createProperty(ns + "name")
-  val size = model.createProperty(ns + "size")
-  val lastModified = model.createProperty(ns + "lastModified")
-  val isDirectory = model.createProperty(ns + "isDirectory")
-
-}
 
 object Archive extends Modeler with Logging {
 
@@ -55,74 +36,7 @@ object Archive extends Modeler with Logging {
   override val usage = "Translate archive file contents (ar|cpio|jar|tar|zip)"
 
   def tBox = {
-    logger.info("initialize core model")
-
-    val license = """
-Copyright 2013 Shi.Zhan.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0.
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing
-permissions and limitations under the License. 
-"""
-
-    val m = ModelFactory.createDefaultModel
-
-    m.setNsPrefix(key, ARC.ns)
-    m.createResource(ARC.base, OWL.Ontology)
-      .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM Archive model", XSDstring)
-      .addProperty(DT.license, license, XSDstring)
-      .addProperty(OWL.versionInfo, Version.get, XSDstring)
-
-    m.createResource(ARC.hasEntry.getURI, OWL.ObjectProperty)
-    List(ARC.name, ARC.size, ARC.lastModified, ARC.isDirectory)
-      .foreach(p => m.createResource(p.getURI, OWL.DatatypeProperty))
-
-    m.createResource(ARC.ArchiveFile.getURI, OWL.Class)
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.hasEntry)
-        .addProperty(OWL.allValuesFrom, ARC.ArchiveEntry))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.name)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.normalizedString))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.size)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.unsignedLong))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.lastModified)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.dateTime))
-
-    m.createResource(ARC.ArchiveEntry.getURI, OWL.Class)
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.name)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.normalizedString))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.size)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.unsignedLong))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.lastModified)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.dateTime))
-      .addProperty(RDFS.subClassOf, m.createResource(OWL.Restriction)
-        .addProperty(OWL.onProperty, ARC.isDirectory)
-        .addProperty(OWL2.cardinality, "1", XSDnonNegativeInteger)
-        .addProperty(OWL2.onDataRange, XSD.xboolean))
-
-    m.write(new java.io.FileOutputStream(ARC.local), "RDF/XML-ABBREV")
-
-    logger.info("created [{}] triples in TBox [{}]", m.size, ARC.local)
+    logger.info("initialize core model") // obsolete
   }
 
   def aBox(input: String, output: String) = {
@@ -139,12 +53,14 @@ permissions and limitations under the License.
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix(key, ARC.ns)
+      m.setNsPrefix("prop", DIR.propNS)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM Archive model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, ARC.Import)
+        .addProperty(OWL.imports, DIR.IMPORT("CIM_Directory"))
+        .addProperty(OWL.imports, DIR.IMPORT("CIM_DataFile"))
+        .addProperty(OWL.imports, DIR.IMPORT("CIM_DirectoryContainsFile"))
 
       val bFIS = new BufferedInputStream(new FileInputStream(f))
       val aSF = new ArchiveStreamFactory
@@ -152,25 +68,30 @@ permissions and limitations under the License.
       val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
       val archiveFile = m.createResource(ns + aIS, OWL2.NamedIndividual)
-        .addProperty(RDF.`type`, ARC.ArchiveFile)
-        .addProperty(ARC.name, f.getAbsolutePath, XSDnormalizedString)
-        .addProperty(ARC.size, f.length.toString, XSDunsignedLong)
-        .addProperty(ARC.lastModified, DateTime.get(f.lastModified), XSDdateTime)
+        .addProperty(RDF.`type`, DIR.CLASS("CIM_Directory"))
+        .addProperty(DIR.PROP("Name"), f.getAbsolutePath, XSDnormalizedString)
+        .addProperty(DIR.PROP("FileSize"), f.length.toString, XSDunsignedLong)
+        .addProperty(DIR.PROP("LastModified"), DateTime.get(f.lastModified), XSDdateTime)
+
+      val containFile = m.createResource(ns + aIS + "_dcf", OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, DIR.CLASS("CIM_DirectoryContainsFile"))
+        .addProperty(DIR.PROP("GroupComponent"), archiveFile)
 
       for (e <- iAIS) {
         val name = e.getName
         val uri = ns + Hash.getMD5(name)
         val size = e.getSize.toString
         val lastM = DateTime.get(e.getLastModifiedDate)
-        val isDir = e.isDirectory.toString
+        val cimClass =
+          if (e.isDirectory) DIR.CLASS("CIM_Directory")
+          else DIR.CLASS("CIM_DataFile")
         val entry = m.createResource(uri, OWL2.NamedIndividual)
-          .addProperty(RDF.`type`, ARC.ArchiveEntry)
-          .addProperty(ARC.name, name, XSDnormalizedString)
-          .addProperty(ARC.size, size, XSDunsignedLong)
-          .addProperty(ARC.lastModified, lastM, XSDdateTime)
-          .addProperty(ARC.isDirectory, isDir, XSDboolean)
+          .addProperty(RDF.`type`, cimClass)
+          .addProperty(DIR.PROP("Name"), name, XSDnormalizedString)
+          .addProperty(DIR.PROP("FileSize"), size, XSDunsignedLong)
+          .addProperty(DIR.PROP("LastModified"), lastM, XSDdateTime)
 
-        archiveFile.addProperty(ARC.hasEntry, entry)
+        containFile.addProperty(DIR.PROP("PartComponent"), entry)
       }
 
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
