@@ -1,0 +1,9 @@
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prop: <https://sites.google.com/site/ontology2013/CIM_Properties.owl#>
+SELECT ?fname
+  WHERE {
+    ?file prop:Name ?fname.
+	?dcf prop:PartComponent ?file.
+	?dcf prop:GroupComponent ?folder.
+	?folder prop:Name "test"^^xsd:normalizedString
+  }
