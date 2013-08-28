@@ -14,7 +14,8 @@ thsis](http://cdmd.cnki.com.cn/Article/CDMD-10487-1012268216.htm).
 
 Preliminary version was developed as a simple XQuery program during
 2011.2\~2011.8, and can be run from xquilla command line, the input
-source file is from DMTF CIM model and must be compiled by OpenPegasus,
+source file is from [DMTF CIM](http://www.dmtf.org/standards/cim)
+model and must be compiled by OpenPegasus,
 and the basic idea is to use translated semantic model in helping
 storage resource management.
 
@@ -55,6 +56,8 @@ How to use
 5.  use "translator" to translate various resources to semantic models,
     the models can then be imported into trigram.
 
+	translate cim model first, for that will be used in other computer system models.
+	
 6.  use "thinker" to do inference on semantic models (Work In Progress).
 
 NOTE:

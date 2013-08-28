@@ -131,7 +131,7 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
       val i = options.getOrElse('source, defaultSource).toString
       val o = options.getOrElse('target, defaultTarget).toString
 
-      println("translating [%s] as [%s] to ABox [%s]".format(i, t, o))
+      println("translating [%s] as [%s] to model [%s]".format(i, t, o))
 
       Modelers.run(t, i, o)
     }
