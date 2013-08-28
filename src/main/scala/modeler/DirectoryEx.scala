@@ -71,7 +71,7 @@ object DirectoryEx extends Modeler with Logging {
 """
 
       def partComponentT = (base: String, subNodeId: String) => s"""
-    <df:PartComponent rdf:resource="$base#$subNodeId"/>"""
+    <prop:PartComponent rdf:resource="$base#$subNodeId"/>"""
 
       def directoryContainsFileT =
         (base: String, dcfId: String, partComponent: String, dirId: String) => s"""
@@ -83,13 +83,36 @@ object DirectoryEx extends Modeler with Logging {
 
       val footerT = "</rdf:RDF>"
 
+      def nodeT(uri: String, node: Path) = {
+        val nodeId = Hash.getMD5(node.path)
+
+        val isDirectory = node.isDirectory
+
+        val cimClass =
+          if (isDirectory) DIR.CLASS("CIM_Directory")
+          else DIR.CLASS("CIM_DataFile")
+        val name = escape(node.name)
+        val size = if (node.size.nonEmpty) node.size.get else 0
+        val dateTime = DateTime.get(node.lastModified)
+
+        val logicalFile = logicalFileT(uri, nodeId, cimClass.toString,
+          name, size, dateTime, node.canRead, node.canWrite, node.canExecute)
+
+        val directoryConainsFile = if (isDirectory) {
+          val iSub = node * "*"
+          val partComponent =
+            iSub.map(s => partComponentT(uri, Hash.getMD5(s.path))).mkString
+          directoryContainsFileT(uri, nodeId + "_dcf", partComponent, nodeId)
+        } else ""
+        logicalFile + directoryConainsFile
+      }
+
       val m = new BufferedWriter(
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
       val base = p.toURI.toString
-      val header = headerT(base, Version.get, DateTime.get)
 
-      m.write(header)
+      m.write(headerT(base, Version.get, DateTime.get) + nodeT(base, p))
 
       logger.info("reading directory ...")
 
@@ -102,28 +125,7 @@ object DirectoryEx extends Modeler with Logging {
       logger.info("[{}] objects", total)
 
       for (i <- ps) {
-        val nodeId = Hash.getMD5(i.path)
-
-        val isDirectory = i.isDirectory
-
-        val cimClass =
-          if (isDirectory) DIR.CLASS("CIM_Directory")
-          else DIR.CLASS("CIM_DataFile")
-        val name = escape(i.name)
-        val size = if (i.size.nonEmpty) i.size.get else 0
-        val dateTime = DateTime.get(i.lastModified)
-
-        val logicalFile = logicalFileT(base, nodeId, cimClass.toString,
-          name, size, dateTime, i.canRead, i.canWrite, i.canExecute)
-
-        val directoryConainsFile = if (isDirectory) {
-          val iSub = i * "*"
-          val partComponent =
-            iSub.map(s => partComponentT(base, Hash.getMD5(s.path))).mkString
-          directoryContainsFileT(base, nodeId + "_dcf", partComponent, nodeId)
-        } else ""
-
-        m.write(logicalFile + directoryConainsFile)
+        m.write(nodeT(base, i))
 
         progress += 1
         if (progress % delta == 0)
