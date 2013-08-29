@@ -21,17 +21,25 @@ object CimVocabulary {
   private val model = ModelFactory.createDefaultModel
 
   /*
-   * naming convention for CIM/OWL name space, local file name & persistent URI
+   * naming convention for CIM/OWL name space, local file name & persistent URL
    */
   val NS = "https://sites.google.com/site/ontology2013/"
   def FN(n: String) = n + ".owl"
-  def URI(n: String) = NS + FN(n)
+  def PURL(n: String) = NS + FN(n)
+  def URI(n: String) = NS + n
+
+  private val all = "CIM_All"
+  private val base = "CIM_Base"
+  val FN_ALL = FN(all)
+  val FN_BASE = FN(base)
+  val PURL_ALL = NS + FN_ALL
+  val PURL_BASE = NS + FN_BASE
 
   /*
    * imports
    */
-  val ALL = model.createResource(URI("CIM_All"))
-  val BASE = model.createResource(URI("CIM_Base"))
+  val ALL = model.createResource(PURL_ALL)
+  val BASE = model.createResource(PURL_BASE)
   // all imports of other individual sub-models will be defined while been used
 
   /*

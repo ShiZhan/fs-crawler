@@ -221,7 +221,7 @@ permissions and limitations under the License.
         val cPName = (cP \ "@NAME").text
         val cPType = (cP \ "@TYPE").text
         val cDatProp = m.getProperty(propNS + cPName)
-        val cDatType = CIM ^^ cPType
+        val cDatType = CimSchema.readDataType(cPType)
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cDatProp)
           .addProperty(OWL.allValuesFrom, cDatType)
