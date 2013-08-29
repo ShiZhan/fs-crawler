@@ -21,14 +21,27 @@ object CimVocabulary {
   private val model = ModelFactory.createDefaultModel
 
   /*
-   * imports & concepts
+   * naming convention for CIM/OWL name space, local file name & persistent URI
    */
-  private val NS = "https://sites.google.com/site/ontology2013/"
+  val NS = "https://sites.google.com/site/ontology2013/"
+  def FN(n: String) = n + ".owl"
+  def URI(n: String) = NS + FN(n)
 
-  val BASE = model.createResource(NS + "CIM_Base.owl")
+  /*
+   * imports
+   */
+  val ALL = model.createResource(URI("CIM_All"))
+  val BASE = model.createResource(URI("CIM_Base"))
+  // all imports of other individual sub-models will be defined while been used
+
+  /*
+   * concepts
+   */
+  // meta concepts
   val Meta_Class = model.createResource(NS + "CIM_Meta_Class")
   val Association = model.createResource(NS + "CIM_Association")
 
+  // CIM schema content
   private val depRes = List(
     "CIM_AbstractBasedOn", "CIM_AbstractComponent", "CIM_AbstractElementAllocatedFromPool",
     "CIM_AbstractElementStatisticalData", "CIM_AbstractIndicationSubscription", "CIM_AbstractProtocolControllerForDevice",
