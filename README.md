@@ -50,20 +50,27 @@ How to use
 
 3.  use "compile" or "package".
 
-4.  use loaders in "bin" to execute, "trigram" for \*NIX and
+4.  use "copy-dependencies" to collect all jars into "target\scala-2.10\lib\".
+
+5.  use loaders in "bin" to execute, "trigram" for \*NIX and
     "trigram.cmd" for Windows.
 
-5.  use "translator" to translate various resources to semantic models,
+6.  use "translator" to translate various resources to semantic models,
     the models can then be imported into trigram.
 
-	translate cim model first, for that will be used in other computer system models.
-	
-6.  use "thinker" to do inference on semantic models (Work In Progress).
+    translate cim model first, for that will be used in other computer system models.
+
+    CIM_All.owl: all-in-one version, complete huge model.
+
+    CIM_Base.owl ...: model group, can be imported when required.
+
+7.  SPARQL
+
+8.  use "thinker" to do inference on semantic models (Work In Progress).
 
 NOTE:
 
-1.  the loaders will read classpath from .classpath file generated in
-    step 1.
+1.  the loaders will search dependencies in "target\scala-2.10\lib\" (step 4).
 
 2.  The sbt ivy cache should be located in a folder without spaces in
     its name.
