@@ -1,5 +1,0 @@
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX dir: <https://sites.google.com/site/ontology2013/tgmdir.owl#>
-SELECT ?dirname
-	WHERE { ?dir dir:name ?dirname.
-            ?dir dir:isDirectory "true"^^xsd:boolean }
