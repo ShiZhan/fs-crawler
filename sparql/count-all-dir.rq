@@ -1,0 +1,6 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX cim: <https://sites.google.com/site/ontology2013/>
+SELECT (COUNT(?dir) AS ?c)
+  WHERE {
+    ?dir rdf:type cim:CIM_Directory
+  }
