@@ -7,12 +7,14 @@ import scala.xml.{ XML, NodeSeq }
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Resource }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import modeler.{ CimVocabulary => CIM }
 import util.{ Logging, Version, DateTime }
+
+import modeler.{ CimVocabulary => CIM }
 
 /**
  * @author ShiZhan
  * translate DMTF CIM schema [http://dmtf.org/standards/cim] into TriGraM model
+ * model local file is defined in CimVocabulary as CIM.FN_ALL
  */
 object CimSchema extends Modeler with Logging {
 
