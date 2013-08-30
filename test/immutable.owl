@@ -9,13 +9,13 @@
 ]>
 
 
-<rdf:RDF xmlns="http://www.semanticweb.org/ontologies/new-concept-test#"
-     xml:base="http://www.semanticweb.org/ontologies/new-concept-test"
+<rdf:RDF xmlns="http://www.semanticweb.org/ontologies/2013/immutable#"
+     xml:base="http://www.semanticweb.org/ontologies/2013/immutable"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-    <owl:Ontology rdf:about="http://www.semanticweb.org/ontologies/new-concept-test">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/ontologies/2013/immutable">
         <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_LogicalFile.owl"/>
     </owl:Ontology>
     
@@ -32,40 +32,41 @@
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/new-concept-test#ImmutableLogicalFile -->
+    <!-- http://www.semanticweb.org/ontologies/2013/immutable#immutable -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/new-concept-test#ImmutableLogicalFile">
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2013/immutable#immutable">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="https://sites.google.com/site/ontology2013/CIM_LogicalFile.owl#CIM_LogicalFile"/>
+                    <rdf:Description rdf:about="https://sites.google.com/site/ontology2013/CIM_LogicalFile"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/CIM_Properties.owl#Writeable"/>
+                        <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/Writeable"/>
                         <owl:hasValue rdf:datatype="&xsd;boolean">false</owl:hasValue>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="https://sites.google.com/site/ontology2013/CIM_LogicalFile.owl#CIM_LogicalFile"/>
+        <rdfs:subClassOf rdf:resource="https://sites.google.com/site/ontology2013/CIM_LogicalFile"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/ontologies/2013/immutable#mutable"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/new-concept-test#MutableLogicalFile -->
+    <!-- http://www.semanticweb.org/ontologies/2013/immutable#mutable -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/new-concept-test#MutableLogicalFile">
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2013/immutable#mutable">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="https://sites.google.com/site/ontology2013/CIM_LogicalFile.owl#CIM_LogicalFile"/>
+                    <rdf:Description rdf:about="https://sites.google.com/site/ontology2013/CIM_LogicalFile"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/CIM_Properties.owl#Writeable"/>
+                        <owl:onProperty rdf:resource="https://sites.google.com/site/ontology2013/Writeable"/>
                         <owl:hasValue rdf:datatype="&xsd;boolean">true</owl:hasValue>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="https://sites.google.com/site/ontology2013/CIM_LogicalFile.owl#CIM_LogicalFile"/>
+        <rdfs:subClassOf rdf:resource="https://sites.google.com/site/ontology2013/CIM_LogicalFile"/>
     </owl:Class>
 </rdf:RDF>
 
