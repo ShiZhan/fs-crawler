@@ -3,11 +3,6 @@
  */
 package core
 
-import java.io.File
-import com.hp.hpl.jena.Jena
-import com.hp.hpl.jena.tdb.TDB
-import util.Version
-
 /**
  * @author ShiZhan
  * 2013
@@ -30,12 +25,14 @@ object Console {
   private val consolePrompt = "# "
 
   private val status =
-    "trigram version :  " + Version.get + "\n" +
-      "Jena core version: " + Jena.VERSION + "\n" +
-      "Jena core build:   " + Jena.BUILD_DATE + "\n" +
-      "Jena TDB version:  " + TDB.VERSION + "\n" +
-      "Jena TDB build:    " + TDB.BUILD_DATE + "\n" +
-      "data location:     " + new File(store.location).getAbsoluteFile
+    "Java:    " + System.getProperty("java.version") + "\n" +
+      "Scala:   " + scala.util.Properties.versionMsg + "\n" +
+      "TriGraM: " + util.Version.get + "\n" +
+      "Jena core & build: " + com.hp.hpl.jena.Jena.VERSION +
+      " " + com.hp.hpl.jena.Jena.BUILD_DATE + "\n" +
+      "Jena TDB & build:  " + com.hp.hpl.jena.tdb.TDB.VERSION +
+      " " + com.hp.hpl.jena.tdb.TDB.BUILD_DATE + "\n" +
+      "data location: " + new java.io.File(store.location).getAbsoluteFile
 
   def run: Unit = {
     println(consoleTitle)
