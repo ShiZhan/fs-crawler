@@ -31,10 +31,8 @@ object DirectoryEx extends Modeler with Logging {
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:prop="https://sites.google.com/site/ontology2013/CIM_Properties.owl#"
-    xmlns:dir="https://sites.google.com/site/ontology2013/CIM_Directory.owl#"
-    xmlns:df="https://sites.google.com/site/ontology2013/CIM_DataFile.owl#"
-    xmlns:dcf="https://sites.google.com/site/ontology2013/CIM_DirectoryContainsFile.owl#">
+    xmlns:cim="https://sites.google.com/site/ontology2013/"
+    xmlns:dir="$base#">
   <owl:Ontology rdf:about="$base">
     <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_DirectoryContainsFile.owl"/>
     <owl:imports rdf:resource="https://sites.google.com/site/ontology2013/CIM_DataFile.owl"/>
@@ -53,31 +51,31 @@ object DirectoryEx extends Modeler with Logging {
           canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
   <owl:NamedIndividual rdf:about="$base#$nodeId">
     <rdf:type rdf:resource="$cimClass"/>
-    <prop:Name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
-    >$name</prop:Name>
-    <prop:FileSize rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
-    >$size</prop:FileSize>
-    <prop:LastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
-    >$lastModified</prop:LastModified>
-    <prop:Readable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canRead</prop:Readable>
-    <prop:Writeable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canWrite</prop:Writeable>
-    <prop:Executable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canExecute</prop:Executable>
+    <cim:Name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
+    >$name</cim:Name>
+    <cim:FileSize rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
+    >$size</cim:FileSize>
+    <cim:LastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
+    >$lastModified</cim:LastModified>
+    <cim:Readable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canRead</cim:Readable>
+    <cim:Writeable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canWrite</cim:Writeable>
+    <cim:Executable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
+    >$canExecute</cim:Executable>
   </owl:NamedIndividual>
 """
 
       def partComponentT = (base: String, subNodeId: String) => s"""
-    <prop:PartComponent rdf:resource="$base#$subNodeId"/>"""
+    <cim:PartComponent rdf:resource="$base#$subNodeId"/>"""
 
       def directoryContainsFileT =
         (base: String, dcfId: String, partComponent: String, dirId: String) => s"""
-  <dcf:CIM_DirectoryContainsFile rdf:about="$base#$dcfId">
+  <cim:CIM_DirectoryContainsFile rdf:about="$base#$dcfId">
     $partComponent
-    <prop:GroupComponent rdf:resource="$base#$dirId"/>
+    <cim:GroupComponent rdf:resource="$base#$dirId"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
-  </dcf:CIM_DirectoryContainsFile>"""
+  </cim:CIM_DirectoryContainsFile>"""
 
       val footerT = "</rdf:RDF>"
 
@@ -87,13 +85,15 @@ object DirectoryEx extends Modeler with Logging {
         val isDirectory = node.isDirectory
 
         val cimClass =
-          if (isDirectory) DIR.CLASS("CIM_Directory")
-          else DIR.CLASS("CIM_DataFile")
+          if (isDirectory)
+            "https://sites.google.com/site/ontology2013/CIM_Directory"
+          else
+            "https://sites.google.com/site/ontology2013/CIM_DataFile"
         val name = escape(node.name)
         val size = if (node.size.nonEmpty) node.size.get else 0
         val dateTime = DateTime.get(node.lastModified)
 
-        val logicalFile = logicalFileT(uri, nodeId, cimClass.toString,
+        val logicalFile = logicalFileT(uri, nodeId, cimClass,
           name, size, dateTime, node.canRead, node.canWrite, node.canExecute)
 
         val directoryConainsFile = if (isDirectory) {
@@ -108,7 +108,7 @@ object DirectoryEx extends Modeler with Logging {
       val m = new BufferedWriter(
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
-      val base = p.toURI.toString
+      val base = escape(p.toURI.toString)
 
       m.write(headerT(base, Version.get, DateTime.get) + nodeT(base, p))
 

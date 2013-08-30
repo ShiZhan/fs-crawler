@@ -10,60 +10,12 @@ import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms =
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import util.{ Logging, Version, DateTime, Hash }
 
+import modeler.{ CimVocabulary => CIM }
+
 /**
  * @author ShiZhan
  * translate directory structure into CIM model
  */
-object DIR {
-
-  private val model = ModelFactory.createDefaultModel
-
-  /*
-   * directory imports & concepts
-   */
-  private val uriPrefix = "https://sites.google.com/site/ontology2013/"
-
-  private val depRes = List(
-    "CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
-    .map {
-      case name => {
-        val depURI = uriPrefix + name + ".owl"
-        val depImport = model.createResource(depURI)
-        val depClass = model.createResource(depURI + "#" + name)
-        name -> (depImport, depClass)
-      }
-    } toMap
-
-  private val unknown = model.createResource
-
-  def IMPORT(name: String) = depRes.getOrElse(name, (unknown, unknown))._1
-  def CLASS(name: String) = depRes.getOrElse(name, (unknown, unknown))._2
-
-  /*
-   * directory vocabulary
-   */
-  val propNS = uriPrefix + "CIM_Properties.owl#"
-
-  private val propertyList = List(
-    "AvailableRequestedStates", "AvailableSpace", "BlockSize", "Caption",
-    "CasePreserved", "CaseSensitive", "ClusterSize", "CodeSet", "CommunicationStatus",
-    "CompressionMethod", "CreationClassName", "CreationDate", "CSCreationClassName",
-    "CSName", "Description", "DetailedStatus", "ElementName", "EnabledDefault",
-    "EnabledState", "EncryptionMethod", "Executable", "FileSize", "FileSystemSize",
-    "FileSystemType", "FSCreationClassName", "FSName", "Generation", "GroupComponent",
-    "HealthState", "InstallDate", "InstanceID", "InUseCount", "IsFixedSize",
-    "LastAccessed", "LastModified", "MaxFileNameLength", "Name", "NumberOfFiles",
-    "OperatingStatus", "OperationalStatus", "OtherEnabledState", "OtherPersistenceType",
-    "PartComponent", "PersistenceType", "PrimaryStatus", "Readable", "ReadOnly",
-    "RequestedState", "ResizeIncrement", "Root", "Status", "StatusDescriptions",
-    "TimeOfLastStateChange", "TransitioningToState", "Writeable")
-    .map(n => n -> model.createProperty(propNS + n)) toMap
-
-  private val invalidProperty = model.createProperty(propNS + "invalidProperty")
-
-  def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
-}
-
 object Directory extends Modeler with Logging {
 
   override val key = "dir"
@@ -81,14 +33,15 @@ object Directory extends Modeler with Logging {
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix("prop", DIR.propNS)
+      m.setNsPrefix(key, ns)
+      m.setNsPrefix(CimSchema.key, CIM.NS)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM Directory model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, DIR.IMPORT("CIM_Directory"))
-        .addProperty(OWL.imports, DIR.IMPORT("CIM_DataFile"))
-        .addProperty(OWL.imports, DIR.IMPORT("CIM_DirectoryContainsFile"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
 
       def genNodeUri(p: Path) = ns + Hash.getMD5(p.path)
 
@@ -103,25 +56,25 @@ object Directory extends Modeler with Logging {
         if (p.isDirectory) {
           val dirUri = genNodeUri(p)
           val dirRes = m.createResource(dirUri, OWL2.NamedIndividual)
-            .addProperty(RDF.`type`, DIR.CLASS("CIM_Directory"))
-            .addProperty(DIR.PROP("Name"), name, XSDnormalizedString)
-            .addProperty(DIR.PROP("FileSize"), size, XSDunsignedLong)
-            .addProperty(DIR.PROP("LastModified"), lastMod, XSDdateTime)
-            .addProperty(DIR.PROP("Readable"), canRead, XSDboolean)
-            .addProperty(DIR.PROP("Writeable"), canWrite, XSDboolean)
-            .addProperty(DIR.PROP("Executable"), canExecute, XSDboolean)
+            .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
+            .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
+            .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+            .addProperty(CIM.PROP("LastModified"), lastMod, XSDdateTime)
+            .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
+            .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
+            .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
           m.createResource(dirUri + "_dcf", OWL2.NamedIndividual)
-            .addProperty(RDF.`type`, DIR.CLASS("CIM_DirectoryContainsFile"))
-            .addProperty(DIR.PROP("GroupComponent"), dirRes)
+            .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
+            .addProperty(CIM.PROP("GroupComponent"), dirRes)
         } else {
           m.createResource(genNodeUri(p), OWL2.NamedIndividual)
-            .addProperty(RDF.`type`, DIR.CLASS("CIM_DataFile"))
-            .addProperty(DIR.PROP("Name"), name, XSDnormalizedString)
-            .addProperty(DIR.PROP("FileSize"), size, XSDunsignedLong)
-            .addProperty(DIR.PROP("LastModified"), lastMod, XSDdateTime)
-            .addProperty(DIR.PROP("Readable"), canRead, XSDboolean)
-            .addProperty(DIR.PROP("Writeable"), canWrite, XSDboolean)
-            .addProperty(DIR.PROP("Executable"), canExecute, XSDboolean)
+            .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
+            .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
+            .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+            .addProperty(CIM.PROP("LastModified"), lastMod, XSDdateTime)
+            .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
+            .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
+            .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
         }
       }
 
@@ -142,7 +95,7 @@ object Directory extends Modeler with Logging {
 
         val dirRef = m.getResource(genNodeUri(i.parent.get) + "_dcf")
         val current = m.getResource(genNodeUri(i))
-        val stmt = m.createStatement(dirRef, DIR.PROP("PartComponent"), current)
+        val stmt = m.createStatement(dirRef, CIM.PROP("PartComponent"), current)
         m.add(stmt)
 
         progress += 1

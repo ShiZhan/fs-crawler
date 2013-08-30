@@ -23,6 +23,8 @@ import com.hp.hpl.jena.vocabulary.{
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import util.{ Logging, Version, DateTime, Hash }
 
+import modeler.{ CimVocabulary => CIM }
+
 /**
  * @author ShiZhan
  * translate archive file contents into semantic model
@@ -49,14 +51,15 @@ object Archive extends Modeler with Logging {
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix("prop", DIR.propNS)
+      m.setNsPrefix(key, ns)
+      m.setNsPrefix(CimSchema.key, CIM.NS)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM Archive model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, DIR.IMPORT("CIM_Directory"))
-        .addProperty(OWL.imports, DIR.IMPORT("CIM_DataFile"))
-        .addProperty(OWL.imports, DIR.IMPORT("CIM_DirectoryContainsFile"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
 
       val bFIS = new BufferedInputStream(new FileInputStream(f))
       val aSF = new ArchiveStreamFactory
@@ -64,14 +67,14 @@ object Archive extends Modeler with Logging {
       val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
       val archiveFile = m.createResource(ns + aIS, OWL2.NamedIndividual)
-        .addProperty(RDF.`type`, DIR.CLASS("CIM_Directory"))
-        .addProperty(DIR.PROP("Name"), f.getAbsolutePath, XSDnormalizedString)
-        .addProperty(DIR.PROP("FileSize"), f.length.toString, XSDunsignedLong)
-        .addProperty(DIR.PROP("LastModified"), DateTime.get(f.lastModified), XSDdateTime)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
+        .addProperty(CIM.PROP("Name"), f.getAbsolutePath, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileSize"), f.length.toString, XSDunsignedLong)
+        .addProperty(CIM.PROP("LastModified"), DateTime.get(f.lastModified), XSDdateTime)
 
       val containFile = m.createResource(ns + aIS + "_dcf", OWL2.NamedIndividual)
-        .addProperty(RDF.`type`, DIR.CLASS("CIM_DirectoryContainsFile"))
-        .addProperty(DIR.PROP("GroupComponent"), archiveFile)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
+        .addProperty(CIM.PROP("GroupComponent"), archiveFile)
 
       for (e <- iAIS) {
         val name = e.getName
@@ -79,15 +82,15 @@ object Archive extends Modeler with Logging {
         val size = e.getSize.toString
         val lastM = DateTime.get(e.getLastModifiedDate)
         val cimClass =
-          if (e.isDirectory) DIR.CLASS("CIM_Directory")
-          else DIR.CLASS("CIM_DataFile")
+          if (e.isDirectory) CIM.CLASS("CIM_Directory")
+          else CIM.CLASS("CIM_DataFile")
         val entry = m.createResource(uri, OWL2.NamedIndividual)
           .addProperty(RDF.`type`, cimClass)
-          .addProperty(DIR.PROP("Name"), name, XSDnormalizedString)
-          .addProperty(DIR.PROP("FileSize"), size, XSDunsignedLong)
-          .addProperty(DIR.PROP("LastModified"), lastM, XSDdateTime)
+          .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
+          .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+          .addProperty(CIM.PROP("LastModified"), lastM, XSDdateTime)
 
-        containFile.addProperty(DIR.PROP("PartComponent"), entry)
+        containFile.addProperty(CIM.PROP("PartComponent"), entry)
       }
 
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")

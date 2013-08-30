@@ -46,8 +46,8 @@ object CimVocabulary {
    * concepts
    */
   // meta concepts
-  val Meta_Class = model.createResource(NS + "CIM_Meta_Class")
-  val Association = model.createResource(NS + "CIM_Association")
+  val Meta_Class = model.createResource(URI("CIM_Meta_Class"))
+  val Association = model.createResource(URI("CIM_Association"))
 
   // CIM schema content
   private val depRes = List(
@@ -652,8 +652,8 @@ object CimVocabulary {
     "PRS_StatementFeature", "PRS_Transaction")
     .map {
       case n => {
-        val depImport = model.createResource(NS + n + ".owl")
-        val depClass = model.createResource(NS + n)
+        val depImport = model.createResource(PURL(n))
+        val depClass = model.createResource(URI(n))
         n -> (depImport, depClass)
       }
     } toMap
@@ -1788,9 +1788,9 @@ object CimVocabulary {
     "WriteSpeed", "X121Address", "X500UniqueIdentifier", "XAxisName", "XAxisUnit", "XcOrder",
     "XcType", "XFeedAddressability", "XPathFeatures", "YAxisName", "YAxisUnit", "ZoneNameFormat",
     "ZoneNameMaxLen", "ZoneSubType", "ZoneType")
-    .map(n => n -> model.createProperty(NS + n)) toMap
+    .map(n => n -> model.createProperty(URI(n))) toMap
 
-  private val invalidProperty = model.createProperty(NS + "invalidProperty")
+  private val invalidProperty = model.createProperty(URI("invalidProperty"))
 
   def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
 }

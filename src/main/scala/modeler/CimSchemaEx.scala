@@ -122,7 +122,7 @@ permissions and limitations under the License.
         if (cSuperName.isEmpty)
           CIM.BASE
         else
-          m.getResource(CIM.PURL(cSuperName))
+          CIM.IMPORT(cSuperName)
 
       m.setNsPrefix(key, CIM.NS)
       m.createResource(CIM.PURL(cName), OWL.Ontology)
