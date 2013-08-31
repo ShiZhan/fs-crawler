@@ -7,12 +7,13 @@ case "`uname`" in
   Darwin) darwin=true;;
 esac
 
-TGM_ROOT=$(dirname `which $0`)
+export TGM_ROOT=$(dirname `which $0`)
 CP=`ls -1 $TGM_ROOT/target/scala-2.10/lib | sed 's/*//g' | awk -v tr="$TGM_ROOT" '{printf tr"/target/scala-2.10/lib/"$1":"}'`
 CP=$CP$TGM_ROOT:$TGM_ROOT/target/scala-2.10/classes
 
 if $cygwin; then
   CP=`cygpath -alpm $CP`
+  TGM_ROOT=`cygpath -alm $TGM_ROOT` # will alse be used in program
 fi
 
 scala -J-Xmx1g -cp "$CP" TrigramTranslator "$@" 
