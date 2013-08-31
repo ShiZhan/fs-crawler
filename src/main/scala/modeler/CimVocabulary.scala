@@ -49,6 +49,7 @@ object CimVocabulary {
   val Meta_Class = model.createResource(URI("CIM_Meta_Class"))
   val Association = model.createResource(URI("CIM_Association"))
 
+  println(scala.util.Properties.javaClassPath)
   // CIM schema content
   private val depRes = List(
     "CIM_AbstractBasedOn", "CIM_AbstractComponent", "CIM_AbstractElementAllocatedFromPool",
