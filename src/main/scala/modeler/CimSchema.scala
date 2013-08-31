@@ -20,8 +20,8 @@ object CimSchema extends Modeler with Logging {
 
   override val key = "cim"
 
-  override val usage = "Translate DMTF CIM schema from http://dmtf.org/standards/cim to " +
-    CIM.FN(CIM.FN_ALL)
+  override val usage =
+    "Translate DMTF CIM schema from http://dmtf.org/standards/cim to " + CIM.FN_ALL
 
   def run(input: String, output: String) = {
     logger.info("translate [{}] from [{}] to [{}]", key, input, CIM.FN_ALL)
