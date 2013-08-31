@@ -4,7 +4,7 @@
 package modeler
 
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import scala.util.Properties.{envOrElse, userDir}
+import util.Config.TGMROOT
 
 /**
  * @author ShiZhan
@@ -24,11 +24,8 @@ object CimVocabulary {
    * CIM-CLASS: CIM classes
    * CIM-PROPERTY: CIM properties, including references and data properties
    */
-  private val configDir = envOrElse("TGM_ROOT", userDir) + "/"
-  private val cFile = configDir + "CIM-CLASS"
-  private val pFile = configDir + "CIM-PROPERTY"
-  private val cList = io.Source.fromFile(cFile).getLines.toList
-  private val pList = io.Source.fromFile(pFile).getLines.toList
+  private val cList = io.Source.fromFile(TGMROOT + "CIM-CLASS").getLines.toList
+  private val pList = io.Source.fromFile(TGMROOT + "CIM-PROPERTY").getLines.toList
 
   /*
    * prepare vocabulary model
