@@ -13,7 +13,7 @@ CP=$CP$TGM_ROOT:$TGM_ROOT/target/scala-2.10/classes
 
 if $cygwin; then
   CP=`cygpath -alpm $CP`
-  TGM_ROOT=`cygpath -alm $TGM_ROOT` # will alse be used in program
+  TGM_ROOT=`cygpath -alm $TGM_ROOT` # also be used in program through scala.util.Properties.envOrElse
 fi
 
 scala -J-Xmx1g -cp "$CP" TrigramTranslator "$@" 
