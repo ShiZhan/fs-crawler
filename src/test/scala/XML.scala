@@ -53,6 +53,8 @@ object TravelClasses {
 
 }
 
+// use this code to generate vocabulary used by modelers
+// need to update with the DMTF CIM version
 object GetVocabulary {
 
   def main(args: Array[String]) =
