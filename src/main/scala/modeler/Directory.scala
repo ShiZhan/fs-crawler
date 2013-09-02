@@ -63,9 +63,15 @@ object Directory extends Modeler with Logging {
             .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
             .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
             .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
-          m.createResource(dirUri + "_dcf", OWL2.NamedIndividual)
+          val dirRef = m.createResource(dirUri + "_dcf", OWL2.NamedIndividual)
             .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
             .addProperty(CIM.PROP("GroupComponent"), dirRes)
+
+          p * "*" map (pSub => {
+            val pSubRes = m.getResource(genNodeUri(pSub))
+            dirRef.addProperty(CIM.PROP("PartComponent"), pSubRes)
+          })
+
         } else {
           m.createResource(genNodeUri(p), OWL2.NamedIndividual)
             .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
@@ -92,11 +98,6 @@ object Directory extends Modeler with Logging {
 
       for (i <- ps) {
         assignAttributes(i)
-
-        val dirRef = m.getResource(genNodeUri(i.parent.get) + "_dcf")
-        val current = m.getResource(genNodeUri(i))
-        val stmt = m.createStatement(dirRef, CIM.PROP("PartComponent"), current)
-        m.add(stmt)
 
         progress += 1
         if (progress % delta == 0)
