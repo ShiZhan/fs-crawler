@@ -27,17 +27,18 @@ trait Modeler {
  */
 object Modelers {
 
-  private val modelerMap: Map[String, Modeler] = Map(
-    Directory.key -> Directory,
-    DirectoryEx.key -> DirectoryEx,
-    CimSchema.key -> CimSchema,
-    CimSchemaEx.key -> CimSchemaEx,
-    Archive.key -> Archive)
+  private val modelerMap = List(
+    CimSchema,
+    CimSchemaEx,
+    Directory,
+    DirectoryEx,
+    Archive)
+    .map(m => (m.key -> m)) toMap
 
   def getHelp =
-    modelerMap.map { case (s, m) => "  " + s + ":   \t" + m.usage }.mkString("\n")
+    modelerMap.map { case (k, m) => "  " + k + ":   \t" + m.usage }.mkString("\n")
 
-  def run(t: String, i: String, o: String) =
-    modelerMap.getOrElse(t, Unknown).run(i, o)
+  def run(k: String, i: String, o: String) =
+    modelerMap.getOrElse(k, Unknown).run(i, o)
 
 }
