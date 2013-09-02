@@ -92,14 +92,14 @@ permissions and limitations under the License.
       .addProperty(RDFS.subClassOf, cMeta)
 
     for (oP <- objProps) {
-      m.createProperty(CIM.URI(oP))
+      m.createProperty(CIM URI oP)
         .addProperty(RDF.`type`, OWL.ObjectProperty)
         .addProperty(RDFS.range, cMeta)
         .addProperty(RDFS.domain, cAsso)
     }
 
     for (dP <- datProps) {
-      m.createProperty(CIM.URI(dP))
+      m.createProperty(CIM URI dP)
         .addProperty(RDF.`type`, OWL.DatatypeProperty)
         .addProperty(RDFS.domain, cMeta)
     }
@@ -115,7 +115,7 @@ permissions and limitations under the License.
         if (cSuperName.isEmpty)
           if (cIsAsso) cAsso else cMeta
         else
-          m.getResource(CIM.URI(cSuperName))
+          m.getResource(CIM URI cSuperName)
 
       val cComment = readValue(cQualifier, "@NAME", "Description")
       val cVersion = readValue(cQualifier, "@NAME", "Version")
@@ -128,8 +128,8 @@ permissions and limitations under the License.
       for (cR <- cReferences) {
         val cRName = (cR \ "@NAME").text
         val cRClass = (cR \ "@REFERENCECLASS").text
-        val cObjProp = CIM.PROP(cRName)
-        val cRefReso = CIM.CLASS(cRClass)
+        val cObjProp = m.getProperty(CIM URI cRName)
+        val cRefReso = m.getResource(CIM URI cRClass)
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cObjProp)
           .addProperty(OWL.allValuesFrom, cRefReso)
@@ -150,7 +150,7 @@ permissions and limitations under the License.
       for (cP <- cProperties) {
         val cPName = (cP \ "@NAME").text
         val cPType = (cP \ "@TYPE").text
-        val cDatProp = CIM.PROP(cPName)
+        val cDatProp = m.getProperty(CIM URI cPName)
         val cDatType = readDataType(cPType)
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cDatProp)

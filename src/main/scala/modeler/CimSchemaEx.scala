@@ -147,10 +147,10 @@ permissions and limitations under the License.
       for (cR <- cReferences) {
         val cRName = (cR \ "@NAME").text
         val cRClass = (cR \ "@REFERENCECLASS").text
-        val cObjProp = CIM.PROP(cRName)
+        val cObjProp = m.getProperty(CIM URI cRName)
           .addProperty(RDF.`type`, OWL.ObjectProperty)
         // put additional property description here, according to CIM Qualifiers
-        val cRefReso = CIM.CLASS(cRClass)
+        val cRefReso = m.getResource(CIM URI cRClass)
         val r = m.createResource(OWL.Restriction)
           .addProperty(OWL.onProperty, cObjProp)
           .addProperty(OWL.allValuesFrom, cRefReso)
@@ -171,7 +171,7 @@ permissions and limitations under the License.
       for (cP <- cProperties) {
         val cPName = (cP \ "@NAME").text
         val cPType = (cP \ "@TYPE").text
-        val cDatProp = CIM.PROP(cPName)
+        val cDatProp = m.getProperty(CIM URI cPName)
           .addProperty(RDF.`type`, OWL.DatatypeProperty)
         // put additional property description here, according to CIM Qualifiers
         val cDatType = readDataType(cPType)
