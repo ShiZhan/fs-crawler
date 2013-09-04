@@ -3,7 +3,7 @@
  */
 package util
 
-import scala.util.Properties.{envOrElse, userDir}
+import scala.util.Properties.{ envOrElse, userDir }
 
 /**
  * @author ShiZhan

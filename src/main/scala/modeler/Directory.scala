@@ -26,7 +26,7 @@ object Directory extends Modeler with Logging {
     val p = Path(new File(input))
 
     if (p.isDirectory) {
-      logger.info("creating model for directory [{}]", p.path)
+      logger.info("creating model for directory [{}]", p.toAbsolute.path)
 
       val base = p.toURI.toString
       val ns = base + "#"
@@ -43,7 +43,7 @@ object Directory extends Modeler with Logging {
         .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
         .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
 
-      def genNodeUri(p: Path) = ns + Hash.getMD5(p.path)
+      def genNodeUri(p: Path) = ns + Hash.getMD5(p.toAbsolute.path)
 
       def assignAttributes(p: Path) = {
         val name = p.name
@@ -67,9 +67,9 @@ object Directory extends Modeler with Logging {
             .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
             .addProperty(CIM.PROP("GroupComponent"), dirRes)
 
-          p * "*" map (pSub => {
-            val pSubRes = m.getResource(genNodeUri(pSub))
-            dirRef.addProperty(CIM.PROP("PartComponent"), pSubRes)
+          p * "*" foreach (subPath => {
+            val subPathRes = m.getResource(genNodeUri(subPath))
+            dirRef.addProperty(CIM.PROP("PartComponent"), subPathRes)
           })
 
         } else {

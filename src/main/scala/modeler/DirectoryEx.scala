@@ -23,7 +23,7 @@ object DirectoryEx extends Modeler with Logging {
     val p = Path(new File(input))
 
     if (p.isDirectory) {
-      logger.info("creating model for *HUGE* directory [{}]", p.path)
+      logger.info("creating model for *HUGE* directory [{}]", p.toAbsolute.path)
 
       def headerT =
         (base: String, version: String, dateTime: String) =>
@@ -97,9 +97,9 @@ object DirectoryEx extends Modeler with Logging {
           name, size, dateTime, node.canRead, node.canWrite, node.canExecute)
 
         val directoryConainsFile = if (isDirectory) {
-          val iSub = node * "*"
+          val subNodeList = node * "*"
           val partComponent =
-            iSub.map(
+            subNodeList.map(
               s => partComponentT(uri, Hash.getMD5(s.toAbsolute.path))).mkString
           directoryContainsFileT(uri, nodeId + "_dcf", partComponent, nodeId)
         } else ""
