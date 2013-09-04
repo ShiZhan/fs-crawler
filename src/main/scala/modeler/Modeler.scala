@@ -8,11 +8,11 @@ package modeler
  * interface for modelers, for adding more, follow these steps:
  * 1. extends from Modeler trait and assign (override) a unique "key"
  * 2. add help information by overriding "usage"
- * 3. implement "tBox" and "aBox" method with [optional] additional vocabulary
+ * 3. implement "run" method with (in, out)
  *
  *    key:       unique identifier
  *    usage:     help information
- *    run:      build ABOX for modeling this category
+ *    run:       build model
  *
  *    then add this modeler into modelerMap
  */
