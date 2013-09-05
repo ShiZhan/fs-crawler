@@ -67,10 +67,10 @@ object Directory extends Modeler with Logging {
             .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
             .addProperty(CIM.PROP("GroupComponent"), dirRes)
 
-          p * "*" foreach (subPath => {
+          for (subPath <- p * "*") {
             val subPathRes = m.getResource(genNodeUri(subPath))
             dirRef.addProperty(CIM.PROP("PartComponent"), subPathRes)
-          })
+          }
 
         } else {
           m.createResource(genNodeUri(p), OWL2.NamedIndividual)

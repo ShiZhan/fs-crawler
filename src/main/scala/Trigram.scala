@@ -2,7 +2,7 @@
  * @author ShiZhan
  * 2013
  * TriGraM main program
- * provides 3 entries:
+ * provides 5 entries:
  * 1. show help
  * 2. show version
  * 3. import specified model into local storage
@@ -16,6 +16,10 @@
  * 1. show help
  * 2. show version
  * 3. translate specified source to TriGraM model
+ *
+ * TriGraM thinker program
+ * provides 1 entries:
+ * 1. inference <model>
  */
 object Trigram {
 
