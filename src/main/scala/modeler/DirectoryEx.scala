@@ -89,7 +89,7 @@ object DirectoryEx extends Modeler with Logging {
             "https://sites.google.com/site/ontology2013/CIM_Directory"
           else
             "https://sites.google.com/site/ontology2013/CIM_DataFile"
-        val name = escape(node.name)
+        val name = escape(node.toAbsolute.path)
         val size = if (node.size.nonEmpty) node.size.get else 0
         val dateTime = DateTime.get(node.lastModified)
 

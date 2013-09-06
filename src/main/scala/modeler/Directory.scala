@@ -46,7 +46,7 @@ object Directory extends Modeler with Logging {
       def genNodeUri(p: Path) = ns + Hash.getMD5(p.toAbsolute.path)
 
       def assignAttributes(p: Path) = {
-        val name = p.name
+        val name = p.toAbsolute.path
         val size = if (p.size.nonEmpty) p.size.get.toString else "0"
         val lastMod = DateTime.get(p.lastModified)
         val canRead = p.canRead.toString
