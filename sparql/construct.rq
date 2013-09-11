@@ -1,2 +1,7 @@
-CONSTRUCT   {?s ?p ?o}
-WHERE       {?s ?p ?o}
+# To add non-writeable items in to newly defined "immutable"
+# a simple inference
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX cim: <https://sites.google.com/site/ontology2013/>
+PREFIX imm: <http://www.semanticweb.org/ontologies/2013/immutable#>
+CONSTRUCT   {?i rdf:type imm:immutable}
+WHERE       {?i cim:Writeable "false"^^xsd:boolean}

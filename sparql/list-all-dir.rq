@@ -1,3 +1,4 @@
+# List all the directories
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX cim: <https://sites.google.com/site/ontology2013/>
 SELECT ?dirname
