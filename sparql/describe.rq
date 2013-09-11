@@ -1,3 +1,5 @@
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
+# Show the triples related to the item with given name
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX cim: <https://sites.google.com/site/ontology2013/>
 DESCRIBE ?x
-WHERE { ?x dc:creator "A.N.Other" }
+WHERE { ?x cim:Name "r:\\test\\test_file"^^xsd:normalizedString }
