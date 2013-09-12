@@ -1,6 +1,35 @@
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX cim: <https://sites.google.com/site/ontology2013/>
+PREFIX imm: <http://www.semanticweb.org/ontologies/2013/immutable#>
 INSERT DATA
-{ 
-  <http://example/book1> dc:title "A new book" ;
-                         dc:creator "A.N.Other" .
+{
+  imm:immutable rdf:type owl:Class .
+  imm:immutable rdfs:subClassOf cim:CIM_LogicalFile .
+  imm:immutable owl:disjointWith imm:mutable .
+  imm:immutable owl:equivalentClass imm:_b0 .
+  imm:_b0 rdf:type owl:Class .
+  imm:_b0 owl:intersectionOf imm:_b1 .
+  imm:_b1 rdf:first cim:CIM_LogicalFile .
+  imm:_b1 rdf:rest imm:_b2 .
+  imm:_b3 rdf:type owl:Restriction .
+  imm:_b3 owl:onProperty cim:Writeable .
+  imm:_b3 owl:hasValue "false"^^xsd:boolean .
+  imm:_b2 rdf:first imm:_b3 .
+  imm:_b2 rdf:rest rdf:nil .
+
+  imm:mutable rdf:type owl:Class .
+  imm:mutable rdfs:subClassOf cim:CIM_LogicalFile .
+  imm:mutable owl:equivalentClass imm:_b4 .
+  imm:_b4 rdf:type owl:Class .
+  imm:_b4 owl:intersectionOf imm:_b5 .
+  imm:_b5 rdf:first cim:CIM_LogicalFile .
+  imm:_b5 rdf:rest imm:_b6 .
+  imm:_b7 rdf:type owl:Restriction .
+  imm:_b7 owl:onProperty cim:Writeable .
+  imm:_b7 owl:hasValue "true"^^xsd:boolean .
+  imm:_b6 rdf:first imm:_b7 .
+  imm:_b6 rdf:rest rdf:nil .
 }
