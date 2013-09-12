@@ -1,8 +1,8 @@
 trigram
 =======
 
-Intro
------
+Introduction
+------------
 
 Triple Graph based Metadata storage - TriGraM
 
@@ -42,60 +42,59 @@ How to use
 
 1.  deploy [sbt](https://github.com/harrah/xsbt/wiki) with
     [sbteclipse](https://github.com/typesafehub/sbteclipse), open sbt
-    console in project root directory, type "update", wait until all the
+    console in project root directory, type `update`, wait until all the
     dependencies are resolved.
 
-2.  use "eclipse" to generate eclipse project, include ".project" and
-    ".classpath".
+2.  use `eclipse` to generate eclipse project, include `.project` and
+    `.classpath`.
 
-3.  use "compile" or "package".
+3.  use `compile` or `package`.
 
-4.  use "copy-dependencies" to collect all jars into "target\scala-2.10\lib\".
+4.  use `copy-dependencies` to collect all jars into `target\scala-2.10\lib\`.
 
-5.  use loaders in "bin" to execute, "trigram" for \*NIX and
-    "trigram.cmd" for Windows.
+5.  use loaders in "bin" to execute, `trigram` for \*NIX and
+    `trigram.cmd` for Windows.
 
-6.  use "translator" to translate various resources to semantic models,
+6.  use `translator` to translate various resources to semantic models,
     the models can then be imported into trigram.
 
     translate cim model first, for that will be used in other computer system models.
 
-    CIM_All.owl: all-in-one version, complete huge model.
+    * CIM_All.owl: all-in-one version, complete huge model.
 
-    CIM_Base.owl ...: model group, can be imported when required.
+    * CIM_Base.owl ...: model group, can be imported when required.
 
-    models can then either be imported by "trigram -i <model>"
+    models can then either be imported by `trigram -i <model>`
     or by tdbloader utility from Jena, use "status" command in trigram shell
     to get the default data location, which is required by tdbloader.
 
 7.  SPARQL execution
 
-    use "trigram -q <SPARQL query>" for query, "trigram -u <SPARQL update>" for update.
+    * use `trigram -q <SPARQL query>` for query, `trigram -u <SPARQL update>` for update.
 
-    or use "trigram" to enter command shell, and mode <query|update> to
-    switch between query and update modes.
+    * or use `trigram` to enter command shell, and mode <query|update> to
+      switch between query and update modes.
 
-8.  use "thinker" to do inference on semantic models (Work In Progress).
+8.  use `thinker` to do inference on semantic models (Work In Progress).
 
 NOTE:
 
-1.  the loaders will search dependencies in "target\scala-2.10\lib\" (step 4).
+1.  the loaders will search dependencies in `target\scala-2.10\lib\` (step 4).
 
-2.  The sbt ivy cache should be located in a folder without spaces in
-    its name.
+2.  The sbt ivy cache should be located in a folder without spaces in its name.
 
 3.  ivy cache relocation can be done through adding these parameters to
     sbt loader:
 
-    > JAVA\_OPTS=" -Dsbt.ivy.home=d:/java/sbt/.ivy2/
-    > -Dsbt.global.base=d:/java/sbt/.sbt/ "\$JAVA\_OPTS
+    JAVA\_OPTS=" -Dsbt.ivy.home=d:/java/sbt/.ivy2/
+    -Dsbt.global.base=d:/java/sbt/.sbt/ "\$JAVA\_OPTS
 
 Design
 ------
 
--   System architecture, communication and model draft
+-   System architecture, communication and model draft:
 
-    > doc/design.fodg
+    `doc/design.fodg`
 
 Related Work
 ------------
