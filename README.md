@@ -64,7 +64,16 @@ How to use
 
     CIM_Base.owl ...: model group, can be imported when required.
 
-7.  SPARQL
+    models can then either be imported by "trigram -i <model>"
+    or by tdbloader utility from Jena, use "status" command in trigram shell
+    to get the default data location, which is required by tdbloader.
+
+7.  SPARQL execution
+
+    use "trigram -q <SPARQL query>" for query, "trigram -u <SPARQL update>" for update.
+
+    or use "trigram" to enter command shell, and mode <query|update> to
+    switch between query and update modes.
 
 8.  use "thinker" to do inference on semantic models (Work In Progress).
 
