@@ -6,5 +6,5 @@ SELECT ?fname
     ?file cim:Name ?fname.
     ?dcf cim:PartComponent ?file.
     ?dcf cim:GroupComponent ?folder.
-    ?folder cim:Name "r:\\test"^^xsd:normalizedString
+    ?folder cim:Name "r:"^^xsd:normalizedString
   }

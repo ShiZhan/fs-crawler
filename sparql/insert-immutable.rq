@@ -1,3 +1,9 @@
+# To add the concept of "immutable" and "mutable" directly into TDB
+# maybe there are simpler and clearer solution for this
+# rather than writing a lot of blank nodes
+# however the simplest way should be importing a predefined model file
+# anyway, this example shows the detail of how to describe several
+# OWL constructs by merely hand-written triples.
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

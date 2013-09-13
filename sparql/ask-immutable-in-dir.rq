@@ -1,5 +1,6 @@
 # To check if there is any immutable items in the directory named "r:\test"
 # use this after "immutable" concept has been imported or inserted properly
+# and use test/test.cmd to deploy a testing directory all in one.
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX cim: <https://sites.google.com/site/ontology2013/>

@@ -1,5 +1,4 @@
-# To add non-writeable items in to newly defined "immutable"
-# a simple inference
+# generate new triples based on existing ones
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX cim: <https://sites.google.com/site/ontology2013/>
