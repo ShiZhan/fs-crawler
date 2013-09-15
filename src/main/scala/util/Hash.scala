@@ -11,7 +11,9 @@ import java.security.{ MessageDigest => MD }
  */
 object Hash {
 
+  private val md5Instance = MD.getInstance("MD5")
+
   def getMD5(s: String) =
-    MD.getInstance("MD5").digest(s.getBytes).map("%02x".format(_)).mkString
+    md5Instance.digest(s.getBytes).map("%02x".format(_)).mkString
 
 }
