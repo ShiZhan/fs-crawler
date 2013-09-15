@@ -50,8 +50,8 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
       case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
       case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
       case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "-i" :: m :: tail => nextOption(map ++ Map('model -> m), tail)
-      case "--import" :: m :: tail => nextOption(map ++ Map('model -> m), tail)
+      case "-i" :: modelList => map ++ Map('model -> modelList)
+      case "--import" :: modelList => map ++ Map('model -> modelList)
       case "-q" :: q :: tail => nextOption(map ++ Map('query -> q), tail)
       case "--query" :: q :: tail => nextOption(map ++ Map('query -> q), tail)
       case "-u" :: u :: tail => nextOption(map ++ Map('update -> u), tail)
@@ -70,8 +70,8 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
       if (options.contains('help)) println(usage)
       else if (options.contains('version)) println(Version.get)
       else if (options.contains('model)) {
-        val modelFile = options('model).toString
-        loader("--loc=" + defaultLocation, modelFile)
+        val modelList = options('model).asInstanceOf[List[String]]
+        modelList.foreach(loader("--loc=" + defaultLocation, _))
       } else if (options.contains('query)) {
         val queryFile = options('query).toString
         query("--loc=" + defaultLocation, "--query=" + queryFile)
