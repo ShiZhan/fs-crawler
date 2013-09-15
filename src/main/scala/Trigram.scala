@@ -46,16 +46,16 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
   def nextOption(map: OptionMap, list: List[String]): OptionMap = {
     list match {
       case Nil => map
-      case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
-      case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
-      case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
+      case "-h" :: tail => map ++ Map('help -> true)
+      case "--help" :: tail => map ++ Map('help -> true)
+      case "-v" :: tail => map ++ Map('version -> true)
+      case "--version" :: tail => map ++ Map('version -> true)
       case "-i" :: modelList => map ++ Map('model -> modelList)
       case "--import" :: modelList => map ++ Map('model -> modelList)
-      case "-q" :: q :: tail => nextOption(map ++ Map('query -> q), tail)
-      case "--query" :: q :: tail => nextOption(map ++ Map('query -> q), tail)
-      case "-u" :: u :: tail => nextOption(map ++ Map('update -> u), tail)
-      case "--update" :: u :: tail => nextOption(map ++ Map('update -> u), tail)
+      case "-q" :: q :: tail => map ++ Map('query -> q)
+      case "--query" :: q :: tail => map ++ Map('query -> q)
+      case "-u" :: u :: tail => map ++ Map('update -> u)
+      case "--update" :: u :: tail => map ++ Map('update -> u)
       case option :: tail => println("Incorrect option: " + option); sys.exit(1)
     }
   }

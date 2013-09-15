@@ -25,12 +25,12 @@ object Console {
   private val consolePrompt = "# "
 
   private val status =
-    "Java:    " + System.getProperty("java.version") + "\n" +
-      "Scala:   " + scala.util.Properties.versionMsg + "\n" +
-      "TriGraM: " + util.Version.get + "\n" +
-      "Jena core & build: " + com.hp.hpl.jena.Jena.VERSION +
+    "Java:      " + System.getProperty("java.version") + "\n" +
+      "Scala:     " + scala.util.Properties.versionMsg + "\n" +
+      "TriGraM:   " + util.Version.get + "\n" +
+      "Jena core: " + com.hp.hpl.jena.Jena.VERSION +
       " " + com.hp.hpl.jena.Jena.BUILD_DATE + "\n" +
-      "Jena TDB & build:  " + com.hp.hpl.jena.tdb.TDB.VERSION +
+      "Jena TDB:  " + com.hp.hpl.jena.tdb.TDB.VERSION +
       " " + com.hp.hpl.jena.tdb.TDB.BUILD_DATE + "\n" +
       "data location: " + new java.io.File(store.location).getAbsoluteFile
 
