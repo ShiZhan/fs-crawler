@@ -104,7 +104,7 @@ permissions and limitations under the License.
 
     // iterate though all classes and create individual models accordingly.
     // CIM 2.37.0 contains [1799] classes
-    for (c <- classes) {
+    for (c <- classes par) {
       // gathering data from input XML model
       val cName = (c \ "@NAME").text
       val cSuperName = (c \ "@SUPERCLASS").text
@@ -112,8 +112,6 @@ permissions and limitations under the License.
       val cIsAsso = "true" == readValue(cQualifier, "@NAME", "Association")
       val cComment = readValue(cQualifier, "@NAME", "Description")
       val cVersion = readValue(cQualifier, "@NAME", "Version")
-
-      logger.info("modelling class [{}]", cName)
 
       // create & initialize the model
       val m = ModelFactory.createDefaultModel
