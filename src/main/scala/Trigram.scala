@@ -71,13 +71,13 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
       else if (options.contains('version)) println(Version.get)
       else if (options.contains('model)) {
         val modelList = options('model).asInstanceOf[List[String]]
-        modelList.foreach(loader("--loc=" + defaultLocation, _))
+        modelList.foreach(loader(s"--loc=$defaultLocation", _))
       } else if (options.contains('query)) {
         val queryFile = options('query).toString
-        query("--loc=" + defaultLocation, "--query=" + queryFile)
+        query(s"--loc=$defaultLocation", "--query=" + queryFile)
       } else if (options.contains('update)) {
         val updateFile = options('update).toString
-        update("--loc=" + defaultLocation, "--update=" + updateFile)
+        update(s"--loc=$defaultLocation", "--update=" + updateFile)
       }
     }
   }
