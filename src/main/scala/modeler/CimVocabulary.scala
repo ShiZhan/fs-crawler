@@ -24,8 +24,12 @@ object CimVocabulary {
    * CIM-CLASS: CIM classes
    * CIM-PROPERTY: CIM properties, including references and data properties
    */
-  private val cList = io.Source.fromFile(TGMROOT + "CIM-CLASS").getLines.toList
-  private val pList = io.Source.fromFile(TGMROOT + "CIM-PROPERTY").getLines.toList
+  private val cFile = io.Source.fromFile(TGMROOT + "CIM-CLASS")
+  private val pFile = io.Source.fromFile(TGMROOT + "CIM-PROPERTY")
+  private val cList = cFile.getLines.toList
+  private val pList = pFile.getLines.toList
+  cFile.close
+  pFile.close
 
   /*
    * prepare vocabulary model
