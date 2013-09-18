@@ -9,17 +9,16 @@ Triple Graph based Metadata storage - TriGraM
 A brief history
 ---------------
 
-The original motivation is described in [my
-thsis](http://cdmd.cnki.com.cn/Article/CDMD-10487-1012268216.htm).
+The original motivation is described in
+[my thesis](http://cdmd.cnki.com.cn/Article/CDMD-10487-1012268216.htm).
 
-Preliminary version was developed as a simple XQuery program during
-2011.2\~2011.8, and can be run from xquilla command line, the input
-source file is from [DMTF CIM](http://www.dmtf.org/standards/cim)
-model and must be compiled by OpenPegasus,
-and the basic idea is to use translated semantic model in helping
-storage resource management.
+Preliminary version was developed as a simple XQuery program during 2011.2\~2011.8,
+and can be run from [XQilla](http://xqilla.sourceforge.net/HomePage) command line,
+the input source file is from [DMTF CIM](http://www.dmtf.org/standards/cim) model
+and must be compiled by OpenPegasus, and the basic idea is to use translated
+semantic model in helping storage resource management.
 
-In late 2011, switch the whole toolchain to Python and
+In late 2011, switch the whole tool-chain to Python and
 [RDFLib](https://github.com/RDFLib/rdflib) for flexible development,
 called SEED, aims at efficient metadata storage for distributed file
 systems.
@@ -74,8 +73,6 @@ How to use
 
     * or use `trigram` to enter command shell, and mode <query|update> to
       switch between query and update modes.
-
-8.  use `thinker` to do inference on semantic models (Work In Progress).
 
 NOTE:
 

@@ -16,10 +16,6 @@
  * 1. show help
  * 2. show version
  * 3. translate specified source to TriGraM model
- *
- * TriGraM thinker program
- * provides 1 entries:
- * 1. inference <model>
  */
 object Trigram {
 
@@ -140,19 +136,5 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
       Modelers.run(t, i, o)
     }
   }
-
-}
-
-object TrigramThinker {
-
-  import core.Thinker
-
-  val usage = """
-usage: Thinker [ontology model]
-"""
-
-  def main(args: Array[String]) =
-    if (args.length < 1) println(usage)
-    else Thinker.inferAndSave(args(0))
 
 }
