@@ -146,6 +146,7 @@ object CimVocabGen {
 
   def main(args: Array[String]) = {
     println("CIM Schema Vocabulary generator")
+
     if (args.length < 1)
       println("run with <CIM Schema XML>, which can be downloaded from DMTF.")
     else {

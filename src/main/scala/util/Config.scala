@@ -12,7 +12,7 @@ import scala.util.Properties.{ envOrElse, userDir }
  * TGMDATA: TriGraM program data
  *
  * NOTE:
- * if above variables are not defined, current directory will be used.
+ * if above variables are not defined/exported, current directory will be used.
  */
 object Config {
   val TGMROOT = envOrElse("TGM_ROOT", userDir) + "/"
