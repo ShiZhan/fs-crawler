@@ -1,7 +1,7 @@
 /**
  * Apache Jena TDB wrapper class
  */
-package core
+package console
 
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.tdb.TDBFactory
@@ -101,7 +101,6 @@ class Store(val location: String) {
 }
 
 object Store {
-  val defaultLocation = "data/"
-  def apply() = new Store(defaultLocation)
+  def apply() = new Store(util.Config.TGMDATA)
   def apply(loc: String) = new Store(loc)
 }

@@ -52,29 +52,3 @@ object TravelClasses {
     }
 
 }
-
-// use this code to generate vocabulary used by modelers
-// need to update with the DMTF CIM version
-object GetVocabulary {
-
-  def main(args: Array[String]) =
-    if (args.length < 1)
-      println("run with <DMTF CIM Schema XML file>")
-    else {
-      val i = XML.loadFile(args(0))
-      val cNodes = i \\ "CIM" \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
-      val rNodes = cNodes.flatMap(c => c \ "PROPERTY.REFERENCE")
-      val pNodes = cNodes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
-      val rNames = rNodes.map(_ \ "@NAME" text) distinct
-      val pNames = pNodes.map(_ \ "@NAME" text) distinct
-      val cNames = cNodes.map(_ \ "@NAME" text)
-      val cFile = new java.io.File("CIM-CLASS")
-      val pFile = new java.io.File("CIM-PROPERTY")
-      val cFileStream = new java.io.PrintStream(cFile)
-      val pFileStream = new java.io.PrintStream(pFile)
-      cNames.foreach(cFileStream.println)
-      rNames.foreach(pFileStream.println)
-      pNames.foreach(pFileStream.println)
-    }
-
-}

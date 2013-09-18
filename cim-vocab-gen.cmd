@@ -4,14 +4,12 @@
 @REM use absolute directory to load compiled classes
 @echo off
 setlocal
-@REM for querying big models
+@REM for translating big in-memory models
 set JAVA_OPTS=%JAVA_OPTS% -Xmx1g
-
 set CP=
 set TGM_ROOT=%~dp0
-@REM set TGM_DATA=r:/data
 for /f %%i in ('dir /b %TGM_ROOT%target\scala-2.10\lib') do call :concat %%i
-scala -cp "%CP%;%TGM_ROOT%;%TGM_ROOT%target/scala-2.10/classes" Trigram %1 %2 %3 %4 %5 %6 
+scala -cp "%CP%;%TGM_ROOT%;%TGM_ROOT%target/scala-2.10/classes" CimVocabGen %1 %2 %3 %4 %5 %6 
 endlocal
 goto :eof
 

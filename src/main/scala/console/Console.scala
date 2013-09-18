@@ -1,7 +1,7 @@
 /**
  * Console Application
  */
-package core
+package console
 
 /**
  * @author ShiZhan

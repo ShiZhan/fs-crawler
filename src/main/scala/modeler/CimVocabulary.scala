@@ -3,6 +3,7 @@
  */
 package modeler
 
+import scala.xml.XML
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import util.Config.TGMROOT
 
@@ -24,8 +25,10 @@ object CimVocabulary {
    * CIM-CLASS: CIM classes
    * CIM-PROPERTY: CIM properties, including references and data properties
    */
-  private val cFile = io.Source.fromFile(TGMROOT + "CIM-CLASS")
-  private val pFile = io.Source.fromFile(TGMROOT + "CIM-PROPERTY")
+  private val cFN = TGMROOT + "CIM-CLASS"
+  private val pFN = TGMROOT + "CIM-PROPERTY"
+  private val cFile = io.Source.fromFile(cFN)
+  private val pFile = io.Source.fromFile(pFN)
   private val cList = cFile.getLines.toList
   private val pList = pFile.getLines.toList
   cFile.close
@@ -89,4 +92,21 @@ object CimVocabulary {
   private val invalidProperty = model.createProperty(URI("invalidProperty"))
 
   def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
+
+  def generator(cimSchemaXML: String) = {
+    val i = XML.loadFile(cimSchemaXML)
+    val cNodes = i \\ "CIM" \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
+    val rNodes = cNodes.flatMap(c => c \ "PROPERTY.REFERENCE")
+    val pNodes = cNodes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
+    val rNames = rNodes.map(_ \ "@NAME" text) distinct
+    val pNames = pNodes.map(_ \ "@NAME" text) distinct
+    val cNames = cNodes.map(_ \ "@NAME" text)
+    val cFile = new java.io.File(cFN)
+    val pFile = new java.io.File(pFN)
+    val cFileStream = new java.io.PrintStream(cFile)
+    val pFileStream = new java.io.PrintStream(pFile)
+    cNames.foreach(cFileStream.println)
+    rNames.foreach(pFileStream.println)
+    pNames.foreach(pFileStream.println)
+  }
 }

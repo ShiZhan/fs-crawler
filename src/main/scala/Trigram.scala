@@ -22,8 +22,8 @@ object Trigram {
   import tdb.tdbloader.{ main => loader }
   import tdb.tdbquery.{ main => query }
   import tdb.tdbupdate.{ main => update }
-  import core.Console
-  import core.Store.defaultLocation
+  import console.Console
+  import util.Config.TGMDATA
   import util.Version
 
   val usage = """
@@ -67,13 +67,13 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
       else if (options.contains('version)) println(Version.get)
       else if (options.contains('model)) {
         val modelList = options('model).asInstanceOf[List[String]]
-        modelList.foreach(loader(s"--loc=$defaultLocation", _))
+        modelList.foreach(loader(s"--loc=$TGMDATA", _))
       } else if (options.contains('query)) {
         val queryFile = options('query).toString
-        query(s"--loc=$defaultLocation", "--query=" + queryFile)
+        query(s"--loc=$TGMDATA", "--query=" + queryFile)
       } else if (options.contains('update)) {
         val updateFile = options('update).toString
-        update(s"--loc=$defaultLocation", "--update=" + updateFile)
+        update(s"--loc=$TGMDATA", "--update=" + updateFile)
       }
     }
   }
@@ -134,6 +134,23 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
       println("translating [%s] as [%s] to model [%s]".format(i, t, o))
 
       Modelers.run(t, i, o)
+    }
+  }
+
+}
+
+object CimVocabGen {
+
+  import modeler.CimVocabulary.generator
+  import util.Config.TGMROOT
+
+  def main(args: Array[String]) = {
+    println("CIM Schema Vocabulary generator")
+    if (args.length < 1)
+      println("run with <CIM Schema XML>, which can be downloaded from DMTF.")
+    else {
+      generator(args(0))
+      println(s"CIM Schema Vocabulary files are saved in [$TGMROOT].")
     }
   }
 
