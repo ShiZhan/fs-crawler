@@ -68,7 +68,6 @@ permissions and limitations under the License.
   }
 
   def createCimBase = {
-    // create & fill the model
     val baseModel = ModelFactory.createDefaultModel
     baseModel.setNsPrefix(key, CIM.NS)
     baseModel.createResource(CIM.PURL_BASE, OWL.Ontology)
@@ -77,15 +76,13 @@ permissions and limitations under the License.
       .addProperty(DT.license, license, XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
-    // name of these two meta-concepts should be consistent globally
-    // so invoke the predefined resources directly
     val cMeta = baseModel.createResource(CIM.Meta_Class toString, OWL.Class)
     baseModel.createResource(CIM.Association toString, OWL.Class)
       .addProperty(RDFS.subClassOf, cMeta)
 
-    // write base concepts to one local model file, for direct import later.
-    val baseStore = new FileOutputStream(new File(CIM.PATH_BASE, CIM.FILE_BASE))
-    baseModel.write(baseStore, "RDF/XML-ABBREV")
+    val baseFile = new File(CIM.PATH_BASE, CIM.FILE_BASE)
+    val baseStream = new FileOutputStream(baseFile)
+    baseModel.write(baseStream, "RDF/XML-ABBREV")
   }
 
   def translateClass(c: Node) = {
@@ -96,15 +93,10 @@ permissions and limitations under the License.
     val cIsAsso = "true" == readValue(cQualifier, "@NAME", "Association")
     val cComment = readValue(cQualifier, "@NAME", "Description")
     val cVersion = readValue(cQualifier, "@NAME", "Version")
+    val cImport = if (cSuperName.isEmpty) CIM.BASE else CIM.IMPORT(cSuperName)
 
     // create & initialize the model
     val m = ModelFactory.createDefaultModel
-
-    val cImport =
-      if (cSuperName.isEmpty)
-        CIM.BASE
-      else
-        CIM.IMPORT(cSuperName)
 
     m.setNsPrefix(key, CIM.NS)
     m.createResource(CIM.PURL(cName), OWL.Ontology)
@@ -174,8 +166,9 @@ permissions and limitations under the License.
     }
 
     // write the model
-    val cStore = new FileOutputStream(new File(CIM.PATH_BASE, CIM.FN(cName)))
-    m.write(cStore, "RDF/XML-ABBREV")
+    val cFile = new File(CIM.PATH_BASE, CIM.FN(cName))
+    val cStream = new FileOutputStream(cFile)
+    m.write(cStream, "RDF/XML-ABBREV")
 
     logger.info("[{}] triples written to [{}]", m.size, CIM.FN(cName))
   }
