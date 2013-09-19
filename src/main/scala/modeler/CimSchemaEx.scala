@@ -59,7 +59,15 @@ See the License for the specific language governing
 permissions and limitations under the License. 
 """
 
-  def createCimBase(targetFolder: String) = {
+  // Since all models will be put here, check it first.
+  private val path2Models = new File(CIM.PATH_BASE)
+  if (path2Models.exists) {
+    assert(!path2Models.isFile)
+  } else {
+    path2Models.mkdir
+  }
+
+  def createCimBase = {
     // create & fill the model
     val baseModel = ModelFactory.createDefaultModel
     baseModel.setNsPrefix(key, CIM.NS)
@@ -76,11 +84,11 @@ permissions and limitations under the License.
       .addProperty(RDFS.subClassOf, cMeta)
 
     // write base concepts to one local model file, for direct import later.
-    val baseStore = new FileOutputStream(new File(targetFolder, CIM.FILE_BASE))
+    val baseStore = new FileOutputStream(new File(CIM.PATH_BASE, CIM.FILE_BASE))
     baseModel.write(baseStore, "RDF/XML-ABBREV")
   }
 
-  def translateClass(c: Node, targetFolder: String) = {
+  def translateClass(c: Node) = {
     // gathering data from input XML model
     val cName = (c \ "@NAME").text
     val cSuperName = (c \ "@SUPERCLASS").text
@@ -166,7 +174,7 @@ permissions and limitations under the License.
     }
 
     // write the model
-    val cStore = new FileOutputStream(new File(targetFolder, CIM.FN(cName)))
+    val cStore = new FileOutputStream(new File(CIM.PATH_BASE, CIM.FN(cName)))
     m.write(cStore, "RDF/XML-ABBREV")
 
     logger.info("[{}] triples written to [{}]", m.size, CIM.FN(cName))
@@ -184,20 +192,11 @@ permissions and limitations under the License.
     logger.info("[{}] object properties [{}] data type properties",
       objProps.length, datProps.length)
 
-    // all models should be put here
-    val path2Models = new File(CIM.PATH_BASE)
-    if (path2Models.exists) { assert(!path2Models.isFile) }
-    else {
-      path2Models.mkdir
-    }
-
     // create CIM_Base.owl for import both CIM_Meta_Class & CIM_Association
-    createCimBase(CIM.PATH_BASE)
+    createCimBase
 
     // iterate though all classes and create individual models accordingly.
-    // E.g.: CIM 2.37.0 contains [1799] classes, in 2.38.0, it's [1813] classes.
-    for (c <- classes par) translateClass(c, CIM.PATH_BASE)
-
+    classes.par foreach translateClass
   }
 
 }
