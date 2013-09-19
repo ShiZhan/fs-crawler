@@ -3,7 +3,7 @@
  */
 package util
 
-import java.security.{ MessageDigest => MD }
+import java.security.MessageDigest
 
 /**
  * @author ShiZhan
@@ -11,9 +11,11 @@ import java.security.{ MessageDigest => MD }
  */
 object Hash {
 
-  private val md5Instance = MD.getInstance("MD5")
+  private val md5 = MessageDigest.getInstance("MD5")
+  private val sha = MessageDigest.getInstance("SHA-1")
+  private val sha256 = MessageDigest.getInstance("SHA-256")
 
   def getMD5(s: String) =
-    md5Instance.digest(s.getBytes).map("%02x".format(_)).mkString
+    md5.digest(s.getBytes).map("%02x".format(_)).mkString
 
 }
