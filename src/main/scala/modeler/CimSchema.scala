@@ -21,10 +21,10 @@ object CimSchema extends Modeler with Logging {
   override val key = "cim"
 
   override val usage =
-    "Translate DMTF CIM schema to " + CIM.FN_ALL
+    "Translate DMTF CIM schema to " + CIM.PATH_ALL
 
   def run(input: String, output: String) = {
-    logger.info("translate [{}] from [{}] to [{}]", key, input, CIM.FN_ALL)
+    logger.info("translate [{}] from [{}] to [{}]", key, input, CIM.PATH_ALL)
 
     val xml = XML.loadFile(input)
     val cim = xml \\ "CIM"
@@ -172,7 +172,7 @@ permissions and limitations under the License.
     if (m.isEmpty)
       logger.info("Nothing translated")
     else {
-      m.write(new java.io.FileOutputStream(CIM.FN_ALL), "RDF/XML-ABBREV")
+      m.write(new java.io.FileOutputStream(CIM.PATH_ALL), "RDF/XML-ABBREV")
 
       logger.info("[{}] triples generated", m.size)
     }

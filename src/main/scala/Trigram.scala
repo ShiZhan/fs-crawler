@@ -146,7 +146,7 @@ usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
 object CimVocabGen {
 
   import modeler.CimVocabulary.generator
-  import util.Config.TGMROOT
+  import util.Config.CIMDATA
 
   def main(args: Array[String]) = {
     println("CIM Schema Vocabulary generator")
@@ -155,7 +155,7 @@ object CimVocabGen {
       println("run with <CIM Schema XML>, which can be downloaded from DMTF.")
     else {
       generator(args(0))
-      println(s"CIM Schema Vocabulary files are saved in [$TGMROOT].")
+      println(s"CIM Schema Vocabulary files are saved in [$CIMDATA].")
     }
   }
 

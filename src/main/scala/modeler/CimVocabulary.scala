@@ -5,7 +5,7 @@ package modeler
 
 import scala.xml.XML
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import util.Config.TGMROOT
+import util.Config.CIMDATA
 
 /**
  * @author ShiZhan
@@ -25,8 +25,8 @@ object CimVocabulary {
    * CIM-CLASS: CIM classes
    * CIM-PROPERTY: CIM properties, including references and data properties
    */
-  private val cFN = TGMROOT + "CIM-CLASS"
-  private val pFN = TGMROOT + "CIM-PROPERTY"
+  private val cFN = CIMDATA + "CIM-CLASS"
+  private val pFN = CIMDATA + "CIM-PROPERTY"
   private val cFile = io.Source.fromFile(cFN)
   private val pFile = io.Source.fromFile(pFN)
   private val cList = cFile.getLines.toList
@@ -49,10 +49,12 @@ object CimVocabulary {
 
   private val all = "CIM_All" // for all in one model (CimSchema)
   private val base = "CIM_Base" // for model group (CimSchemaEx)
-  val FN_ALL = FN(all)
-  val FN_BASE = FN(base)
-  val PURL_ALL = NS + FN_ALL
-  val PURL_BASE = NS + FN_BASE
+  val FILE_ALL = FN(all)
+  val FILE_BASE = FN(base)
+  val PURL_ALL = NS + FILE_ALL
+  val PURL_BASE = NS + FILE_BASE
+  val PATH_ALL = CIMDATA + FILE_ALL
+  val PATH_BASE = CIMDATA + "models"
 
   /*
    * imports

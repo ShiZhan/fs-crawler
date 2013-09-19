@@ -10,6 +10,7 @@ import scala.util.Properties.{ envOrElse, userDir }
  * configuration information
  * TGMROOT: TriGraM program root
  * TGMDATA: TriGraM program data
+ * CIMDATA: CIM Schema Vocabulary and Model
  *
  * NOTE:
  * if above variables are not defined/exported, current directory will be used.
@@ -17,4 +18,5 @@ import scala.util.Properties.{ envOrElse, userDir }
 object Config {
   val TGMROOT = envOrElse("TGM_ROOT", userDir) + "/"
   val TGMDATA = envOrElse("TGM_DATA", userDir) + "/data"
+  val CIMDATA = TGMROOT + "cim/"
 }

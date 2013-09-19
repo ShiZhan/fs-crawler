@@ -28,7 +28,7 @@ object CimSchemaEx extends Modeler with Logging {
   override val usage = "Translate DMTF CIM schema to inter-related models for selective import"
 
   def run(input: String, output: String) = {
-    logger.info("translate [{}] from [{}] to model group [{}]", key, input, output)
+    logger.info("translate [{}] from [{}] to model group [{}]", key, input, CIM.PATH_BASE)
 
     val xml = XML.loadFile(input)
     val cim = xml \\ "CIM"
@@ -40,7 +40,7 @@ object CimSchemaEx extends Modeler with Logging {
 
       logger.info("[{}] version [{}] DTD version [{}]", key, cimVer, dtdVer)
 
-      cim2owl_group(cim, output)
+      cim2owl_group(cim)
     }
   }
 
@@ -76,7 +76,7 @@ permissions and limitations under the License.
       .addProperty(RDFS.subClassOf, cMeta)
 
     // write base concepts to one local model file, for direct import later.
-    val baseStore = new FileOutputStream(new File(targetFolder, CIM.FN_BASE))
+    val baseStore = new FileOutputStream(new File(targetFolder, CIM.FILE_BASE))
     baseModel.write(baseStore, "RDF/XML-ABBREV")
   }
 
@@ -172,7 +172,7 @@ permissions and limitations under the License.
     logger.info("[{}] triples written to [{}]", m.size, CIM.FN(cName))
   }
 
-  def cim2owl_group(cim: NodeSeq, output: String) = {
+  def cim2owl_group(cim: NodeSeq) = {
     val classes = cim \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
     val rNodes = classes.flatMap(c => c \ "PROPERTY.REFERENCE")
     val pNodes = classes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
@@ -185,24 +185,18 @@ permissions and limitations under the License.
       objProps.length, datProps.length)
 
     // all models should be put here
-    val givenPath = new File(output)
-    val repo =
-      if (givenPath.exists)
-        if (givenPath.isFile)
-          ""
-        else
-          output
-      else {
-        givenPath.mkdir
-        output
-      }
+    val path2Models = new File(CIM.PATH_BASE)
+    if (path2Models.exists) { assert(!path2Models.isFile) }
+    else {
+      path2Models.mkdir
+    }
 
     // create CIM_Base.owl for import both CIM_Meta_Class & CIM_Association
-    createCimBase(repo)
+    createCimBase(CIM.PATH_BASE)
 
     // iterate though all classes and create individual models accordingly.
     // E.g.: CIM 2.37.0 contains [1799] classes, in 2.38.0, it's [1813] classes.
-    for (c <- classes par) translateClass(c, repo)
+    for (c <- classes par) translateClass(c, CIM.PATH_BASE)
 
   }
 
