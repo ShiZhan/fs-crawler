@@ -7,9 +7,9 @@ data/*
 # except place holder
 !data/_tdb_
 
-# cim schema
+# CIM schema
 cim/*
-# except place holder
+# CIM schema downloader and Vocabulary
 !cim/get-cim
 !cim/CIM-CLASS
 !cim/CIM-PROPERTY
