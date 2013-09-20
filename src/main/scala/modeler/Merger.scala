@@ -18,22 +18,29 @@ import modeler.{ CimVocabulary => CIM }
  */
 object Merger {
 
-  def run(modelFile: String) = {
+  private def gather(base: String): List[String] = {
     val m = ModelFactory.createDefaultModel
-    val mFIS = FileManager.get.open(modelFile)
+    val mFIS = FileManager.get.open(base)
     m.read(mFIS, "")
     val importURIs = m.listObjectsOfProperty(OWL.imports).toList
     val importFiles =
-      for (i <- importURIs)
-        yield CIM.PATH_BASE + i.toString.substring(CIM.NS.size)
-    importFiles foreach println
-    val importModels = importFiles map {
+      {for (i <- importURIs)
+        yield CIM.PATH_BASE + i.toString.substring(CIM.NS.size)}.toList
+    m.close
+    importFiles ++ importFiles.flatMap(gather)
+  }
+
+  def run(modelFile: String) = {
+    val modelList = gather(modelFile).distinct
+    modelList map {
       f =>
         val im = ModelFactory.createDefaultModel
         val imFIS = FileManager.get.open(f)
         im.read(imFIS, "")
-    }
-    m.remove(m.listStatements(null, OWL.imports, null))
-  }
+    } toList
 
+    println("")
+
+//    m.remove(m.listStatements(null, OWL.imports, null))
+  }
 }
