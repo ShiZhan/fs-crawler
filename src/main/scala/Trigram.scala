@@ -166,18 +166,6 @@ object CimModelMerger {
   import modeler.Merger.run
 
   private val usage = """
-  This program is for use with CimSchemaEx modeler, which generates
-  separate, dependent sub-models for use by dedicated modelers.
-
-  The purpose is to merge required sub-models into one aggregated model.
-  The merged model can than be easily inferred, imported or transferred.
-
-  The merge is decided by sub-model dependency implied by owl:import.
-  After the merge process, all the owl:import will be cleaned.
-
-  To compare with models based on complete CIM model: CIM_All.owl.
-  The output model could be significantly smaller.
-
   run with <CimSchemaEx sub-models directory> <model to merge>
   """
 
