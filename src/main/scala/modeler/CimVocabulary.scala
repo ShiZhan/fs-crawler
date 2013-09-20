@@ -54,7 +54,7 @@ object CimVocabulary {
   val PURL_ALL = NS + FILE_ALL
   val PURL_BASE = NS + FILE_BASE
   val PATH_ALL = CIMDATA + FILE_ALL
-  val PATH_BASE = CIMDATA + "models"
+  val PATH_BASE = CIMDATA + "models/"
 
   /*
    * imports

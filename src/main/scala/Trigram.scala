@@ -162,6 +162,9 @@ object CimVocabGen {
 }
 
 object CimModelMerger {
+
+  import modeler.Merger.run
+
   private val usage = """
   This program is for use with CimSchemaEx modeler, which generates
   separate, dependent sub-models for use by dedicated modelers.
@@ -181,9 +184,10 @@ object CimModelMerger {
   def main(args: Array[String]) = {
     println("CIM Schema based model merger")
 
-    if (args.length < 2)
+    if (args.length < 1)
       println(usage)
     else {
+      run(args(0))
       println("model merged.")
     }
   }
