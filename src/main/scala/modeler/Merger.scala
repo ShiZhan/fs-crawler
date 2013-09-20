@@ -20,13 +20,20 @@ object Merger {
 
   def run(modelFile: String) = {
     val m = ModelFactory.createDefaultModel
-    val in = FileManager.get.open(modelFile)
-    m.read(in, "")
+    val mFIS = FileManager.get.open(modelFile)
+    m.read(mFIS, "")
     val importURIs = m.listObjectsOfProperty(OWL.imports).toList
     val importFiles =
       for (i <- importURIs)
         yield CIM.PATH_BASE + i.toString.substring(CIM.NS.size)
     importFiles foreach println
+    val importModels = importFiles map {
+      f =>
+        val im = ModelFactory.createDefaultModel
+        val imFIS = FileManager.get.open(f)
+        im.read(imFIS, "")
+    }
+    m.remove(m.listStatements(null, OWL.imports, null))
   }
 
 }
