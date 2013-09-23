@@ -166,7 +166,7 @@ object CimModelMerger {
   import modeler.Merger.run
 
   private val usage = """
-  run with <CimSchemaEx sub-models directory> <model to merge>
+  run with <model to merge>
   """
 
   def main(args: Array[String]) = {
