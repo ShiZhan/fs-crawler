@@ -28,11 +28,12 @@ object Console {
     "Java:      " + System.getProperty("java.version") + "\n" +
       "Scala:     " + scala.util.Properties.versionMsg + "\n" +
       "TriGraM:   " + util.Version.get + "\n" +
+      "  root:    " + util.Config.TGMROOT + "\n" +
+      "  data:    " + new java.io.File(store.location).getAbsoluteFile + "\n" +
       "Jena core: " + com.hp.hpl.jena.Jena.VERSION +
       " " + com.hp.hpl.jena.Jena.BUILD_DATE + "\n" +
       "Jena TDB:  " + com.hp.hpl.jena.tdb.TDB.VERSION +
-      " " + com.hp.hpl.jena.tdb.TDB.BUILD_DATE + "\n" +
-      "data location: " + new java.io.File(store.location).getAbsoluteFile
+      " " + com.hp.hpl.jena.tdb.TDB.BUILD_DATE + "\n"
 
   def run: Unit = {
     println(consoleTitle)
