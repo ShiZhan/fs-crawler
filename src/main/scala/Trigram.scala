@@ -148,11 +148,15 @@ object CimVocabGen {
   import modeler.CimVocabulary.generator
   import util.Config.CIMDATA
 
+  private val usage = """
+  run with <CIM Schema XML>, which can be downloaded from DMTF.
+  """
+
   def main(args: Array[String]) = {
     println("CIM Schema Vocabulary generator")
 
     if (args.length < 1)
-      println("run with <CIM Schema XML>, which can be downloaded from DMTF.")
+      println(usage)
     else {
       generator(args(0))
       println(s"CIM Schema Vocabulary files are saved in [$CIMDATA].")
