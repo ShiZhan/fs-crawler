@@ -37,14 +37,15 @@ object Merger extends Logging {
 
     val models = files map {
       f =>
-        val im = ModelFactory.createDefaultModel
-        val imFIS = FileManager.get.open(f)
-        im.read(imFIS, "")
+        val m = ModelFactory.createDefaultModel
+        val mFIS = FileManager.get.open(f)
+        m.read(mFIS, "")
     } toList
 
     val baseModel = ModelFactory.createDefaultModel.read(baseModelFile)
     val mergedModel = (baseModel /: models) { (r, m) => r union m }
-    mergedModel.remove(mergedModel.listStatements(null, OWL.imports, null))
+    val importStmts = mergedModel.listStatements(null, OWL.imports, null)
+    mergedModel.remove(importStmts)
     val mFOS = new java.io.FileOutputStream(baseModelFile + "-merged.owl")
     mergedModel.write(mFOS, "RDF/XML-ABBREV")
 
