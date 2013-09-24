@@ -42,7 +42,9 @@ object Merger extends Logging {
         m.read(mFIS, "")
     } toList
 
-    val baseModel = ModelFactory.createDefaultModel.read(baseModelFile)
+    val baseModel = ModelFactory.createDefaultModel
+    val baseModelFIS = FileManager.get.open(baseModelFile)
+    baseModel.read(baseModelFIS, "")
     val mergedModel = (baseModel /: models) { (r, m) => r union m }
     val importStmts = mergedModel.listStatements(null, OWL.imports, null)
     mergedModel.remove(importStmts)
