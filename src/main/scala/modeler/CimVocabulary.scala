@@ -11,13 +11,10 @@ import util.Config.CIMDATA
  * @author ShiZhan
  * Translated [DMTF CIM](http://dmtf.org/standards/cim) vocabulary
  *
- * This vocabulary is corresponding to DMTF CIM version 2.37.0.
- * If new modeler(s) require additional concept & property,
- * then both the modeler and this common vocabulary code should be updated.
- *
- * If new concept & property are not derived from CIM,
- * then new vocabulary object should be defined to keep the code neat.
- * --- Shi.Zhan @ August 29, 2013
+ * This vocabulary is corresponding to DMTF CIM schema.
+ * If new schema is published with additional concept & property,
+ * then the companion file: "CIM-CLASS" and "CIM-PROPERTY" should be updated.
+ * --- Shi.Zhan
  */
 object CimVocabulary {
   /*

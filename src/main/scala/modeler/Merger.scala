@@ -39,7 +39,7 @@ object Merger extends Logging {
   def run(baseModelFile: String) = {
     val files = gather(baseModelFile).distinct
 
-    logger.info("loading imported models: [{}]", files mkString ", ")
+    logger.info("loading imported CIM models: [{}]", files mkString ", ")
 
     val models = files map { loadModel(_) } toList
     val baseModel = loadModel(baseModelFile)
