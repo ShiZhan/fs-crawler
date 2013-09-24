@@ -14,7 +14,7 @@ import util.Logging
 /**
  * @author ShiZhan
  * CIM Model Merger
- * based on the CimSchemaEx sub-models dependency in owl:import chain
+ * collect CimSchemaEx sub-models dependency from owl:import chain
  */
 object Merger extends Logging {
 
