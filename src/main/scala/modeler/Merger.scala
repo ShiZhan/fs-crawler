@@ -30,21 +30,19 @@ object Merger extends Logging {
     else importFiles ::: importFiles.flatMap(gather)
   }
 
+  private def loadModel(fileName: String) = {
+    val m = ModelFactory.createDefaultModel
+    val mFIS = FileManager.get.open(fileName)
+    m.read(mFIS, "")
+  }
+
   def run(baseModelFile: String) = {
     val files = gather(baseModelFile).distinct
 
     logger.info("loading imported models: [{}]", files mkString ", ")
 
-    val models = files map {
-      f =>
-        val m = ModelFactory.createDefaultModel
-        val mFIS = FileManager.get.open(f)
-        m.read(mFIS, "")
-    } toList
-
-    val baseModel = ModelFactory.createDefaultModel
-    val baseModelFIS = FileManager.get.open(baseModelFile)
-    baseModel.read(baseModelFIS, "")
+    val models = files map { loadModel(_) } toList
+    val baseModel = loadModel(baseModelFile)
     val mergedModel = (baseModel /: models) { (r, m) => r union m }
     val importStmts = mergedModel.listStatements(null, OWL.imports, null)
     mergedModel.remove(importStmts)
