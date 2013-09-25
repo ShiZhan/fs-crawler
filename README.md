@@ -1,10 +1,10 @@
-trigram
+TriGraM
 =======
 
 Introduction
 ------------
 
-Triple Graph based Metadata storage - TriGraM
+Triple Graph based Meta-data storage - TriGraM
 
 A brief history
 ---------------
@@ -20,12 +20,14 @@ semantic model in helping storage resource management.
 
 In late 2011, switch the whole tool-chain to Python and
 [RDFLib](https://github.com/RDFLib/rdflib) for flexible development,
-called SEED, aims at efficient metadata storage for distributed file
+called [SEED](#seed), aims at efficient meta-data storage for distributed file
 systems.
 
-In late 2012, considering the scalability issues, the main framework
+In late 2012, for the scalable consideration, the main framework
 switched once more, to [Scala](http://www.scala-lang.org/) +
-[Jena](http://jena.apache.org/), for an easy integration with
+[Jena](http://jena.apache.org/), Scala provides the language-level parallelism,
+and Jena is a comprehensive framework for both model manipulation and persistent
+storage, the latter is implemented as
 [TDB](http://jena.apache.org/documentation/tdb/).
 
 ### SEED
@@ -84,6 +86,21 @@ How to use
 
     * or use `trigram` to enter command shell, and mode <query|update> to
       switch between query and update modes.
+
+8.  Helper scripts in test directory
+
+    * GenerateProtegeCatalog.scala
+
+      scan designated directory and create a catalog file for Protege to load
+      so that the models can be easily imported and processed.
+
+    * PrepareTestDirectory.scala
+
+      create a set of files and directories for testing.
+
+    * get-acad
+
+      download a set of meta-model for academic literature (for future use).
 
 NOTE:
 
