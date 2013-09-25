@@ -167,7 +167,7 @@ object CimVocabGen {
 
 object CimModelMerger {
 
-  import modeler.Merger.run
+  import modeler.Merger.merge
 
   private val usage = """
   run with <model to merge>
@@ -179,7 +179,7 @@ object CimModelMerger {
     if (args.length < 1)
       println(usage)
     else {
-      run(args(0))
+      merge(args(0))
       println("model merged.")
     }
   }
