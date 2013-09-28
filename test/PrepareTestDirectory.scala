@@ -1,6 +1,6 @@
 object PrepareTestDirectory {
-  import java.io.File
-  import java.io.PrintWriter
+
+  import java.io.{ File, PrintWriter }
 
   def main(args: Array[String]) = {
     if (args.length < 1)
@@ -25,4 +25,5 @@ object PrepareTestDirectory {
       println("test directory ready")
     }
   }
+
 }
