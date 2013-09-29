@@ -1,25 +1,6 @@
 /**
  * @author ShiZhan
  * 2013
- * TriGraM main program
- * provides 5 entries:
- * 1. show help
- * 2. show version
- * 3. import specified model into local storage
- * 4. query local storage
- * 5. update local storage
- * default entry:
- *    enter console
- *
- * TriGraM translator program
- * provides 3 entries:
- * 1. show help
- * 2. show version
- * 3. translate specified source to TriGraM model
- *
- * CIM Schema Vocabulary generate/update program
- * provides 1 entries:
- * 1. read CIM Schema (XML) and write Vocabulary files into TGMROOT
  */
 object Trigram {
 
