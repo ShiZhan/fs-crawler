@@ -18,7 +18,7 @@ object GenerateProtegeCatalog {
 
   def main(args: Array[String]) =
     if (args.length < 1)
-      println("run with <model repository>")
+      println("run with <model>")
     else {
       val repo = new File(args(0))
       val owls = repo.list.filter(_.endsWith(".owl"))
