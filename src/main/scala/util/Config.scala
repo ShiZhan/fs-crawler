@@ -17,6 +17,6 @@ import scala.util.Properties.{ envOrElse, userDir }
  */
 object Config {
   val TGMROOT = envOrElse("TGM_ROOT", userDir) + "/"
-  val TGMDATA = envOrElse("TGM_DATA", userDir) + "/data"
+  val TGMDATA = envOrElse("TGM_DATA", userDir) + "/.trigram"
   val CIMDATA = TGMROOT + "cim/"
 }

@@ -3,9 +3,9 @@
 *.jar
 
 # tdb storage
-data/*
+.trigram/*
 # except place holder
-!data/_tdb_
+!.trigram/_tdb_
 
 # CIM schema
 cim/*
