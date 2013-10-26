@@ -172,6 +172,8 @@ Related Work
 Distributed File Systems: [GFS](http://labs.google.com/papers/gfs.html),
 [HDFS](http://hadoop.apache.org/index.html), [Ceph](http://ceph.com/),
 [Tahoe-LAFS](https://tahoe-lafs.org/trac/tahoe-lafs),
+[Kosmos Distributed Filesystem](http://code.google.com/p/kosmosfs/),
+[Quantcast File System](https://github.com/quantcast/qfs),
 [Storage@home](http://cs.stanford.edu/people/beberg/Storage@home2007.pdf)
 
 Triple Store: [Sesame](http://www.openrdf.org/) and
