@@ -3,7 +3,7 @@
   <classpathentry kind="src" path="src\main\java" output="target\scala-2.10\classes"/>
   <classpathentry kind="src" path="src\test\scala" output="target\scala-2.10\test-classes"/>
   <classpathentry kind="src" path="src\test\java" output="target\scala-2.10\test-classes"/>
-  <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
+  <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\org.scala-lang\scala-library\jars\scala-library-2.10.3.jar"/>
   <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\org.apache.jena\jena-core\jars\jena-core-2.10.0.jar"/>
   <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\org.apache.jena\jena-iri\jars\jena-iri-0.9.5.jar"/>
   <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\log4j\log4j\bundles\log4j-1.2.17.jar"/>
