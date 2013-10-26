@@ -71,6 +71,7 @@ object Archive extends Modeler with Logging {
         .addProperty(CIM.PROP("Name"), f.getAbsolutePath, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), f.length.toString, XSDunsignedLong)
         .addProperty(CIM.PROP("LastModified"), DateTime.get(f.lastModified), XSDdateTime)
+        .addProperty(CIM.PROP("InstanceID"), f.hashCode.toHexString, XSDnormalizedString)
 
       val containFile = m.createResource(ns + aIS + "_dcf", OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
@@ -81,6 +82,7 @@ object Archive extends Modeler with Logging {
         val uri = ns + Hash.getMD5(name)
         val size = e.getSize.toString
         val lastM = DateTime.get(e.getLastModifiedDate)
+        val hash = e.hashCode.toHexString
         val cimClass =
           if (e.isDirectory) CIM.CLASS("CIM_Directory")
           else CIM.CLASS("CIM_DataFile")
@@ -89,6 +91,7 @@ object Archive extends Modeler with Logging {
           .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
           .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
           .addProperty(CIM.PROP("LastModified"), lastM, XSDdateTime)
+          .addProperty(CIM.PROP("InstanceID"), hash, XSDnormalizedString)
 
         containFile.addProperty(CIM.PROP("PartComponent"), entry)
       }
