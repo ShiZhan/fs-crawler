@@ -15,11 +15,11 @@ object Console {
   private val handler = Handler(store)
 
   private val consoleUsage = """ [Console Usage]
-  help               print this message
-  status             show program status
-  modes              list available command modes
-  mode <mode>        enter <mode> to execute specific commands
-  exit               exit console"""
+  help           print this message
+  status         show program status
+  mode <mode>    enter <mode> to execute specific commands
+""" + handler.help + """
+  exit           exit console"""
 
   private val consoleTitle = "TriGraM Console"
   private val consolePrompt = "# "
@@ -49,7 +49,6 @@ object Console {
 
         case "test" :: Nil => "internal test command"
 
-        case "modes" :: Nil => handler.help
         case "mode" :: mode :: Nil =>
           handler.enterCLI(mode)
           "return to default console"
