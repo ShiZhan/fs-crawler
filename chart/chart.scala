@@ -7,8 +7,6 @@ object chart {
     val dataset = data.toXYSeriesCollection("some points")
     val chart = XYLineChart(dataset, title = "My Chart of Some Points")
     chart.show
-//    chart.saveAsPNG(new java.io.File("/tmp/chart.png"), (1024,768))
-//    chart.saveAsJPEG(new java.io.File("/tmp/chart.jpg"), (1024,768))
-    chart.saveAsPDF("chart.pdf", (1024,768))
+    chart.saveAsPDF("r:/chart.pdf", (1024,768))
   }
 }
