@@ -4,7 +4,7 @@ object GenerateProtegeCatalog {
   import scala.collection.JavaConversions._
 
   def getBaseURI(model: String) = {
-    val txt = io.Source.fromFile(model).getLines.filter{_.contains("<owl:Ontology rdf:about=")}
+    val txt = io.Source.fromFile(model).getLines.filter { _.contains("<owl:Ontology rdf:about=") }
     """\".*\"""".r.findFirstIn(txt.mkString).get
   }
 
