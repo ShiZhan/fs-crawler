@@ -13,9 +13,17 @@ object MyBuild extends Build {
     }
   }
 
-  lazy val root = Project(
+  lazy val trigram = Project(
     id = "trigram",
     base = file("."),
+    settings = Defaults.defaultSettings ++ Seq(
+      copyDepTask
+    )
+  )
+
+  lazy val accessory = Project(
+    id = "accessory",
+    base = file("accessory"),
     settings = Defaults.defaultSettings ++ Seq(
       copyDepTask
     )
