@@ -43,13 +43,9 @@ object barchart {
     plot.setBackgroundPaint(Color.white)
     plot.setRangeGridlinePaint(Color.blue)
     val gp0 = new GradientPaint(0.0f, 0.0f, Color.blue,
-      0.0f, 0.0f, new Color(0, 0, 64))
+      0.0f, 0.0f, new Color(0, 0, 196))
     val render = plot.getRenderer
-    render.setSeriesPaint(0, gp0)
-    render.setSeriesPaint(1, gp0)
-    render.setSeriesPaint(2, gp0)
-    render.setSeriesPaint(3, gp0)
-    render.setSeriesPaint(4, gp0)
+    (0 to 4) foreach (i => render.setSeriesPaint(i, gp0))
     bChart.show
     bChart.saveAsPDF("r:/chart.pdf", (800, 600))
   }
