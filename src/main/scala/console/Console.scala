@@ -17,8 +17,8 @@ object Console {
   private val consoleUsage = """ [Console Usage]
   help           print this message
   status         show program status
-  mode <mode>    enter <mode> to execute specific commands
-""" + handler.help + """
+  query          enter SPARQL to do query
+  update         enter SPARQL to do update
   exit           exit console"""
 
   private val consoleTitle = "TriGraM Console"
@@ -49,9 +49,8 @@ object Console {
 
         case "test" :: Nil => "internal test command"
 
-        case "mode" :: mode :: Nil =>
-          handler.enterCLI(mode)
-          "return to default console"
+        case "query" :: Nil => handler.doQuery
+        case "update" :: Nil => handler.doUpdate
 
         case "" :: Nil => null
 
