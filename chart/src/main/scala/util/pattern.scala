@@ -14,6 +14,7 @@ package util
 object pattern {
   import java.awt.{Color, Rectangle, TexturePaint}
   import java.awt.image.BufferedImage
+  import org.jfree.chart.renderer.category.{ BarRenderer, StandardBarPainter }
 
   val Fill = List((0, 0, 5, 5), (0, 0, 5, 0), (0, 5, 5, 0), (0, 0, 0, 5)) map {
     case (x1, y1, x2, y2) => {
@@ -27,5 +28,11 @@ object pattern {
       new TexturePaint(bufferedImage, imageRect)
     }
   } toArray
+
+  val Renderer = new BarRenderer
+  Renderer.setBarPainter(new StandardBarPainter)
+  Renderer.setShadowVisible(false)
+  Renderer.setDrawBarOutline(true)
+  (0 to 2) foreach (i => Renderer.setSeriesPaint(i, Fill(i)))
 
 }
