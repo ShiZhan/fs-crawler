@@ -110,7 +110,8 @@ object multibarchart {
     val renderer = new BarRenderer
     renderer.setBarPainter(new StandardBarPainter)
     renderer.setShadowVisible(false)
-    (0 to 2) foreach { i => renderer.setSeriesPaint(i, Fill(i)) }
+    renderer.setDrawBarOutline(true)
+    (0 to 2) foreach (i => renderer.setSeriesPaint(i, Fill(i)))
     plot.setRenderer(renderer)
     bChart.show
     bChart.saveAsPDF("r:/multibarchart.pdf", (800, 600))
