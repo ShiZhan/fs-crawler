@@ -8,7 +8,7 @@ object linechart {
     val dataset = data.toXYSeriesCollection("some points")
     val lChart = XYLineChart(
       dataset,
-      title = "Chart",
+      title = "Example Chart",
       domainAxisLabel = "X",
       rangeAxisLabel = "Y")
     val jfc = lChart.peer
@@ -19,7 +19,7 @@ object linechart {
     plot.setDomainGridlinePaint(Color.blue)
     plot.setRangeGridlinePaint(Color.blue)
     lChart.show
-    lChart.saveAsPDF("r:/linechart.pdf", (800, 600))
+    lChart.saveAsPDF("r:/linechart.pdf", (500, 375))
   }
 }
 
@@ -31,14 +31,12 @@ object multilinechart {
 
   def main(args: Array[String]) = {
     val dataA = Seq((1, 2), (2, 4), (3, 6), (4, 8), (5, 10))
-    val dsA = dataA.toXYSeries("A")
+    val dsA = dataA.toXYSeries("Line A")
     val dataB = Seq((1, 10), (2, 8), (3, 6), (4, 4), (5, 2))
-    val dsB = dataB.toXYSeries("B")
+    val dsB = dataB.toXYSeries("Line B")
     val dataset = List(dsA, dsB).toXYSeriesCollection
-
     val lChart = XYLineChart(
       dataset,
-      title = "Chart",
       domainAxisLabel = "X",
       rangeAxisLabel = "Y")
     val jfc = lChart.peer
@@ -46,11 +44,11 @@ object multilinechart {
     jfc.backgroundPaint = Color.white
     val plot = lChart.plot
     plot.setBackgroundPaint(Color.white)
-    plot.setDomainGridlinePaint(Color.blue)
-    plot.setRangeGridlinePaint(Color.blue)
+    plot.setDomainGridlinePaint(Color.lightGray)
+    plot.setRangeGridlinePaint(Color.lightGray)
     plot.setRenderer(new XYLineAndShapeRenderer)
     lChart.show
-    lChart.saveAsPDF("r:/multilinechart.pdf", (800, 600))
+    lChart.saveAsPDF("r:/multilinechart.pdf", (500, 375))
   }
 }
 
@@ -66,7 +64,7 @@ object barchart {
     val dataset = data.toCategoryDataset
     val bChart = BarChart(
       dataset,
-      title = "My Chart of Some Points",
+      title = "Example Chart of Some Bars",
       domainAxisLabel = "X",
       rangeAxisLabel = "Y")
     val jfc = bChart.peer
@@ -77,7 +75,7 @@ object barchart {
     plot.setRangeGridlinePaint(Color.blue)
     plot.setRenderer(util.pattern.Renderer)
     bChart.show
-    bChart.saveAsPDF("r:/barchart.pdf", (800, 600))
+    bChart.saveAsPDF("r:/barchart.pdf", (500, 375))
   }
 }
 
@@ -93,7 +91,6 @@ object multibarchart {
     val dataset = data.toCategoryDataset
     val bChart = BarChart(
       dataset,
-      title = "The chart of bar comparison",
       domainAxisLabel = "X",
       rangeAxisLabel = "Y")
     val jfc = bChart.peer
@@ -101,9 +98,9 @@ object multibarchart {
     jfc.backgroundPaint = Color.white
     val plot = bChart.plot
     plot.setBackgroundPaint(Color.white)
-    plot.setRangeGridlinePaint(Color.blue)
+    plot.setRangeGridlinePaint(Color.lightGray)
     plot.setRenderer(util.pattern.Renderer)
     bChart.show
-    bChart.saveAsPDF("r:/multibarchart.pdf", (800, 600))
+    bChart.saveAsPDF("r:/multibarchart.pdf", (500, 375))
   }
 }
