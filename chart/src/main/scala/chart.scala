@@ -19,14 +19,15 @@ object linechart {
     plot.setDomainGridlinePaint(Color.blue)
     plot.setRangeGridlinePaint(Color.blue)
     lChart.show
-    lChart.saveAsPDF("r:/chart.pdf", (800, 600))
+    lChart.saveAsPDF("r:/linechart.pdf", (800, 600))
   }
 }
 
 object multilinechart {
   import scalax.chart.Charting._
   import org.jfree.ui.RectangleEdge
-  import java.awt.Color
+  import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+  import java.awt.{ Color, Shape }
 
   def main(args: Array[String]) = {
     val dataA = Seq((1, 2), (2, 4), (3, 6), (4, 8), (5, 10))
@@ -47,15 +48,18 @@ object multilinechart {
     plot.setBackgroundPaint(Color.white)
     plot.setDomainGridlinePaint(Color.blue)
     plot.setRangeGridlinePaint(Color.blue)
+    val renderer = new XYLineAndShapeRenderer
+    plot.setRenderer(renderer)
     lChart.show
-    lChart.saveAsPDF("r:/chart.pdf", (800, 600))
+    lChart.saveAsPDF("r:/multilinechart.pdf", (800, 600))
   }
 }
 
 object barchart {
   import scalax.chart.Charting._
   import org.jfree.ui.RectangleEdge
-  import java.awt.{ Color, GradientPaint }
+  import org.jfree.chart.renderer.category.{ BarRenderer, StandardBarPainter }
+  import java.awt.Color
 
   def main(args: Array[String]) = {
     val data = Seq((1, 4), (2, 4), (3, 6), (4, 8), (5, 10))
@@ -71,19 +75,22 @@ object barchart {
     val plot = bChart.plot
     plot.setBackgroundPaint(Color.white)
     plot.setRangeGridlinePaint(Color.blue)
-    val gp0 = new GradientPaint(0.0f, 0.0f, Color.blue,
-      0.0f, 0.0f, new Color(0, 0, 196))
-    val render = plot.getRenderer
-    (0 to 4) foreach (i => render.setSeriesPaint(i, gp0))
+    val renderer = new BarRenderer
+    renderer.setBarPainter(new StandardBarPainter)
+    renderer.setShadowVisible(false)
+    (0 to 4) foreach (i => renderer.setSeriesPaint(i, Color.blue))
+    plot.setRenderer(renderer)
     bChart.show
-    bChart.saveAsPDF("r:/chart.pdf", (800, 600))
+    bChart.saveAsPDF("r:/barchart.pdf", (800, 600))
   }
 }
 
 object multibarchart {
   import scalax.chart.Charting._
   import org.jfree.ui.RectangleEdge
-  import java.awt.{ Color, GradientPaint }
+  import org.jfree.chart.renderer.category.{ BarRenderer, StandardBarPainter }
+  import java.awt.Color
+  import util.pattern.Fill
 
   def main(args: Array[String]) = {
     val data = List(("C1", "A", 3), ("C1", "B", 4), ("C1", "C", 3),
@@ -100,12 +107,12 @@ object multibarchart {
     val plot = bChart.plot
     plot.setBackgroundPaint(Color.white)
     plot.setRangeGridlinePaint(Color.blue)
-    val render = plot.getRenderer
-    List((0, Color.blue), (1, Color.green), (2, Color.yellow)) foreach {
-      case (i, c) => render.setSeriesPaint(i,
-        new GradientPaint(0.0f, 0.0f, c, 0.0f, 0.0f, Color.white))
-    }
+    val renderer = new BarRenderer
+    renderer.setBarPainter(new StandardBarPainter)
+    renderer.setShadowVisible(false)
+    (0 to 2) foreach { i => renderer.setSeriesPaint(i, Fill(i)) }
+    plot.setRenderer(renderer)
     bChart.show
-    bChart.saveAsPDF("r:/chart.pdf", (800, 600))
+    bChart.saveAsPDF("r:/multibarchart.pdf", (800, 600))
   }
 }
