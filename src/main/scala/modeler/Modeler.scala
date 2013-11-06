@@ -33,7 +33,7 @@ object Modelers {
     Directory,
     DirectoryEx,
     Archive,
-    Content)
+    Checksum)
 
   def getHelp =
     ms.map { m => "  %s:  \t%s".format(m.key, m.usage) }.mkString("\n")
