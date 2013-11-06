@@ -17,7 +17,7 @@ object DirectoryEx extends Modeler with Logging {
 
   override val key = "direx"
 
-  override val usage = "Translate *HUGE* directory structure"
+  override val usage = "[directory] to [triples], plain text translation to support massive items."
 
   def run(input: String, output: String) = {
     val p = Path(new File(input))

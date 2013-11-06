@@ -35,7 +35,7 @@ object Archive extends Modeler with Logging {
 
   override val key = "arc"
 
-  override val usage = "Translate archive file contents (ar|cpio|jar|tar|zip)"
+  override val usage = "[archive file] to [triples], currently support [ar, cpio, jar, tar, zip]."
 
   def run(input: String, output: String) = {
     val f = new File(input)

@@ -20,7 +20,7 @@ object Directory extends Modeler with Logging {
 
   override val key = "dir"
 
-  override val usage = "Translate directory structure"
+  override val usage = "[directory] to [triples]"
 
   def run(input: String, output: String) = {
     val p = Path(new File(input))

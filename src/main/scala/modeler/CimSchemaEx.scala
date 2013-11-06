@@ -25,10 +25,10 @@ object CimSchemaEx extends Modeler with Logging {
 
   override val key = "cimex"
 
-  override val usage = "Translate DMTF CIM schema to inter-related models for selective import"
+  override val usage = "[DMTF CIM schema] to [OWL classes]: " + CIM.PATH_BASE
 
   def run(input: String, output: String) = {
-    logger.info("translate [{}] from [{}] to model group [{}]", key, input, CIM.PATH_BASE)
+    logger.info("translate [{}] from [{}] to class models in [{}]", key, input, CIM.PATH_BASE)
 
     val xml = XML.loadFile(input)
     val cim = xml \\ "CIM"
