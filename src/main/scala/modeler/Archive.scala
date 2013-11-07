@@ -35,9 +35,10 @@ object Archive extends Modeler with Logging {
 
   override val key = "arc"
 
-  override val usage = "[archive file] to [triples], currently support [ar, cpio, jar, tar, zip]."
+  override val usage = "<archive file> => [triples], currently support [ar, cpio, jar, tar, zip]."
 
-  def run(input: String, output: String) = {
+  def run(options: Array[String]) = {
+    val input = options(0)
     val f = new File(input)
     if (!f.exists)
       logger.error("input source does not exist")
@@ -96,9 +97,10 @@ object Archive extends Modeler with Logging {
         containFile.addProperty(CIM.PROP("PartComponent"), entry)
       }
 
+      val output = input + "-model.owl"
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
-      logger.info("[{}] triples generated", m.size)
+      logger.info("[{}] triples generated in [{}]", m.size, output)
     }
   }
 

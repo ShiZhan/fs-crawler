@@ -17,9 +17,10 @@ object DirectoryEx extends Modeler with Logging {
 
   override val key = "direx"
 
-  override val usage = "[directory] to [triples], plain text translation to support massive items."
+  override val usage = "<directory> => [triples], plain text translation to support massive items."
 
-  def run(input: String, output: String) = {
+  def run(options: Array[String]) = {
+    val input = options(0)
     val p = Path(new File(input))
 
     if (p.isDirectory) {
@@ -106,6 +107,7 @@ object DirectoryEx extends Modeler with Logging {
         logicalFile + directoryConainsFile
       }
 
+      val output = input + "-model.owl"
       val m = new BufferedWriter(
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
@@ -136,7 +138,7 @@ object DirectoryEx extends Modeler with Logging {
 
       m.close
 
-      logger.info("[{}] individuals generated", total)
+      logger.info("[{}] individuals generated in [{}]", total, output)
     } else {
       logger.info("[{}] is not a directory", p.name)
     }

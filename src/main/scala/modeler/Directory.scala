@@ -20,9 +20,10 @@ object Directory extends Modeler with Logging {
 
   override val key = "dir"
 
-  override val usage = "[directory] to [triples]"
+  override val usage = "<directory> => [triples]"
 
-  def run(input: String, output: String) = {
+  def run(options: Array[String]) = {
+    val input = options(0)
     val p = Path(new File(input))
 
     if (p.isDirectory) {
@@ -105,9 +106,10 @@ object Directory extends Modeler with Logging {
       }
       println("translating [100%]")
 
+      val output = input + "-model.owl"
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
-      logger.info("[{}] triples generated", m.size)
+      logger.info("[{}] triples generated in [{}]", m.size, output)
     } else {
       logger.info("[{}] is not a directory", p.name)
     }

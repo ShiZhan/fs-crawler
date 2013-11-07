@@ -70,55 +70,32 @@ object TrigramTranslator {
   import modeler.Modelers
   import util.Version
 
-  val defaultInType = modeler.Directory.key
-  val defaultSource = "."
-  val defaultTarget = "model.owl"
-
   val usage = s"""
-usage: TrigramTranslator [-h] [-v] [-m] [-t] TYPE [-i] INPUT [-o] OUTPUT
+usage: TrigramTranslator [-h] [-v] [-m] MODELER <modeler arguments (see below)>
  -h,--help                Print this message
  -v,--version             Show program version
- -t,--type TYPE           Type of input resource [default: $defaultInType]
- -i,--input SOURCE        Input resource         [default: $defaultSource]
- -o,--output TARGET       Output target          [default: $defaultTarget]
+ -m,--modeler MODELER     Use <modeler>
 
- supported types:
-""" + Modelers.getHelp
-
-  type OptionMap = Map[Symbol, Any]
-
-  def nextOption(map: OptionMap, list: List[String]): OptionMap = {
-    list match {
-      case Nil => map
-      case "-h" :: tail => nextOption(map ++ Map('help -> true), tail)
-      case "--help" :: tail => nextOption(map ++ Map('help -> true), tail)
-      case "-v" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "--version" :: tail => nextOption(map ++ Map('version -> true), tail)
-      case "-t" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
-      case "--type" :: t :: tail => nextOption(map ++ Map('intype -> t), tail)
-      case "-i" :: i :: tail => nextOption(map ++ Map('source -> i), tail)
-      case "--input" :: i :: tail => nextOption(map ++ Map('source -> i), tail)
-      case "-o" :: o :: tail => nextOption(map ++ Map('target -> o), tail)
-      case "--output" :: o :: tail => nextOption(map ++ Map('target -> o), tail)
-      case option :: tail => println("Incorrect option: " + option); sys.exit(1)
-    }
-  }
+ supported modelers:
+""" + Modelers.help
 
   def main(args: Array[String]) = {
     println("TriGraM metadata translator")
 
-    val options = nextOption(Map(), args.toList)
+    if (args.length == 0) println(usage)
+    else if (args.length >= 1) {
+      if (args(0) == "-h" | args(0) == "--help") println(usage)
+      else if (args(0) == "-v" | args(0) == "--version") println(Version.get)
+      else if (args(0) == "-m" | args(0) == "--modeler") {
+        if (args.length >= 3) {
+          val m = args(1)
+          val o = args.drop(2)
 
-    if (args.length == 0 | options.contains('help)) println(usage)
-    else if (options.contains('version)) println(Version.get)
-    else {
-      val t = options.getOrElse('intype, defaultInType).toString
-      val i = options.getOrElse('source, defaultSource).toString
-      val o = options.getOrElse('target, defaultTarget).toString
+          println("invoking [%s] modeler with options [%s]".format(m, o.mkString(" ")))
 
-      println("translating [%s] as [%s] to model [%s]".format(i, t, o))
-
-      Modelers.run(t, i, o)
+          Modelers.run(m, o)
+        } else println("parameter error, see help.")
+      }
     }
   }
 

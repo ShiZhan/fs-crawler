@@ -12,6 +12,6 @@ import util.Logging
  */
 object Unknown extends Modeler with Logging {
 
-  def run(i: String, o: String) = logger.info("Modeler type unkown")
+  def run(o: Array[String]) = logger.info("Modeler type unkown")
 
 }
