@@ -1,6 +1,7 @@
 /**
  * @author ShiZhan
- * 2013
+ * @year 2013
+ * @name TriGraM Project
  */
 object Trigram {
 

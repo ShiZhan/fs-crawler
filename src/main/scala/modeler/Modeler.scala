@@ -5,16 +5,12 @@ package modeler
 
 /**
  * @author ShiZhan
- * interface for modelers, for adding more, follow these steps:
- * 1. extends from Modeler trait and assign (override) a unique "key"
- * 2. add help information by overriding "usage"
- * 3. implement "run" method with modeler dedicated options
- *
- *    key:       unique identifier
- *    usage:     help information
- *    run:       build model
- *
- *    then add this modeler into modelerMap
+ * interface template for modelers, for adding more, follow these steps:
+ * 1. use Modeler trait to create the new modeler
+ *   a. extends from Modeler trait and assign (override) a unique "key"
+ *   b. add help information by overriding "usage"
+ *   c. implement "run" method with modeler dedicated options
+ * 2. add this modeler into "Modelers.ms"
  */
 trait Modeler {
   val key: String = "base"
@@ -23,7 +19,7 @@ trait Modeler {
 }
 
 /**
- * managing modelers for translating various resources to RDF model
+ * modeler hub
  */
 object Modelers {
   private val ms = Seq(
