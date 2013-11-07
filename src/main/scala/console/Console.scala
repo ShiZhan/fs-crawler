@@ -14,15 +14,15 @@ object Console {
   private val store = Store()
   private val handler = Handler(store)
 
-  private val consoleUsage = """ [Console Usage]
+  private val usage = """ [Console Usage]
   help           print this message
   status         show program status
   query          enter SPARQL to do query
   update         enter SPARQL to do update
   exit           exit console"""
 
-  private val consoleTitle = "TriGraM Console"
-  private val consolePrompt = "# "
+  private val title = "TriGraM Console"
+  private val prompt = "# "
 
   private val status = {
     import util.Platform.{ os, javaVer, scalaVer }
@@ -31,26 +31,26 @@ object Console {
     val tgmVer = util.Version.get
     val tgmRoot = util.Config.TGMROOT
     val tgmData = new java.io.File(store.location).getAbsoluteFile
-    s"""OS:        $os
-Java:      $javaVer
-Scala:     $scalaVer
-TriGraM:   $tgmVer
+    s"""TriGraM:   $tgmVer
   code:    $tgmRoot
   data:    $tgmData
 Jena core: $jenaVer $jenaBuild
-Jena TDB:  $tdbVer $tdbBuild"""
+Jena TDB:  $tdbVer $tdbBuild
+Scala:     $scalaVer
+Java:      $javaVer
+OS:        $os"""
   }
 
   def run: Unit = {
-    println(consoleTitle)
-    print(consolePrompt)
+    println(title)
+    print(prompt)
 
     for (line <- io.Source.stdin.getLines) {
       val output = line.split(" ").toList match {
         case "exit" :: Nil =>
           store.close; return
 
-        case "help" :: Nil => consoleUsage
+        case "help" :: Nil => usage
         case "status" :: Nil => status
 
         case "test" :: Nil => "internal test command"
@@ -65,7 +65,7 @@ Jena TDB:  $tdbVer $tdbBuild"""
 
       if (output != null) println(output)
 
-      print(consolePrompt)
+      print(prompt)
     }
   }
 
