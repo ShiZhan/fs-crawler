@@ -3,7 +3,9 @@
  */
 package modeler
 
-import java.io.{ File, FileOutputStream }
+import java.io.{ FileReader, FileOutputStream }
+import scala.collection.JavaConversions._
+import au.com.bytecode.opencsv.CSVReader
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -23,7 +25,11 @@ object CSV extends Modeler with Logging {
 
   def run(options: Array[String]) = {
     val input = options(0)
+    val reader = new CSVReader(new FileReader(input))
+    val entries = reader.readAll
+    entries.toList.foreach(i => println(i.mkString))
 
+    reader.close
   }
 
 }
