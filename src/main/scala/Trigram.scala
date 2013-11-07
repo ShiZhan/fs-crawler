@@ -73,9 +73,9 @@ object TrigramTranslator {
 
   val usage = s"""
 usage: TrigramTranslator [-h|-v|-m MODELER <arguments>]
- -h,--help                Print this message
- -v,--version             Show program version
- -m,--modeler MODELER     Use <modeler>
+ -h,--help                   Print this message
+ -v,--version                Show program version
+ -m,--modeler MODELER <...>  Use <modeler> with arguments (check modeler help)
 
  supported modelers:
 """ + Modelers.help
@@ -102,9 +102,6 @@ usage: TrigramTranslator [-h|-v|-m MODELER <arguments>]
 
 object CimVocabGen {
 
-  import modeler.CimVocabulary.generator
-  import util.Config.CIMDATA
-
   private val usage = """
   run with <CIM Schema XML>, which can be downloaded from DMTF.
   """
@@ -115,16 +112,15 @@ object CimVocabGen {
     if (args.length < 1)
       println(usage)
     else {
-      generator(args(0))
-      println(s"CIM Schema Vocabulary files are saved in [$CIMDATA].")
+      modeler.CimVocabulary.generator(args(0))
+      println("CIM Schema Vocabulary files are saved in [%s]."
+        .format(util.Config.CIMDATA))
     }
   }
 
 }
 
 object CimModelMerger {
-
-  import modeler.Merger.merge
 
   private val usage = """
   run with <model to merge>
@@ -136,7 +132,7 @@ object CimModelMerger {
     if (args.length < 1)
       println(usage)
     else {
-      merge(args(0))
+      modeler.Merger.merge(args(0))
       println("model merged.")
     }
   }
