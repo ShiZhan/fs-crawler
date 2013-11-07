@@ -84,20 +84,18 @@ usage: TrigramTranslator [-h] [-v] [-m] MODELER <modeler arguments (see below)>
     println("TriGraM metadata translator")
 
     if (args.length == 0) println(usage)
-    else if (args.length >= 1) {
-      if (args(0) == "-h" | args(0) == "--help") println(usage)
-      else if (args(0) == "-v" | args(0) == "--version") println(Version.get)
-      else if (args(0) == "-m" | args(0) == "--modeler") {
-        if (args.length >= 3) {
-          val m = args(1)
-          val o = args.drop(2)
+    else if (args(0) == "-h" | args(0) == "--help") println(usage)
+    else if (args(0) == "-v" | args(0) == "--version") println(Version.get)
+    else if (args(0) == "-m" | args(0) == "--modeler") {
+      if (args.length >= 3) {
+        val m = args(1)
+        val o = args.drop(2)
 
-          println("invoking [%s] modeler with options [%s]".format(m, o.mkString(" ")))
+        println("invoking [%s] modeler with options [%s]".format(m, o.mkString(" ")))
 
-          Modelers.run(m, o)
-        } else println("parameter error, see help.")
-      }
-    }
+        Modelers.run(m, o)
+      } else println("parameter error, see help.")
+    } else println("invalid parameter, see help.")
   }
 
 }
@@ -142,4 +140,5 @@ object CimModelMerger {
       println("model merged.")
     }
   }
+
 }
