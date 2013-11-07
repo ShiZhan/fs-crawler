@@ -72,7 +72,7 @@ object TrigramTranslator {
   import util.Version
 
   val usage = s"""
-usage: TrigramTranslator [-h] [-v] [-m] MODELER <modeler arguments (see below)>
+usage: TrigramTranslator [-h|-v|-m MODELER <arguments>]
  -h,--help                Print this message
  -v,--version             Show program version
  -m,--modeler MODELER     Use <modeler>
@@ -87,15 +87,15 @@ usage: TrigramTranslator [-h] [-v] [-m] MODELER <modeler arguments (see below)>
     else if (args(0) == "-h" | args(0) == "--help") println(usage)
     else if (args(0) == "-v" | args(0) == "--version") println(Version.get)
     else if (args(0) == "-m" | args(0) == "--modeler") {
-      if (args.length >= 3) {
+      if (args.length > 2) {
         val m = args(1)
         val o = args.drop(2)
 
         println("invoking [%s] modeler with options [%s]".format(m, o.mkString(" ")))
 
         Modelers.run(m, o)
-      } else println("parameter error, see help.")
-    } else println("invalid parameter, see help.")
+      } else println("insufficient parameters, see help.")
+    } else println("invalid option [%s], see help.".format(args(0)))
   }
 
 }

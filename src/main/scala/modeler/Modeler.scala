@@ -28,7 +28,8 @@ object Modelers {
     Directory,
     DirectoryEx,
     Archive,
-    Checksum)
+    Checksum,
+    CSV)
 
   val help = ms.map { m => "  %s:  \t%s".format(m.key, m.usage) }.mkString("\n")
 

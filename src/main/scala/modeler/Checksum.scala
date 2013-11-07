@@ -13,7 +13,7 @@ import modeler.{ CimVocabulary => CIM }
 
 /**
  * @author ShiZhan
- * Translate content characters of 'virtually' any data source into
+ * Translate content characteristics of 'virtually' any data source into
  * structural model item(checksum, size, path, [item, ...]) for easy comparison
  */
 object Checksum extends Modeler with Logging {
