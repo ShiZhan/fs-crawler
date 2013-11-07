@@ -24,16 +24,22 @@ object Console {
   private val consoleTitle = "TriGraM Console"
   private val consolePrompt = "# "
 
-  private val status =
-    "Java:      " + System.getProperty("java.version") + "\n" +
-      "Scala:     " + scala.util.Properties.versionMsg + "\n" +
-      "TriGraM:   " + util.Version.get + "\n" +
-      "  code:    " + util.Config.TGMROOT + "\n" +
-      "  data:    " + new java.io.File(store.location).getAbsoluteFile + "\n" +
-      "Jena core: " + com.hp.hpl.jena.Jena.VERSION +
-      " " + com.hp.hpl.jena.Jena.BUILD_DATE + "\n" +
-      "Jena TDB:  " + com.hp.hpl.jena.tdb.TDB.VERSION +
-      " " + com.hp.hpl.jena.tdb.TDB.BUILD_DATE + "\n"
+  private val status = {
+    import util.Platform.{ os, javaVer, scalaVer }
+    import com.hp.hpl.jena.Jena.{ VERSION => jenaVer, BUILD_DATE => jenaBuild }
+    import com.hp.hpl.jena.tdb.TDB.{ VERSION => tdbVer, BUILD_DATE => tdbBuild }
+    val tgmVer = util.Version.get
+    val tgmRoot = util.Config.TGMROOT
+    val tgmData = new java.io.File(store.location).getAbsoluteFile
+    s"""OS:        $os
+Java:      $javaVer
+Scala:     $scalaVer
+TriGraM:   $tgmVer
+  code:    $tgmRoot
+  data:    $tgmData
+Jena core: $jenaVer $jenaBuild
+Jena TDB:  $tdbVer $tdbBuild"""
+  }
 
   def run: Unit = {
     println(consoleTitle)
