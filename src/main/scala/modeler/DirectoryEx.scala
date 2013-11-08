@@ -6,7 +6,9 @@ package modeler
 import scala.xml.Utility.escape
 import java.io.{ File, FileOutputStream, OutputStreamWriter, BufferedWriter }
 import scalax.file.Path
-import util.{ Logging, Version, DateTime, Hash }
+import util.{ Logging, Version, DateTime }
+
+import Directory.{ base, path2URI }
 
 /**
  * @author ShiZhan
@@ -47,10 +49,10 @@ object DirectoryEx extends Modeler with Logging {
   </owl:Ontology>"""
 
       def logicalFileT =
-        (base: String, nodeId: String, cimClass: String,
+        (pathURI: String, cimClass: String,
           name: String, size: Long, lastModified: String,
           canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
-  <owl:NamedIndividual rdf:about="$base#$nodeId">
+  <owl:NamedIndividual rdf:about="$pathURI">
     <rdf:type rdf:resource="$cimClass"/>
     <cim:Name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
     >$name</cim:Name>
@@ -67,21 +69,21 @@ object DirectoryEx extends Modeler with Logging {
   </owl:NamedIndividual>
 """
 
-      def partComponentT = (base: String, subNodeId: String) => s"""
-    <cim:PartComponent rdf:resource="$base#$subNodeId"/>"""
+      def partComponentT = (pathURI: String) => s"""
+    <cim:PartComponent rdf:resource="$pathURI"/>"""
 
       def directoryContainsFileT =
-        (base: String, dcfId: String, partComponent: String, dirId: String) => s"""
-  <cim:CIM_DirectoryContainsFile rdf:about="$base#$dcfId">
+        (pathURI: String, partComponent: String) => s"""
+  <cim:CIM_DirectoryContainsFile rdf:about="$pathURI.dcf">
     $partComponent
-    <cim:GroupComponent rdf:resource="$base#$dirId"/>
+    <cim:GroupComponent rdf:resource="$pathURI"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
   </cim:CIM_DirectoryContainsFile>"""
 
       val footerT = "</rdf:RDF>"
 
       def nodeT(uri: String, node: Path) = {
-        val nodeId = Hash.getMD5(node.toAbsolute.path)
+        val pathURI = escape(path2URI(node))
 
         val isDirectory = node.isDirectory
 
@@ -94,15 +96,14 @@ object DirectoryEx extends Modeler with Logging {
         val size = if (node.size.nonEmpty) node.size.get else 0
         val dateTime = DateTime.get(node.lastModified)
 
-        val logicalFile = logicalFileT(uri, nodeId, cimClass,
+        val logicalFile = logicalFileT(pathURI, cimClass,
           name, size, dateTime, node.canRead, node.canWrite, node.canExecute)
 
         val directoryConainsFile = if (isDirectory) {
           val subNodeList = node * "*"
           val partComponent =
-            subNodeList.map(
-              s => partComponentT(uri, Hash.getMD5(s.toAbsolute.path))).mkString
-          directoryContainsFileT(uri, nodeId + "_dcf", partComponent, nodeId)
+            subNodeList.map(s => partComponentT(escape(path2URI(s)))).mkString
+          directoryContainsFileT(pathURI, partComponent)
         } else ""
         logicalFile + directoryConainsFile
       }
@@ -110,8 +111,6 @@ object DirectoryEx extends Modeler with Logging {
       val output = input + "-model.owl"
       val m = new BufferedWriter(
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
-
-      val base = escape(p.toURI.toString)
 
       m.write(headerT(base, Version.get, DateTime.get) + nodeT(base, p))
 
