@@ -28,7 +28,7 @@ object CSV extends Modeler with Logging {
       case data :: schema :: tail => translate(data, schema)
       case _ => {
         logger.error("parameter error: [{}]", options)
-        logger.error("must provide a data source CSV and a schema CSV.")
+        logger.error("must provide a data source CSV and a schema CSV (delimiter: '*').")
         logger.error("data CSV:")
         logger.error("column 0:   [individual IDs]")
         logger.error("column 1~m: [property values]")
@@ -40,7 +40,7 @@ object CSV extends Modeler with Logging {
   }
 
   def loadSchema(schema: String) = {
-    val reader = new CSVReader(new FileReader(schema), ',')
+    val reader = new CSVReader(new FileReader(schema), '*')
     val line = reader.readAll.toList map { case Array(u, i) => (u, i) }
     val concept = line.head._1
     val properties = line.drop(1).map(_._1)
