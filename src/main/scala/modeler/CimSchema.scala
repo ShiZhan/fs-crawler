@@ -20,7 +20,7 @@ object CimSchema extends Modeler with Logging {
 
   override val key = "cim"
 
-  override val usage = "<DMTF CIM schema> => [all-in-one OWL model]: " + CIM.PATH_ALL
+  override val usage = "<DMTF CIM schema> => [all-in-one OWL model]:\n\t\t" + CIM.PATH_ALL
 
   def run(options: Array[String]) = {
     val input = options(0)

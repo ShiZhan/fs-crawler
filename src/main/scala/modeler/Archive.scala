@@ -22,7 +22,7 @@ object Archive extends Modeler with Logging {
 
   override val key = "arc"
 
-  override val usage = "<archive file> => [triples], currently support [ar, cpio, jar, tar, zip]."
+  override val usage = "<archive> => [triples],\n\t\tcurrently support [ar, cpio, jar, tar, zip]."
 
   def run(options: Array[String]) = {
     val input = options(0)

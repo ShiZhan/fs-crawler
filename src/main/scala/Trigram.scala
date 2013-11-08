@@ -75,7 +75,7 @@ object TrigramTranslator {
 usage: TrigramTranslator [-h|-v|-m MODELER <arguments>]
  -h,--help                   Print this message
  -v,--version                Show program version
- -m,--modeler MODELER <...>  Use <modeler> with arguments (check modeler help)
+ -m,--modeler MODELER <...>  Use <modeler> with arguments (below)
 
  supported modelers:
 """ + Modelers.help

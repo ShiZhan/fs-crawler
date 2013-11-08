@@ -20,7 +20,7 @@ object Directory extends Modeler with Logging {
 
   override val key = "dir"
 
-  override val usage = "<directory> => [triples]"
+  override val usage = "<directory> [<output>] => [triples]"
 
   private def assignAttributes(m: Model, p: Path) = {
     val name = p.toAbsolute.path

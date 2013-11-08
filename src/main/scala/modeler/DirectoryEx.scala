@@ -17,7 +17,7 @@ object DirectoryEx extends Modeler with Logging {
 
   override val key = "direx"
 
-  override val usage = "<directory> => [triples], plain text translation to support massive items."
+  override val usage = "<directory> [<output>] => [triples],\n\t\tplain text translation to support massive items."
 
   def run(options: Array[String]) = {
     val input = options(0)

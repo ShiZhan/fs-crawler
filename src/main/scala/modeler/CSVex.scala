@@ -15,7 +15,8 @@ import util.{ Logging, Version, DateTime, Hash }
 object CSVex extends Modeler with Logging {
   override val key = "csvex"
 
-  override val usage = "<CSV> <schema> => [triples], plain text translation for massive document."
+  override val usage =
+    "<CSV> <schema> => [triples],\n\t\tplain text translation to support large document."
 
   def run(options: Array[String]) = {
     val input = options(0)
