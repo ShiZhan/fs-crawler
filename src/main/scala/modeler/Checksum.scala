@@ -7,7 +7,7 @@ import java.io.{ File, FileOutputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, Hash }
+import util.{ Logging, Version, DateTime, Hash, URI }
 
 import modeler.{ CimVocabulary => CIM }
 
@@ -47,7 +47,7 @@ object Checksum extends Modeler with Logging {
 
       val c = toInt(chunkSize).getOrElse(65536)
 
-      val base = f.toURI.toString
+      val base = URI.fromHost
       val ns = base + "#"
 
       val m = ModelFactory.createDefaultModel

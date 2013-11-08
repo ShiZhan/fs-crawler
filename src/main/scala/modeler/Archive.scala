@@ -3,25 +3,12 @@
  */
 package modeler
 
-import java.io.{
-  File,
-  FileInputStream,
-  FileOutputStream,
-  InputStreamReader,
-  BufferedInputStream
-}
+import java.io.{ File, FileInputStream, FileOutputStream, BufferedInputStream }
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.vocabulary.{
-  RDF,
-  RDFS,
-  OWL,
-  OWL2,
-  DC_11 => DC,
-  DCTerms => DT
-}
+import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, Hash, URI }
+import util.{ Logging, Version, DateTime, URI }
 
 import modeler.{ CimVocabulary => CIM }
 
