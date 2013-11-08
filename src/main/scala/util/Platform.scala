@@ -5,12 +5,12 @@ package util
 
 /**
  * @author ShiZhan
- * check platform information
+ * gather platform information
  */
 object Platform {
-  import System.getProperty
-  val os = getProperty("os.name")
-  val isWin = os.startsWith("Windows")
-  val javaVer = getProperty("java.version")
+  val hostname = java.net.InetAddress.getLocalHost.getHostName
+  val os = System.getProperty("os.name")
+  val isWindows = os.startsWith("Windows")
+  val javaVer = System.getProperty("java.version")
   val scalaVer = scala.util.Properties.versionMsg
 }

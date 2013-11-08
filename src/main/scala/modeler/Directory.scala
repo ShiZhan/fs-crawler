@@ -5,10 +5,10 @@ package modeler
 
 import java.io.{ File, FileOutputStream }
 import scalax.file.Path
-import com.hp.hpl.jena.rdf.model.ModelFactory
+import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, Hash }
+import util.{ Logging, Version, DateTime, Platform }
 
 import modeler.{ CimVocabulary => CIM }
 
@@ -22,15 +22,56 @@ object Directory extends Modeler with Logging {
 
   override val usage = "<directory> => [triples]"
 
+  val base = "file:/" + Platform.hostname
+  val ns = base + "#"
+
+  def path2URI(p: Path) = p.toAbsolute.toURI.toString.replaceFirst("file:", base)
+
+  private def assignAttributes(m: Model, p: Path) = {
+    val name = p.toAbsolute.path
+    val size = if (p.size.nonEmpty) p.size.get.toString else "0"
+    val lastMod = DateTime.get(p.lastModified)
+    val canRead = p.canRead.toString
+    val canWrite = p.canWrite.toString
+    val canExecute = p.canExecute.toString
+
+    if (p.isDirectory) {
+      val dirUri = path2URI(p)
+      val dirRes = m.createResource(dirUri, OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
+        .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+        .addProperty(CIM.PROP("LastModified"), lastMod, XSDdateTime)
+        .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
+        .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
+        .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
+      val dirRef = m.createResource(dirUri + ".dcf", OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
+        .addProperty(CIM.PROP("GroupComponent"), dirRes)
+
+      for (subPath <- p * "*") {
+        val subPathRes = m.getResource(path2URI(subPath))
+        dirRef.addProperty(CIM.PROP("PartComponent"), subPathRes)
+      }
+
+    } else {
+      m.createResource(path2URI(p), OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
+        .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+        .addProperty(CIM.PROP("LastModified"), lastMod, XSDdateTime)
+        .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
+        .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
+        .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
+    }
+  }
+
   def run(options: Array[String]) = {
     val input = options(0)
     val p = Path(new File(input))
 
     if (p.isDirectory) {
       logger.info("creating model for directory [{}]", p.toAbsolute.path)
-
-      val base = p.toURI.toString
-      val ns = base + "#"
 
       val m = ModelFactory.createDefaultModel
 
@@ -44,48 +85,7 @@ object Directory extends Modeler with Logging {
         .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
         .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
 
-      def genNodeUri(p: Path) = ns + Hash.getMD5(p.toAbsolute.path)
-
-      def assignAttributes(p: Path) = {
-        val name = p.toAbsolute.path
-        val size = if (p.size.nonEmpty) p.size.get.toString else "0"
-        val lastMod = DateTime.get(p.lastModified)
-        val canRead = p.canRead.toString
-        val canWrite = p.canWrite.toString
-        val canExecute = p.canExecute.toString
-
-        if (p.isDirectory) {
-          val dirUri = genNodeUri(p)
-          val dirRes = m.createResource(dirUri, OWL2.NamedIndividual)
-            .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
-            .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
-            .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
-            .addProperty(CIM.PROP("LastModified"), lastMod, XSDdateTime)
-            .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
-            .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
-            .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
-          val dirRef = m.createResource(dirUri + "_dcf", OWL2.NamedIndividual)
-            .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
-            .addProperty(CIM.PROP("GroupComponent"), dirRes)
-
-          for (subPath <- p * "*") {
-            val subPathRes = m.getResource(genNodeUri(subPath))
-            dirRef.addProperty(CIM.PROP("PartComponent"), subPathRes)
-          }
-
-        } else {
-          m.createResource(genNodeUri(p), OWL2.NamedIndividual)
-            .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
-            .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
-            .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
-            .addProperty(CIM.PROP("LastModified"), lastMod, XSDdateTime)
-            .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
-            .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
-            .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
-        }
-      }
-
-      assignAttributes(p)
+      assignAttributes(m, p)
 
       logger.info("reading directory ...")
 
@@ -98,7 +98,7 @@ object Directory extends Modeler with Logging {
       logger.info("[{}] objects", total)
 
       for (i <- ps) {
-        assignAttributes(i)
+        assignAttributes(m, i)
 
         progress += 1
         if (progress % delta == 0)
@@ -114,5 +114,4 @@ object Directory extends Modeler with Logging {
       logger.info("[{}] is not a directory", p.name)
     }
   }
-
 }
