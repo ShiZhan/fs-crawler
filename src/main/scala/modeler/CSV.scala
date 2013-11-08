@@ -21,15 +21,34 @@ import modeler.{ CimVocabulary => CIM }
 object CSV extends Modeler with Logging {
   override val key = "csv"
 
-  override val usage = "<CSV> => [triples]"
+  override val usage = "<CSV> <schema> => [triples]"
 
   def run(options: Array[String]) = {
-    val input = options(0)
-    val reader = new CSVReader(new FileReader(input))
-    val entries = reader.readAll
-    entries.toList.foreach(i => println(i.mkString))
-
-    reader.close
+    options.toList match {
+      case data :: schema :: tail => translate(data, schema)
+      case _ => {
+        logger.error("parameter error: [{}]", options)
+        logger.error("must provide a data source CSV and a schema CSV.")
+        logger.error("schema CSV:")
+        logger.error("line 0:   [Concept URI,  import URI]")
+        logger.error("line 1~m: [Property URI, import URI]")
+      }
+    }
   }
 
+  def translate(data: String, schema: String) = {
+    val schemaReader = new CSVReader(new FileReader(schema))
+    val schemaList = schemaReader.readAll
+    val cLine = schemaList.head
+    val pLines = schemaList.drop(1).toList
+    schemaReader.close
+
+    val reader = new CSVReader(new FileReader(data))
+    val entries = reader.readAll
+    if (!entries.isEmpty) {
+      entries.toList.foreach(i => println(i.mkString))
+    }
+    reader.close
+
+  }
 }
