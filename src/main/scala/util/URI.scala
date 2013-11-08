@@ -1,5 +1,5 @@
 /**
- * Uniform URI generator
+ * URI generator
  */
 package util
 
@@ -8,7 +8,7 @@ import scalax.file.Path
 
 /**
  * @author ShiZhan
- * Uniform URI generator
+ * URI generator
  * 1. Generate computer node URI from hostname
  * 2. Generate file URI from File instance with hostname
  * 3. Generate path URI from Path instance with hostname
