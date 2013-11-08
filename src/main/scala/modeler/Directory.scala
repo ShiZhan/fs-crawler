@@ -103,7 +103,7 @@ object Directory extends Modeler with Logging {
       }
       println("translating [100%]")
 
-      val output = input + "-model.owl"
+      val output = if (options.length > 1) options(1) else input + "-model.owl"
       m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
       logger.info("[{}] triples generated in [{}]", m.size, output)

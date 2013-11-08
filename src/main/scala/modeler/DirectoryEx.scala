@@ -108,7 +108,7 @@ object DirectoryEx extends Modeler with Logging {
         logicalFile + directoryConainsFile
       }
 
-      val output = input + "-model.owl"
+      val output = if (options.length > 1) options(1) else input + "-model.owl"
       val m = new BufferedWriter(
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
