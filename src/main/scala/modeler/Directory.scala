@@ -8,7 +8,7 @@ import scalax.file.Path
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, Platform }
+import util.{ Logging, Version, DateTime, Platform, URI }
 
 import modeler.{ CimVocabulary => CIM }
 
@@ -22,11 +22,6 @@ object Directory extends Modeler with Logging {
 
   override val usage = "<directory> => [triples]"
 
-  val base = "file:/" + Platform.hostname
-  val ns = base + "#"
-
-  def path2URI(p: Path) = p.toAbsolute.toURI.toString.replaceFirst("file:", base)
-
   private def assignAttributes(m: Model, p: Path) = {
     val name = p.toAbsolute.path
     val size = if (p.size.nonEmpty) p.size.get.toString else "0"
@@ -36,7 +31,7 @@ object Directory extends Modeler with Logging {
     val canExecute = p.canExecute.toString
 
     if (p.isDirectory) {
-      val dirUri = path2URI(p)
+      val dirUri = URI.fromPath(p)
       val dirRes = m.createResource(dirUri, OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
         .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
@@ -50,12 +45,12 @@ object Directory extends Modeler with Logging {
         .addProperty(CIM.PROP("GroupComponent"), dirRes)
 
       for (subPath <- p * "*") {
-        val subPathRes = m.getResource(path2URI(subPath))
+        val subPathRes = m.getResource(URI.fromPath(subPath))
         dirRef.addProperty(CIM.PROP("PartComponent"), subPathRes)
       }
 
     } else {
-      m.createResource(path2URI(p), OWL2.NamedIndividual)
+      m.createResource(URI.fromPath(p), OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
         .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
@@ -75,7 +70,9 @@ object Directory extends Modeler with Logging {
 
       val m = ModelFactory.createDefaultModel
 
-      m.setNsPrefix(key, ns)
+      val base = URI.fromHost
+
+      m.setNsPrefix(key, base + "#")
       m.setNsPrefix(CimSchema.key, CIM.NS)
       m.createResource(base, OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
