@@ -20,7 +20,7 @@ object CSVex extends Modeler with Logging {
 
   def run(options: Array[String]) = {
     val input = options(0)
-    val reader = new CSVReader(new FileReader(input), ' ')
+    val reader = new CSVReader(new FileReader(input), '*')
     val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
     if (entries != null) {
       entries.foreach(i => println(i.mkString(", ")))
