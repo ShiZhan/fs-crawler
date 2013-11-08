@@ -21,7 +21,7 @@ import com.hp.hpl.jena.vocabulary.{
   DCTerms => DT
 }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, Hash }
+import util.{ Logging, Version, DateTime, Hash, URI }
 
 import modeler.{ CimVocabulary => CIM }
 
@@ -47,7 +47,7 @@ object Archive extends Modeler with Logging {
     else {
       logger.info("Model zipped file [{}]", f.getAbsolutePath)
 
-      val base = f.toURI.toString
+      val base = URI.fromHost
       val ns = base + "#"
 
       val m = ModelFactory.createDefaultModel
@@ -62,25 +62,26 @@ object Archive extends Modeler with Logging {
         .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
         .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
 
+      val arcURI = URI.fromFile(f)
       val bFIS = new BufferedInputStream(new FileInputStream(f))
       val aSF = new ArchiveStreamFactory
       val aIS = aSF.createArchiveInputStream(bFIS)
       val iAIS = Iterator.continually { aIS.getNextEntry }.takeWhile(_ != null)
 
-      val archiveFile = m.createResource(ns + aIS, OWL2.NamedIndividual)
+      val archiveFile = m.createResource(arcURI, OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
         .addProperty(CIM.PROP("Name"), f.getAbsolutePath, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), f.length.toString, XSDunsignedLong)
         .addProperty(CIM.PROP("LastModified"), DateTime.get(f.lastModified), XSDdateTime)
         .addProperty(CIM.PROP("InstanceID"), f.hashCode.toHexString, XSDnormalizedString)
 
-      val containFile = m.createResource(ns + aIS + "_dcf", OWL2.NamedIndividual)
+      val containFile = m.createResource(arcURI + ".dcf", OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
         .addProperty(CIM.PROP("GroupComponent"), archiveFile)
 
       for (e <- iAIS) {
         val name = e.getName
-        val uri = ns + Hash.getMD5(name)
+        val uri = arcURI + "/" + name
         val size = e.getSize.toString
         val lastM = DateTime.get(e.getLastModifiedDate)
         val hash = e.hashCode.toHexString
