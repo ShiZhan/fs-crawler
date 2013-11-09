@@ -16,8 +16,16 @@ import scalax.file.Path
  * 4. Generate URI from plain String with hostname
  */
 object URI {
-  def fromHost = "file:/" + Platform.hostname
-  def fromFile(f: File) = f.toURI.toString.replaceFirst("file:", fromHost)
-  def fromPath(p: Path) = p.toAbsolute.toURI.toString.replaceFirst("file:", fromHost)
+  val prefix = "file:/"
+  def fromHost = prefix + Platform.hostname + '/'
+  def fromFile(file: File) = file.toURI.toString.replaceFirst("file:/", fromHost)
+  def fromPath(path: Path) = path.toAbsolute.toURI.toString.replaceFirst("file:/", fromHost)
   def fromString(s: String) = fromHost + '/' + URLEncoder.encode(s)
+
+  def fromHost(p: String) = p + Platform.hostname + '/'
+  def fromFile(p: String, file: File) =
+    file.toURI.toString.replaceFirst("file:/", fromHost(p))
+  def fromPath(p: String, path: Path) =
+    path.toAbsolute.toURI.toString.replaceFirst("file:/", fromHost(p))
+  def fromString(p: String, s: String) = fromHost(p) + '/' + URLEncoder.encode(s)
 }
