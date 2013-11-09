@@ -7,69 +7,61 @@ import java.io.{ FileReader, FileOutputStream }
 import scala.collection.JavaConversions._
 import au.com.bytecode.opencsv.CSVReader
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
+import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import util.{ Logging, Version, DateTime, URI }
-
-import modeler.{ CimVocabulary => CIM }
 
 /**
  * @author ShiZhan
  * Translate CSV into triple model
  * A wide range support for various data sources that can be represented by CSV
+ * CSV format:
+ * delimiter: '*'
+ * column 0:     key property, individual ID = base URI + key
+ * column 1~127: all other properties as "COLxxx"
+ * rows:         individuals of "ROW"
  */
 object CSV extends Modeler with Logging {
   override val key = "csv"
 
-  override val usage = "<CSV> <schema> => [triples]"
+  override val usage = "<CSV> => [triples]"
 
   def run(options: Array[String]) = {
     options.toList match {
-      case data :: schema :: tail => translate(data, schema)
-      case _ => {
-        logger.error("parameter error: [{}]", options)
-        logger.error("must provide a data source CSV (delimiter: '*') and a schema.")
-        logger.error("data CSV:")
-        logger.error("column 0:   [individual IDs]")
-        logger.error("column 1~m: [property values]")
-        logger.error("schema:")
-        logger.error("line 0:     [CIM Class]")
-        logger.error("line 1~m:   [CIM Property]")
-      }
+      case data :: tail => translate(data)
+      case _ => { logger.error("parameter error: [{}]", options) }
     }
   }
 
-  def loadSchema(schema: String) = {
-    val s = io.Source.fromFile(schema)
-    val lines = s.getLines.toList
-    val concept = lines.head
-    val properties = lines.drop(1)
-    s.close
-    (concept, properties)
-  }
-
-  private def initModel(i: String) = {
+  def translate(data: String) = {
     val base = URI.fromHost
-    val ns = base + "#"
-    val m = ModelFactory.createDefaultModel
+    val ns = base + "/CSV#"
+    val m = ModelFactory.createOntologyModel
     m.setNsPrefix(key, ns)
-    m.setNsPrefix(CimSchema.key, CIM.NS)
-    m.createResource(base, OWL.Ontology)
+    m.createOntology(base)
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM CSV model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      .addProperty(OWL.imports, CIM.IMPORT(i))
-    m
-  }
+    val ROW = m.createResource(ns + "ROW")
+    val COL = (0 to 127) map { i =>
+      m.createDatatypeProperty("%sCOL%03d".format(ns, i))
+    }
 
-  def translate(data: String, schema: String) = {
-    val (c, p) = loadSchema(schema)
-    val m = initModel(c)
     val reader = new CSVReader(new FileReader(data), '*')
-    val entries = reader.readAll
+    val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
     for (e <- entries) {
-      println(e.mkString(" --> "))
+      val key = e(0)
+      val uri = URI.fromString(key)
+      val r = m.createIndividual(uri, ROW)
+      (0 to e.length - 1) foreach {
+        i => r.addProperty(COL(i), e(i), XSDnormalizedString)
+      }
     }
     reader.close
+
+    val output = data + "-model.owl"
+    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
+
+    logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 }
