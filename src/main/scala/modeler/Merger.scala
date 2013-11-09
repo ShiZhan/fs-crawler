@@ -37,7 +37,8 @@ object Merger extends Logging {
   def merge(modelFile: String) = {
     val files = gather(modelFile).distinct
 
-    logger.info("loading imported CIM models: [{}]", files mkString ", ")
+    logger.info("[{}] CIM classes imported:", files.length)
+    files foreach println
 
     val models = files map { loadModel(_) } toList
     val baseModel = loadModel(modelFile)
