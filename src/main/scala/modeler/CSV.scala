@@ -4,7 +4,6 @@
 package modeler
 
 import java.io.{ FileReader, FileOutputStream }
-import scala.collection.JavaConversions._
 import au.com.bytecode.opencsv.CSVReader
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
