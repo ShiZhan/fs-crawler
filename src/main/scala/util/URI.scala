@@ -4,6 +4,7 @@
 package util
 
 import java.io.File
+import java.net.URLEncoder
 import scalax.file.Path
 
 /**
@@ -17,4 +18,5 @@ object URI {
   def fromHost = "file:/" + Platform.hostname
   def fromFile(f: File) = f.toURI.toString.replaceFirst("file:", fromHost)
   def fromPath(p: Path) = p.toAbsolute.toURI.toString.replaceFirst("file:", fromHost)
+  def fromString(s: String) = fromHost + '/' + URLEncoder.encode(s)
 }
