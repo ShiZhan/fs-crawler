@@ -83,7 +83,7 @@ object DirectoryEx extends Modeler with Logging {
       val footerT = "</rdf:RDF>"
 
       def nodeT(uri: String, node: Path) = {
-        val pathURI = escape(URI.fromPath(node))
+        val pathURI = URI.fromPath(node)
 
         val isDirectory = node.isDirectory
 
@@ -102,7 +102,7 @@ object DirectoryEx extends Modeler with Logging {
         val directoryConainsFile = if (isDirectory) {
           val subNodeList = node * "*"
           val partComponent =
-            subNodeList.map(s => partComponentT(escape(URI.fromPath(s)))).mkString
+            subNodeList.map(s => partComponentT(URI.fromPath(s))).mkString
           directoryContainsFileT(pathURI, partComponent)
         } else ""
         logicalFile + directoryConainsFile
