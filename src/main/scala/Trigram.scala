@@ -25,20 +25,19 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
 
   type OptionMap = Map[Symbol, Any]
 
-  def nextOption(map: OptionMap, list: List[String]): OptionMap = {
+  def parseOption(list: List[String]): OptionMap = {
     list match {
-      case Nil => map
-      case "-h" :: tail => map ++ Map('help -> true)
-      case "--help" :: tail => map ++ Map('help -> true)
-      case "-v" :: tail => map ++ Map('version -> true)
-      case "--version" :: tail => map ++ Map('version -> true)
-      case "-i" :: modelList => map ++ Map('model -> modelList)
-      case "--import" :: modelList => map ++ Map('model -> modelList)
-      case "-q" :: q :: tail => map ++ Map('query -> q)
-      case "--query" :: q :: tail => map ++ Map('query -> q)
-      case "-u" :: u :: tail => map ++ Map('update -> u)
-      case "--update" :: u :: tail => map ++ Map('update -> u)
-      case option :: tail => println("Incorrect option: " + option); sys.exit(1)
+      case "-h" :: tail => Map('help -> true)
+      case "--help" :: tail => Map('help -> true)
+      case "-v" :: tail => Map('version -> true)
+      case "--version" :: tail => Map('version -> true)
+      case "-i" :: modelList => Map('model -> modelList)
+      case "--import" :: modelList => Map('model -> modelList)
+      case "-q" :: q :: tail => Map('query -> q)
+      case "--query" :: q :: tail => Map('query -> q)
+      case "-u" :: u :: tail => Map('update -> u)
+      case "--update" :: u :: tail => Map('update -> u)
+      case _ => println("Incorrect option: " + list); sys.exit(1)
     }
   }
 
@@ -47,7 +46,7 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
 
     if (args.length == 0) Console.run
     else {
-      val options = nextOption(Map(), args.toList)
+      val options = parseOption(args.toList)
 
       if (options.contains('help)) println(usage)
       else if (options.contains('version)) println(Version.get)
@@ -93,7 +92,7 @@ usage: Translator [flags] <arguments>
 
   type OptionMap = Map[Symbol, Any]
 
-  def nextOption(list: List[String]) = {
+  def parseOption(list: List[String]) = {
     list match {
       case "-h" :: tail => Map('help -> true)
       case "--help" :: tail => Map('help -> true)
@@ -116,7 +115,7 @@ usage: Translator [flags] <arguments>
   def main(args: Array[String]) = {
     println("TriGraM metadata translator")
 
-    val options = nextOption(args.toList)
+    val options = parseOption(args.toList)
     if (options.isEmpty)
       println(incorrectArgs)
     else {
