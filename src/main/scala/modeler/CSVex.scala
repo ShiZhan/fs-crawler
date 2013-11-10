@@ -25,8 +25,9 @@ object CSVex extends Modeler with Logging {
     }
   }
 
-  private def headerT = (ns: String, base: String, version: String, dateTime: String) =>
-    s"""<rdf:RDF
+  private def headerT =
+    (ns: String, base: String, version: String, dateTime: String, uri: String) =>
+      s"""<rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -40,7 +41,8 @@ object CSVex extends Modeler with Logging {
     >TriGraM CSV model</dc:description>
     <dc:date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
     >$dateTime</dc:date>
-  </owl:Ontology>"""
+  </owl:Ontology>
+  <owl:Class rdf:about="$uri"/>"""
 
   private def dataTypePropertyT = (uri: String) =>
     s"""
@@ -65,10 +67,10 @@ object CSVex extends Modeler with Logging {
       new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
     val base = URI.fromHost
-    val ns = base + "/CSV#"
+    val ns = base + "/CSV#"; val ROW = ns + "ROW"
     def pName(i: Int) = "COL%03d".format(i)
     val properties = (0 to 127).map { i => dataTypePropertyT(ns + pName(i)) }.mkString
-    m.write(headerT(ns, base, Version.get, DateTime.get) + properties)
+    m.write(headerT(ns, base, Version.get, DateTime.get, ROW) + properties)
 
     val reader = new CSVReader(new FileReader(data), '*')
     val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
