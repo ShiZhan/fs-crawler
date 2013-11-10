@@ -24,31 +24,39 @@ object Merger extends Logging {
     m.read(mFIS, "")
   }
 
-  private def gather(base: String): List[String] = {
-    val m = loadModel(base)
+  private def readImports(baseModelFile: String): List[String] = {
+    val m = loadModel(baseModelFile)
     val importURIs = m.listObjectsOfProperty(OWL.imports).toList
     val importFiles =
       importURIs.map(CIM.PATH_BASE + _.toString.substring(CIM.NS.size)).toList
     m.close
     if (importFiles.isEmpty) List()
-    else importFiles ::: importFiles.flatMap(gather)
+    else importFiles ::: importFiles.flatMap(readImports)
   }
 
-  def merge(modelFile: String) = {
-    val files = gather(modelFile).distinct
+  def gather(baseModelFile: String) = {
+    val files = readImports(baseModelFile).distinct
 
     logger.info("[{}] CIM classes imported:", files.length)
     files foreach println
 
     val models = files map { loadModel(_) } toList
-    val baseModel = loadModel(modelFile)
-    val mergedModel = (baseModel /: models) { (r, m) => r union m }
-    val importStmts = mergedModel.listStatements(null, OWL.imports, null)
-    mergedModel.remove(importStmts)
-    val mFOS = new java.io.FileOutputStream(modelFile + "-merged.owl")
-    mergedModel.write(mFOS, "RDF/XML-ABBREV")
+    val baseModel = loadModel(baseModelFile)
+    val gatheredModel = (baseModel /: models) { (r, m) => r union m }
+    val importStmts = gatheredModel.listStatements(null, OWL.imports, null)
+    gatheredModel.remove(importStmts)
+    val gatheredFile = baseModelFile + "-gathered.owl"
+    val mFOS = new java.io.FileOutputStream(gatheredFile)
+    gatheredModel.write(mFOS, "RDF/XML-ABBREV")
 
-    logger.info("[{}] triples merged into [{}]",
-      mergedModel.size, modelFile + "-merged.owl")
+    logger.info("wrote [{}] triples to [{}]", gatheredModel.size, gatheredFile)
   }
+
+  def combine(modelFiles: List[String]) {
+    val models = modelFiles map { loadModel(_) } toList
+
+    val combinedFile = "" + "combined.owl"
+    logger.info("wrote [{}] triples to [{}]", 0, combinedFile)
+  }
+
 }

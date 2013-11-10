@@ -4,7 +4,6 @@
  * @name TriGraM Project
  */
 object Trigram {
-
   import tdb.tdbloader.{ main => loader }
   import tdb.tdbquery.{ main => query }
   import tdb.tdbupdate.{ main => update }
@@ -62,11 +61,9 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
       }
     }
   }
-
 }
 
 object TrigramTranslator {
-
   import modeler.{ Modelers, CimVocabulary, Merger }
   import util.{ Version, Config }
 
@@ -100,10 +97,10 @@ usage: Translator [flags] <arguments>
       case "--version" :: tail => Map('version -> true)
       case "-c" :: models => Map('combine -> models)
       case "--combine" :: models => Map('combine -> models)
-      case "-V" :: schema :: tail => Map('schema -> schema)
-      case "--vocabulary" :: schema :: tail => Map('schema -> schema)
-      case "-g" :: model :: tail => Map('gather -> model)
-      case "--gather" :: model :: tail => Map('gather -> model)
+      case "-V" :: cimSchema :: tail => Map('schema -> cimSchema)
+      case "--vocabulary" :: cimSchema :: tail => Map('schema -> cimSchema)
+      case "-g" :: baseModel :: tail => Map('gather -> baseModel)
+      case "--gather" :: baseModel :: tail => Map('gather -> baseModel)
       case "-m" :: modeler :: margs =>
         Map('modeler -> modeler, 'margs -> margs)
       case "--modeler" :: modeler :: margs =>
@@ -122,16 +119,19 @@ usage: Translator [flags] <arguments>
       if (options.contains('help)) println(usage)
       else if (options.contains('version)) println(Version.get)
       else if (options.contains('combine)) {
-        val models = options('combine).asInstanceOf[List[String]]
-        models.foreach(println)
+        val modelFiles = options('combine).asInstanceOf[List[String]]
+        if (modelFiles.size > 1) {
+          Merger.combine(modelFiles)
+          println("[%d] models combined.".format(modelFiles.size))
+        }
       } else if (options.contains('schema)) {
-        val schema = options('schema).toString
-        CimVocabulary.generator(schema)
+        val cimSchema = options('schema).toString
+        CimVocabulary.generator(cimSchema)
         println("CIM Vocabulary in [%s] are updated.".format(Config.CIMDATA))
       } else if (options.contains('gather)) {
-        val model = options('gather).toString
-        Merger.merge(model)
-        println("All imported CIM classes of [%s] gathered.".format(model))
+        val baseModel = options('gather).toString
+        Merger.gather(baseModel)
+        println("All imported CIM classes of [%s] gathered.".format(baseModel))
       } else if (options.contains('modeler)) {
         val m = options('modeler).toString
         val o = options('margs).asInstanceOf[List[String]].toArray
@@ -140,5 +140,4 @@ usage: Translator [flags] <arguments>
       }
     }
   }
-
 }

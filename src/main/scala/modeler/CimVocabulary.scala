@@ -92,8 +92,8 @@ object CimVocabulary {
 
   def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
 
-  def generator(cimSchemaXML: String) = {
-    val i = XML.loadFile(cimSchemaXML)
+  def generator(cimSchema: String) = {
+    val i = XML.loadFile(cimSchema)
     val cNodes = i \\ "CIM" \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
     val rNodes = cNodes.flatMap(c => c \ "PROPERTY.REFERENCE")
     val pNodes = cNodes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
