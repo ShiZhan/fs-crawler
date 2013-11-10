@@ -4,8 +4,8 @@
 package util
 
 import java.io.File
-import java.net.URLEncoder
 import scalax.file.Path
+import org.apache.http.client.utils.URIBuilder
 
 /**
  * @author ShiZhan
@@ -19,20 +19,26 @@ import scalax.file.Path
  */
 object URI {
   val prefix = "trigram:/"
+
   def fromHost = prefix + Platform.hostname + '/'
-  def fromFile(file: File) = file.toURI.toString.replaceFirst("file:/", fromHost)
-  def fromPath(path: Path) = path.toAbsolute.toURI.toString.replaceFirst("file:/", fromHost)
-  def fromString(s: String) = fromHost + URLEncoder.encode(s)
-  private def pathString2URI(s: String) =
-    URLEncoder.encode(s.replace('\\', '/'))
-      .replaceFirst("%3A", ":").replaceAll("%2F", "/")
-  def fromPathString(s: String) = fromHost + pathString2URI(s)
+
+  def fromFile(file: File) =
+    file.toURI.toString.replaceFirst("file:/", fromHost)
+
+  def fromPath(path: Path) =
+    path.toAbsolute.toURI.toString.replaceFirst("file:/", fromHost)
+
+  val ub = new URIBuilder
+  def pathEscape = ub.setPath(_)
+  def fromString(s: String) = fromHost + pathEscape(s)
 
   def fromHost(p: String) = p + Platform.hostname + '/'
+
   def fromFile(p: String, file: File) =
     file.toURI.toString.replaceFirst("file:/", fromHost(p))
+
   def fromPath(p: String, path: Path) =
     path.toAbsolute.toURI.toString.replaceFirst("file:/", fromHost(p))
-  def fromString(p: String, s: String) = fromHost(p) + URLEncoder.encode(s)
-  def fromPathString(p: String, s: String) = fromHost(p) + pathString2URI(s)
+
+  def fromString(p: String, s: String) = fromHost(p) + pathEscape(s)
 }
