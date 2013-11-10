@@ -41,7 +41,7 @@ object CSV extends Modeler with Logging {
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM CSV model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
-    val ROW = m.createResource(ns + "ROW")
+    val ROW = m.createClass(ns + "ROW")
     val COL = (0 to 127) map { i =>
       m.createDatatypeProperty("%sCOL%03d".format(ns, i))
     }
