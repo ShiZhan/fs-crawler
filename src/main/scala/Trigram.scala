@@ -68,17 +68,32 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
 
 object TrigramTranslator {
 
-  import modeler.Modelers
+  import jena.rdfcat
+  import modeler.{ Modelers, CimVocabulary, Merger }
   import util.Version
 
   val usage = s"""
-usage: TrigramTranslator [-h|-v|-m MODELER <arguments>]
- -h,--help                   Print this message
- -v,--version                Show program version
- -m,--modeler MODELER <...>  Use <modeler> with arguments (below)
+usage: Translator [flags] <arguments>
+ -h,--help      Print this message
+ -v,--version   Show program version
+
+ build-in utilities:
+ -c,--combine <MODEL...>         Combine multiple models
+ -C,--rdfcat <MODEL...>          Jena rdfcat utility warpper
+                                 Show contents of RDF/OWL file(s)
+ -V,--vocabulary CIM_Schema_XML  Update CIM vocabulary for use in modelers
+                                 [CIM Schema XML] can be downloaded from DMTF:
+                                 http://dmtf.org/standards/cim
+ -g,--gather MODEL               Gather CIM imports into given model
+                                 Based on the <OWL.imports> in [MODEL].
+ -m,--modeler MODELER <args...>  Use [modeler] with arguments (below)
+                                 Each [modeler] has its own arguments.
 
  supported modelers:
 """ + Modelers.help
+
+  val notEnoughArgs = "Not enough parameters, see help."
+  val incorrectArgs = "Incorrect parameters, see help."
 
   def main(args: Array[String]) = {
     println("TriGraM metadata translator")
@@ -86,6 +101,19 @@ usage: TrigramTranslator [-h|-v|-m MODELER <arguments>]
     if (args.length == 0) println(usage)
     else if (args(0) == "-h" | args(0) == "--help") println(usage)
     else if (args(0) == "-v" | args(0) == "--version") println(Version.get)
+    else if (args(0) == "-c" | args(0) == "--combine") println("Combine models")
+    else if (args(0) == "-C" | args(0) == "--rdfcat") println("Jena rdfcat")
+    else if (args(0) == "-V" | args(0) == "--vocabulary")
+      if (args.length > 1) {
+        CimVocabulary.generator(args(1))
+        println("CIM Schema Vocabulary files in [%s] are updated."
+          .format(util.Config.CIMDATA))
+      } else println(notEnoughArgs)
+    else if (args(0) == "-g" | args(0) == "--gather")
+      if (args.length > 1) {
+        Merger.merge(args(1))
+        println("All imported CIM classes of [%s] gathered.".format(args(1)))
+      } else println(notEnoughArgs)
     else if (args(0) == "-m" | args(0) == "--modeler") {
       if (args.length > 2) {
         val m = args(1)
@@ -94,47 +122,8 @@ usage: TrigramTranslator [-h|-v|-m MODELER <arguments>]
         println("invoking [%s] modeler with options [%s]".format(m, o.mkString(" ")))
 
         Modelers.run(m, o)
-      } else println("insufficient parameters, see help.")
-    } else println("invalid option [%s], see help.".format(args(0)))
-  }
-
-}
-
-object CimVocabGen {
-
-  private val usage = """
-  run with <CIM Schema XML>, which can be downloaded from DMTF.
-  """
-
-  def main(args: Array[String]) = {
-    println("CIM Schema Vocabulary generator")
-
-    if (args.length < 1)
-      println(usage)
-    else {
-      modeler.CimVocabulary.generator(args(0))
-      println("CIM Schema Vocabulary files are saved in [%s]."
-        .format(util.Config.CIMDATA))
-    }
-  }
-
-}
-
-object CimModelMerger {
-
-  private val usage = """
-  run with <model to merge>
-  """
-
-  def main(args: Array[String]) = {
-    println("CIM Schema based model merger")
-
-    if (args.length < 1)
-      println(usage)
-    else {
-      modeler.Merger.merge(args(0))
-      println("model merged.")
-    }
+      } else println(notEnoughArgs)
+    } else println(incorrectArgs)
   }
 
 }
