@@ -16,23 +16,23 @@ import util.{ Logging, Version, DateTime, URI }
  * A wide range support for various data sources that can be represented by CSV
  * CSV format:
  * delimiter: '*'
- * column 0:     key property, individual ID = base URI + key
- * column 1~127: all other properties as "COLxxx"
+ * index column: key property, individual ID = base URI + key
+ * column 0~127: all other properties as "COLxxx"
  * rows:         individuals of "ROW"
  */
 object CSV extends Modeler with Logging {
   override val key = "csv"
 
-  override val usage = "<CSV> => [triples]"
+  override val usage = "<CSV> <index column> => [triples]"
 
   def run(options: Array[String]) = {
     options.toList match {
-      case data :: tail => translate(data)
+      case data :: index :: tail => translate(data, index.toInt)
       case _ => { logger.error("parameter error: [{}]", options) }
     }
   }
 
-  def translate(data: String) = {
+  def translate(data: String, index: Integer) = {
     val base = URI.fromHost
     val ns = base + "/CSV#"
     val m = ModelFactory.createOntologyModel
@@ -49,11 +49,11 @@ object CSV extends Modeler with Logging {
     val reader = new CSVReader(new FileReader(data), '*')
     val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
     for (e <- entries) {
-      val key = e(0)
-      val uri = URI.fromString(key)
+      val i = e(index)
+      val uri = URI.fromString(i)
       val r = m.createIndividual(uri, ROW)
       (0 to e.length - 1) foreach {
-        i => r.addProperty(COL(i), e(i), XSDnormalizedString)
+        c => r.addProperty(COL(c), e(c), XSDnormalizedString)
       }
     }
     reader.close

@@ -16,11 +16,11 @@ object CSVex extends Modeler with Logging {
   override val key = "csvex"
 
   override val usage =
-    "<CSV> => [triples],\n\t\tplain text translation to support large document."
+    "<CSV> <index column> => [triples],\n\t\tplain text translation to support large document."
 
   def run(options: Array[String]) = {
     options.toList match {
-      case data :: tail => translate(data)
+      case data :: index :: tail => translate(data, index.toInt)
       case _ => { logger.error("parameter error: [{}]", options) }
     }
   }
@@ -59,7 +59,7 @@ object CSVex extends Modeler with Logging {
   private val footerT = """
 </rdf:RDF>"""
 
-  def translate(data: String) = {
+  def translate(data: String, index: Integer) = {
     val output = data + "-model.owl"
     val m = new BufferedWriter(
       new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
@@ -73,11 +73,11 @@ object CSVex extends Modeler with Logging {
     val reader = new CSVReader(new FileReader(data), '*')
     val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
     for (e <- entries) {
-      val key = e(0)
+      val i = e(index)
       val hasProperties = (0 to e.length - 1).map {
-        i => hasPropertyT(pName(i), escape(e(i)))
+        c => hasPropertyT(pName(c), escape(e(c)))
       }.mkString
-      val individual = individualT(URI.fromString(key), hasProperties)
+      val individual = individualT(URI.fromString(i), hasProperties)
       m.write(individual)
     }
     reader.close
