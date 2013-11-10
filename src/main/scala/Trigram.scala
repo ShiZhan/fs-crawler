@@ -68,9 +68,8 @@ usage: Trigram [-h] [-v] [-i] [-q] [-u]
 
 object TrigramTranslator {
 
-  import jena.rdfcat
   import modeler.{ Modelers, CimVocabulary, Merger }
-  import util.Version
+  import util.{ Version, Config }
 
   val usage = s"""
 usage: Translator [flags] <arguments>
@@ -79,8 +78,6 @@ usage: Translator [flags] <arguments>
 
  build-in utilities:
  -c,--combine <MODEL...>         Combine multiple models
- -C,--rdfcat <MODEL...>          Jena rdfcat utility warpper
-                                 Show contents of RDF/OWL file(s)
  -V,--vocabulary CIM_Schema_XML  Update CIM vocabulary for use in modelers
                                  [CIM Schema XML] can be downloaded from DMTF:
                                  http://dmtf.org/standards/cim
@@ -92,38 +89,57 @@ usage: Translator [flags] <arguments>
  supported modelers:
 """ + Modelers.help
 
-  val notEnoughArgs = "Not enough parameters, see help."
-  val incorrectArgs = "Incorrect parameters, see help."
+  val incorrectArgs = "Incorrect parameters, see help (Translator -h, --help)."
+
+  type OptionMap = Map[Symbol, Any]
+
+  def nextOption(list: List[String]) = {
+    list match {
+      case "-h" :: tail => Map('help -> true)
+      case "--help" :: tail => Map('help -> true)
+      case "-v" :: tail => Map('version -> true)
+      case "--version" :: tail => Map('version -> true)
+      case "-c" :: models => Map('combine -> models)
+      case "--combine" :: models => Map('combine -> models)
+      case "-V" :: schema :: tail => Map('schema -> schema)
+      case "--vocabulary" :: schema :: tail => Map('schema -> schema)
+      case "-g" :: model :: tail => Map('gather -> model)
+      case "--gather" :: model :: tail => Map('gather -> model)
+      case "-m" :: modeler :: margs =>
+        Map('modeler -> modeler, 'margs -> margs)
+      case "--modeler" :: modeler :: margs =>
+        Map('modeler -> modeler, 'margs -> margs)
+      case _ => Map(): OptionMap
+    }
+  }
 
   def main(args: Array[String]) = {
     println("TriGraM metadata translator")
 
-    if (args.length == 0) println(usage)
-    else if (args(0) == "-h" | args(0) == "--help") println(usage)
-    else if (args(0) == "-v" | args(0) == "--version") println(Version.get)
-    else if (args(0) == "-c" | args(0) == "--combine") println("Combine models")
-    else if (args(0) == "-C" | args(0) == "--rdfcat") println("Jena rdfcat")
-    else if (args(0) == "-V" | args(0) == "--vocabulary")
-      if (args.length > 1) {
-        CimVocabulary.generator(args(1))
-        println("CIM Schema Vocabulary files in [%s] are updated."
-          .format(util.Config.CIMDATA))
-      } else println(notEnoughArgs)
-    else if (args(0) == "-g" | args(0) == "--gather")
-      if (args.length > 1) {
-        Merger.merge(args(1))
-        println("All imported CIM classes of [%s] gathered.".format(args(1)))
-      } else println(notEnoughArgs)
-    else if (args(0) == "-m" | args(0) == "--modeler") {
-      if (args.length > 2) {
-        val m = args(1)
-        val o = args.drop(2)
-
+    val options = nextOption(args.toList)
+    if (options.isEmpty)
+      println(incorrectArgs)
+    else {
+      if (options.contains('help)) println(usage)
+      else if (options.contains('version)) println(Version.get)
+      else if (options.contains('combine)) {
+        val models = options('combine).asInstanceOf[List[String]]
+        models.foreach(println)
+      } else if (options.contains('schema)) {
+        val schema = options('schema).toString
+        CimVocabulary.generator(schema)
+        println("CIM Vocabulary in [%s] are updated.".format(Config.CIMDATA))
+      } else if (options.contains('gather)) {
+        val model = options('gather).toString
+        Merger.merge(model)
+        println("All imported CIM classes of [%s] gathered.".format(model))
+      } else if (options.contains('modeler)) {
+        val m = options('modeler).toString
+        val o = options('margs).asInstanceOf[List[String]].toArray
         println("invoking [%s] modeler with options [%s]".format(m, o.mkString(" ")))
-
         Modelers.run(m, o)
-      } else println(notEnoughArgs)
-    } else println(incorrectArgs)
+      }
+    }
   }
 
 }
