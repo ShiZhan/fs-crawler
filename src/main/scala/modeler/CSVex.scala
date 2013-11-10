@@ -44,7 +44,7 @@ object CSVex extends Modeler with Logging {
 
   private def dataTypePropertyT = (uri: String) =>
     s"""
-    <owl:DatatypeProperty rdf:about="$uri"/>"""
+  <owl:DatatypeProperty rdf:about="$uri"/>"""
 
   private def hasPropertyT = (name: String, value: String) =>
     s"""
