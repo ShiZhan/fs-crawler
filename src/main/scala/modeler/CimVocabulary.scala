@@ -104,7 +104,7 @@ object CimVocabulary {
     val pFile = new java.io.File(pFN)
     val cFileStream = new java.io.PrintStream(cFile)
     val pFileStream = new java.io.PrintStream(pFile)
-    cNames.foreach(cFileStream.println) // be ware of the tailing blank line
+    cNames.foreach(cFileStream.println) // beware the tailing blank line
     rNames.foreach(pFileStream.println)
     pNames.foreach(pFileStream.println)
   }
