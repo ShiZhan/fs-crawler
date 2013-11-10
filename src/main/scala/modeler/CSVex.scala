@@ -65,7 +65,7 @@ object CSVex extends Modeler with Logging {
       new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
     val base = URI.fromHost
-    val ns = base + "CSV#"
+    val ns = base + "/CSV#"
     def pName(i: Int) = "COL%03d".format(i)
     val properties = (0 to 127).map { i => dataTypePropertyT(ns + pName(i)) }.mkString
     m.write(headerT(ns, base, Version.get, DateTime.get) + properties)

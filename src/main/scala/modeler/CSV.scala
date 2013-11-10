@@ -34,7 +34,7 @@ object CSV extends Modeler with Logging {
 
   def translate(data: String) = {
     val base = URI.fromHost
-    val ns = base + "CSV#"
+    val ns = base + "/CSV#"
     val m = ModelFactory.createOntologyModel
     m.setNsPrefix(key, ns)
     m.createOntology(base)
