@@ -70,7 +70,7 @@ object Archive extends Modeler with Logging {
 
       for (e <- iAIS) {
         val name = e.getName
-        val uri = arcURI + "/" + name
+        val uri = URI.fromPathString(arcPath + '/' + name)
         val size = e.getSize.toString
         val modi = DateTime.get(e.getLastModifiedDate)
         val hash = e.hashCode.toHexString
