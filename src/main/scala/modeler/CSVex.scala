@@ -44,17 +44,14 @@ object CSVex extends Modeler with Logging {
   </owl:Ontology>
   <owl:Class rdf:about="$uri"/>"""
 
-  private def dataTypePropertyT = (uri: String) =>
-    s"""
+  private def dataTypePropertyT = (uri: String) => s"""
   <owl:DatatypeProperty rdf:about="$uri"/>"""
 
-  private def hasPropertyT = (name: String, value: String) =>
-    s"""
+  private def hasPropertyT = (name: String, value: String) => s"""
     <csv:$name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
     >$value</csv:$name>"""
 
-  private def individualT = (uri: String, hasProperties: String) =>
-    s"""
+  private def individualT = (uri: String, hasProperties: String) => s"""
   <csv:ROW rdf:about="$uri">$hasProperties
   </csv:ROW>"""
 
@@ -67,7 +64,8 @@ object CSVex extends Modeler with Logging {
       new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
     val base = URI.fromHost
-    val ns = base + "/CSV#"; val ROW = ns + "ROW"
+    val ns = base + "/CSV#"
+    val ROW = ns + "ROW"
     def pName(i: Int) = "COL%03d".format(i)
     val properties = (0 to 127).map { i => dataTypePropertyT(ns + pName(i)) }.mkString
     m.write(headerT(ns, base, Version.get, DateTime.get, ROW) + properties)
