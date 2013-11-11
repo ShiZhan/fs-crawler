@@ -26,24 +26,24 @@ import util.{ Logging, Version, DateTime, URI }
 object CSV extends Modeler with Logging {
   override val key = "csv"
 
-  override val usage = "<CSV> <index column> [<schema>] => [triples]"
+  override val usage = "<CSV> <index column> [<names>] => [triples]"
 
   def run(options: Array[String]) = {
-    val defaultSchema = List("ROW") ++ { (0 to 127) map { "COL%03d".format(_) } }
+    val defaultNames = List("ROW") ++ { (0 to 127) map { "COL%03d".format(_) } }
     options.toList match {
-      case data :: index :: Nil => translate(data, index.toInt, defaultSchema)
-      case data :: index :: schemaFile :: Nil => {
-        val f = io.Source.fromFile(new File(schemaFile))
+      case data :: index :: Nil => translate(data, index.toInt, defaultNames)
+      case data :: index :: nameFile :: Nil => {
+        val f = io.Source.fromFile(new File(nameFile))
         val lines = f.getLines.toList
         val len = lines.length
-        val schema = if (len < 128) lines ++ defaultSchema.drop(len) else lines
-        translate(data, index.toInt, schema)
+        val names = if (len < 128) lines ++ defaultNames.drop(len) else lines
+        translate(data, index.toInt, names)
       }
       case _ => { logger.error("parameter error: [{}]", options) }
     }
   }
 
-  def translate(data: String, index: Integer, schema: List[String]) = {
+  def translate(data: String, index: Integer, names: List[String]) = {
     val base = URI.fromHost
     val ns = base + "/CSV#"
     val m = ModelFactory.createOntologyModel
@@ -53,18 +53,19 @@ object CSV extends Modeler with Logging {
       .addProperty(DC.description, "TriGraM CSV model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
-    val (rN, cN) = (schema.head, schema.drop(1))
-    val ROW = m.createClass(ns + rN)
-    val COL = cN map { n => m.createDatatypeProperty(ns + n) }
+    val rowName = names.head
+    val colName = names.drop(1)
+    val Concept = m.createClass(ns + rowName)
+    val Properties = colName map { n => m.createDatatypeProperty(ns + n) }
 
     val reader = new CSVReader(new FileReader(data), ';')
     val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
     for (e <- entries) {
       val i = e(index)
       val uri = URI.fromString(i)
-      val r = m.createIndividual(uri, ROW)
+      val r = m.createIndividual(uri, Concept)
       (0 to e.length - 1) foreach {
-        c => r.addProperty(COL(c), e(c), XSDnormalizedString)
+        c => r.addProperty(Properties(c), e(c), XSDnormalizedString)
       }
     }
     reader.close
