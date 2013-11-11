@@ -11,12 +11,12 @@ import java.text.SimpleDateFormat
  * according to http://www.w3.org/TR/xmlschema-2/#dateTime
  */
 object DateTime {
-
-  private val dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-  private val dateFormatFull = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-  def get = dateFormat.format(Calendar.getInstance.getTime)
-  def get(d: Date) = dateFormat.format(d)
-  def get(i: Long) = dateFormat.format(i)
-  def getFull = dateFormatFull.format(Calendar.getInstance.getTime)
-
+  private val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+  private val formatDate = new SimpleDateFormat("yyyy-MM-dd")
+  private val formatFull = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+  def get = format.format(Calendar.getInstance.getTime)
+  def get(d: Date) = format.format(d)
+  def get(i: Long) = format.format(i)
+  def getDate = formatDate.format(Calendar.getInstance.getTime)
+  def getFull = formatFull.format(Calendar.getInstance.getTime)
 }

@@ -20,7 +20,6 @@ object Console {
   query          enter SPARQL to do query
   update         enter SPARQL to do update
   exit           exit console"""
-
   private val title = "TriGraM Console"
   private val prompt = "# "
 
@@ -30,7 +29,7 @@ object Console {
     import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
     import util.Platform.{ OS, JAVAVER, SCALAVER }
     val TGMVER = util.Version.get
-    val dateTime = util.DateTime.getFull
+    val dateTime = util.DateTime.getDate
     s"""[$dateTime]
 TriGraM:   $TGMVER
   code:    $TGMROOT
@@ -54,8 +53,7 @@ OS:        $OS"""
 
         case "help" :: Nil => usage
         case "status" :: Nil => status
-
-        case "test" :: Nil => "internal test command"
+        case "time" :: Nil => util.DateTime.getFull
 
         case "query" :: Nil => handler.doQuery
         case "update" :: Nil => handler.doUpdate
