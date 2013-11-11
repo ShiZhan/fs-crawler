@@ -3,7 +3,7 @@ import Keys._
 
 object MyBuild extends Build {
 
-  lazy val copyDependencies = TaskKey[Unit]("copy-dependencies")
+  lazy val copyDependencies = TaskKey[Unit]("copy-dep")
 
   def copyDepTask = copyDependencies <<= (update, crossTarget, scalaVersion) map {
     (updateReport, out, scalaVer) =>
