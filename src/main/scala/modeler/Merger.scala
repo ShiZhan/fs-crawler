@@ -4,7 +4,7 @@
 package modeler
 
 import scala.collection.JavaConversions._
-import com.hp.hpl.jena.rdf.model.ModelFactory
+import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
 import com.hp.hpl.jena.util.FileManager
 import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
 
@@ -18,20 +18,19 @@ import util.Logging
  */
 object Merger extends Logging {
 
-  private def loadModel(fileName: String) = {
+  private def load(fileName: String) = {
     val m = ModelFactory.createDefaultModel
     val mFIS = FileManager.get.open(fileName)
     m.read(mFIS, "")
   }
 
-  private def unionModelFiles(modelFiles: List[String]) = {
-    val models = modelFiles map { loadModel(_) }
+  private def join(models: List[Model]) = {
     val baseModel = ModelFactory.createDefaultModel
     (baseModel /: models) { (r, m) => r union m }
   }
 
-  private def readImports(baseModelFile: String): List[String] = {
-    val m = loadModel(baseModelFile)
+  private def readImports(modelFile: String): List[String] = {
+    val m = load(modelFile)
     val importURIs = m.listObjectsOfProperty(OWL.imports).toList
     val importFiles =
       importURIs.map(CIM.PATH_BASE + _.toString.substring(CIM.NS.size)).toList
@@ -40,17 +39,17 @@ object Merger extends Logging {
     else importFiles ::: importFiles.flatMap(readImports)
   }
 
-  def gather(baseModelFile: String) = {
-    val files = readImports(baseModelFile).distinct
+  def gather(modelFile: String) = {
+    val files = readImports(modelFile).distinct
 
     logger.info("[{}] CIM classes imported:", files.length)
     files foreach println
 
-    val gatheredModel = unionModelFiles(files :+ baseModelFile)
+    val gatheredModel = join({ files :+ modelFile } map load)
     val stmtImport = gatheredModel.listStatements(null, OWL.imports, null)
     gatheredModel.remove(stmtImport)
 
-    val gatheredFile = baseModelFile + "-gathered.owl"
+    val gatheredFile = modelFile + "-gathered.owl"
     val mFOS = new java.io.FileOutputStream(gatheredFile)
     gatheredModel.write(mFOS, "RDF/XML-ABBREV")
     mFOS.close
@@ -59,7 +58,7 @@ object Merger extends Logging {
   }
 
   def combine(modelFiles: List[String]) {
-    val combinedModel = unionModelFiles(modelFiles)
+    val combinedModel = join(modelFiles map load)
 
     val stmtVer = combinedModel.listStatements(null, OWL.versionInfo, null)
     val stmtDes = combinedModel.listStatements(null, DC.description, null)
