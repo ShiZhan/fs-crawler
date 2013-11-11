@@ -3,7 +3,7 @@
  */
 package modeler
 
-import scala.xml.Utility.escape
+import xml.Utility.escape
 import java.io.{ File, FileOutputStream, OutputStreamWriter, BufferedWriter }
 import scalax.file.Path
 import util.{ Logging, Version, DateTime, URI }
@@ -69,22 +69,21 @@ object DirectoryEx extends Modeler with Logging {
   </owl:NamedIndividual>
 """
 
-      def partComponentT = (pathURI: String) => s"""
-    <cim:PartComponent rdf:resource="$pathURI"/>"""
+      def partComponentT = (fileURI: String) => s"""
+    <cim:PartComponent rdf:resource="$fileURI"/>"""
 
       def directoryContainsFileT =
-        (pathURI: String, partComponent: String) => s"""
-  <cim:CIM_DirectoryContainsFile rdf:about="$pathURI.dcf">
+        (dirURI: String, partComponent: String) => s"""
+  <cim:CIM_DirectoryContainsFile rdf:about="$dirURI.dcf">
     $partComponent
-    <cim:GroupComponent rdf:resource="$pathURI"/>
+    <cim:GroupComponent rdf:resource="$dirURI"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
   </cim:CIM_DirectoryContainsFile>"""
 
       val footerT = "</rdf:RDF>"
 
       def nodeT(uri: String, node: Path) = {
-        val pathURI = URI.fromPath(node)
-
+        val uri = escape(URI.fromPath(node))
         val isDirectory = node.isDirectory
 
         val cimClass =
@@ -96,14 +95,14 @@ object DirectoryEx extends Modeler with Logging {
         val size = if (node.size.nonEmpty) node.size.get else 0
         val dateTime = DateTime.get(node.lastModified)
 
-        val logicalFile = logicalFileT(pathURI, cimClass,
+        val logicalFile = logicalFileT(uri, cimClass,
           name, size, dateTime, node.canRead, node.canWrite, node.canExecute)
 
         val directoryConainsFile = if (isDirectory) {
           val subNodeList = node * "*"
           val partComponent =
-            subNodeList.map(s => partComponentT(URI.fromPath(s))).mkString
-          directoryContainsFileT(pathURI, partComponent)
+            subNodeList.map(s => partComponentT(escape(URI.fromPath(s)))).mkString
+          directoryContainsFileT(uri, partComponent)
         } else ""
         logicalFile + directoryConainsFile
       }
