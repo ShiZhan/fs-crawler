@@ -6,7 +6,7 @@ package modeler
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.util.FileManager
-import com.hp.hpl.jena.vocabulary.OWL
+import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
 
 import modeler.{ CimVocabulary => CIM }
 import util.Logging
@@ -22,6 +22,12 @@ object Merger extends Logging {
     val m = ModelFactory.createDefaultModel
     val mFIS = FileManager.get.open(fileName)
     m.read(mFIS, "")
+  }
+
+  private def unionModelFiles(modelFiles: List[String]) = {
+    val models = modelFiles map { loadModel(_) }
+    val baseModel = ModelFactory.createDefaultModel
+    (baseModel /: models) { (r, m) => r union m }
   }
 
   private def readImports(baseModelFile: String): List[String] = {
@@ -40,23 +46,34 @@ object Merger extends Logging {
     logger.info("[{}] CIM classes imported:", files.length)
     files foreach println
 
-    val models = files map { loadModel(_) } toList
-    val baseModel = loadModel(baseModelFile)
-    val gatheredModel = (baseModel /: models) { (r, m) => r union m }
-    val importStmts = gatheredModel.listStatements(null, OWL.imports, null)
-    gatheredModel.remove(importStmts)
+    val gatheredModel = unionModelFiles(files :+ baseModelFile)
+    val stmtImport = gatheredModel.listStatements(null, OWL.imports, null)
+    gatheredModel.remove(stmtImport)
+
     val gatheredFile = baseModelFile + "-gathered.owl"
     val mFOS = new java.io.FileOutputStream(gatheredFile)
     gatheredModel.write(mFOS, "RDF/XML-ABBREV")
+    mFOS.close
 
     logger.info("wrote [{}] triples to [{}]", gatheredModel.size, gatheredFile)
   }
 
   def combine(modelFiles: List[String]) {
-    val models = modelFiles map { loadModel(_) } toList
+    val combinedModel = unionModelFiles(modelFiles)
 
-    val combinedFile = "" + "combined.owl"
-    logger.info("wrote [{}] triples to [{}]", 0, combinedFile)
+    val stmtVer = combinedModel.listStatements(null, OWL.versionInfo, null)
+    val stmtDes = combinedModel.listStatements(null, DC.description, null)
+    val stmtDat = combinedModel.listStatements(null, DC.date, null)
+    combinedModel.remove(stmtVer)
+    combinedModel.remove(stmtDes)
+    combinedModel.remove(stmtDat)
+
+    val combinedFile = modelFiles.head + "-combined.owl"
+    val mFOS = new java.io.FileOutputStream(combinedFile)
+    combinedModel.write(mFOS, "RDF/XML-ABBREV")
+    mFOS.close
+
+    logger.info("wrote [{}] triples to [{}]", combinedModel.size, combinedFile)
   }
 
 }
