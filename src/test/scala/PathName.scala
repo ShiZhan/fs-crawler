@@ -18,6 +18,8 @@ object PathName {
   val CIMDATA = UNC(envOrElse("CIM_DATA", _TGMROOT)) + "cim/"
 
   def main(args: Array[String]) = {
+    println(".:    " + UNC("."))
+    println("..:   " + UNC(".."))
     println("PWD:  " + _PWD)
     println("ROOT: " + TGMROOT)
     println("DATA: " + TGMDATA)
