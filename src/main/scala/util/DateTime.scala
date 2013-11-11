@@ -13,9 +13,10 @@ import java.text.SimpleDateFormat
 object DateTime {
 
   private val dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-
+  private val dateFormatFull = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
   def get = dateFormat.format(Calendar.getInstance.getTime)
   def get(d: Date) = dateFormat.format(d)
   def get(i: Long) = dateFormat.format(i)
+  def getFull = dateFormatFull.format(Calendar.getInstance.getTime)
 
 }
