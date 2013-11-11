@@ -3,7 +3,7 @@
  */
 package modeler
 
-import java.io.{ FileReader, FileOutputStream, OutputStreamWriter, BufferedWriter }
+import java.io.{ File, FileReader, FileOutputStream, OutputStreamWriter, BufferedWriter }
 import scala.xml.Utility.escape
 import au.com.bytecode.opencsv.CSVReader
 import util.{ Logging, Version, DateTime, URI }
@@ -16,11 +16,20 @@ object CSVex extends Modeler with Logging {
   override val key = "csvex"
 
   override val usage =
-    "<CSV> <index column> => [triples],\n\t\tplain text translation to support large document."
+    "<CSV> <index column> [<names>] => [triples]," +
+      "\n\t\tplain text translation to support large document."
 
   def run(options: Array[String]) = {
+    val defaultNames = List("ROW") ++ { (0 to 127) map { "COL%03d".format(_) } }
     options.toList match {
-      case data :: index :: tail => translate(data, index.toInt)
+      case data :: index :: Nil => translate(data, index.toInt, defaultNames)
+      case data :: index :: nameFile :: Nil => {
+        val f = io.Source.fromFile(new File(nameFile))
+        val lines = f.getLines.toList
+        val len = lines.length
+        val names = if (len < 128) lines ++ defaultNames.drop(len) else lines
+        translate(data, index.toInt, names)
+      }
       case _ => { logger.error("parameter error: [{}]", options) }
     }
   }
@@ -51,33 +60,34 @@ object CSVex extends Modeler with Logging {
     <csv:$name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
     >$value</csv:$name>"""
 
-  private def individualT = (uri: String, hasProperties: String) => s"""
-  <csv:ROW rdf:about="$uri">$hasProperties
-  </csv:ROW>"""
+  private def individualT = (cName: String, uri: String, hasProperties: String) => s"""
+  <csv:$cName rdf:about="$uri">$hasProperties
+  </csv:$cName>"""
 
   private val footerT = """
 </rdf:RDF>"""
 
-  def translate(data: String, index: Integer) = {
+  def translate(data: String, index: Integer, names: List[String]) = {
     val output = data + "-model.owl"
     val m = new BufferedWriter(
       new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
     val base = URI.fromHost
     val ns = base + "/CSV#"
-    val ROW = ns + "ROW"
-    def pName(i: Int) = "COL%03d".format(i)
-    val properties = (0 to 127).map { i => dataTypePropertyT(ns + pName(i)) }.mkString
-    m.write(headerT(ns, base, Version.get, DateTime.get, ROW) + properties)
+    val rowName = names.head
+    val colName = names.drop(1)
+    val concept = ns + rowName
+    val properties = colName.map { n => dataTypePropertyT(ns + n) }.mkString
+    m.write(headerT(ns, base, Version.get, DateTime.get, concept) + properties)
 
-    val reader = new CSVReader(new FileReader(data), '*')
+    val reader = new CSVReader(new FileReader(data), ';')
     val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
     for (e <- entries) {
-      val i = e(index)
+      val i = escape(e(index))
       val hasProperties = (0 to e.length - 1).map {
-        c => hasPropertyT(pName(c), escape(e(c)))
+        c => hasPropertyT(colName(c), escape(e(c)))
       }.mkString
-      val individual = individualT(URI.fromString(i), hasProperties)
+      val individual = individualT(rowName, URI.fromString(i), hasProperties)
       m.write(individual)
     }
     reader.close
