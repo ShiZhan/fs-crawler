@@ -53,7 +53,7 @@ OS:        $OS"""
 
         case "help" :: Nil => usage
         case "status" :: Nil => status
-        case "time" :: Nil => util.DateTime.getFull
+        case "time" :: Nil => util.DateTime.getUTC
 
         case "query" :: Nil => handler.doQuery
         case "update" :: Nil => handler.doUpdate
