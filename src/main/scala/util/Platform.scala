@@ -8,9 +8,9 @@ package util
  * gather platform information
  */
 object Platform {
-  val hostname = java.net.InetAddress.getLocalHost.getHostName
-  val os = System.getProperty("os.name")
-  val isWindows = os.startsWith("Windows")
-  val javaVer = System.getProperty("java.version")
-  val scalaVer = scala.util.Properties.versionMsg
+  val HOSTNAME = java.net.InetAddress.getLocalHost.getHostName
+  val OS = System.getProperty("os.name")
+  val isWindows = OS.startsWith("Windows")
+  val JAVAVER = System.getProperty("java.version")
+  val SCALAVER = scala.util.Properties.versionMsg
 }

@@ -19,7 +19,7 @@ import org.apache.http.client.utils.URIBuilder
 object URI {
   val scheme = "trigram:"
 
-  def fromHost = scheme + '/' + Platform.hostname
+  def fromHost = scheme + '/' + Platform.HOSTNAME
   def fromFile(f: File) = f.toURI.toString.replaceFirst("file:", fromHost)
   def fromPath(p: Path) = p.toURI.toString.replaceFirst("file:", fromHost)
 
@@ -31,7 +31,7 @@ object URI {
 
   def fromString(str: String) = fromHost + pathEscape(str)
 
-  def fromHost(s: String) = s + '/' + Platform.hostname
+  def fromHost(s: String) = s + '/' + Platform.HOSTNAME
   def fromFile(s: String, f: File) = f.toURI.toString.replaceFirst("file:", fromHost(s))
   def fromPath(s: String, p: Path) = p.toURI.toString.replaceFirst("file:", fromHost(s))
 

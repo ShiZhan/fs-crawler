@@ -37,7 +37,3 @@ class Handler(store: Store) {
   }
 
 }
-
-object Handler {
-  def apply(store: Store) = new Handler(store)
-}

@@ -5,11 +5,7 @@ package console
 
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.tdb.TDBFactory
-import com.hp.hpl.jena.query.{
-  QueryFactory,
-  QueryExecutionFactory,
-  ReadWrite
-}
+import com.hp.hpl.jena.query.{ QueryFactory, QueryExecutionFactory, ReadWrite }
 import com.hp.hpl.jena.query.Query.{
   QueryTypeSelect,
   QueryTypeConstruct,
@@ -98,9 +94,4 @@ class Store(val location: String) {
     }
   }
 
-}
-
-object Store {
-  def apply() = new Store(util.Config.TGMDATA)
-  def apply(loc: String) = new Store(loc)
 }

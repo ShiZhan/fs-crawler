@@ -11,8 +11,8 @@ package console
  */
 object Console {
 
-  private val store = Store()
-  private val handler = Handler(store)
+  private val store = new Store(util.Config.TGMDATA)
+  private val handler = new Handler(store)
 
   private val usage = """ [Console Usage]
   help           print this message
@@ -25,20 +25,22 @@ object Console {
   private val prompt = "# "
 
   private val status = {
-    import util.Platform.{ os, javaVer, scalaVer }
-    import com.hp.hpl.jena.Jena.{ VERSION => jenaVer, BUILD_DATE => jenaBuild }
-    import com.hp.hpl.jena.tdb.TDB.{ VERSION => tdbVer, BUILD_DATE => tdbBuild }
-    val tgmVer = util.Version.get
-    val tgmRoot = util.Config.TGMROOT
-    val tgmData = new java.io.File(store.location).getAbsoluteFile
-    s"""TriGraM:   $tgmVer
-  code:    $tgmRoot
-  data:    $tgmData
-Jena core: $jenaVer $jenaBuild
-Jena TDB:  $tdbVer $tdbBuild
-Scala:     $scalaVer
-Java:      $javaVer
-OS:        $os"""
+    import com.hp.hpl.jena.Jena.{ VERSION => JENAVER, BUILD_DATE => JENABUILD }
+    import com.hp.hpl.jena.tdb.TDB.{ VERSION => TDBVER, BUILD_DATE => TDBBUILD }
+    import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
+    import util.Platform.{ OS, JAVAVER, SCALAVER }
+    val TGMVER = util.Version.get
+    val dateTime = util.DateTime.getFull
+    s"""[$dateTime]
+TriGraM:   $TGMVER
+  code:    $TGMROOT
+  data:    $TGMDATA
+  CIM:     $CIMDATA
+Jena core: $JENAVER $JENABUILD
+Jena TDB:  $TDBVER $TDBBUILD
+Scala:     $SCALAVER
+Java:      $JAVAVER
+OS:        $OS"""
   }
 
   def run: Unit = {
