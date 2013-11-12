@@ -13,10 +13,10 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDateTime
  * http://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
  */
 object DateTime {
-  private val calendar = Calendar.getInstance
-  private def _xsdDT = new XSDDateTime(calendar) toString
+  private def _c = Calendar.getInstance
+  private def _x = (c: Calendar) => new XSDDateTime(c) toString
 
-  def get = _xsdDT
-  def get(d: Date) = { calendar.setTime(d); _xsdDT }
-  def get(i: Long) = { calendar.setTimeInMillis(i); _xsdDT }
+  def get = { val c = _c; _x(c) }
+  def get(d: Date) = { val c = _c; c.setTime(d); _x(c) }
+  def get(i: Long) = { val c = _c; c.setTimeInMillis(i); _x(c) }
 }
