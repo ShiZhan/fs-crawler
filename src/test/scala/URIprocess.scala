@@ -15,8 +15,10 @@ object URIprocess {
     ub.setPath(str2)
     println(str2)
     println(ub)
-    ub.setPath(str3)
+    val str4 = str3.replace('\\', '/')
+    ub.setPath(str4)
     println(str3)
+    println(str4)
     println(ub)
   }
 }
