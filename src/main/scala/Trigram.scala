@@ -94,7 +94,7 @@ usage: Trigram
         if (modelFiles.size > 1) {
           Merger.combine(modelFiles)
           println("[%d] models combined.".format(modelFiles.size))
-        }
+        } else println("There's only one model out there.")
       } else if (options.contains('schema)) {
         val cimSchema = options('schema).toString
         CimVocabulary.generator(cimSchema)
