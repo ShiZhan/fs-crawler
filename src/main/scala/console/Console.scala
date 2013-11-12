@@ -27,10 +27,10 @@ object Console {
     import com.hp.hpl.jena.Jena.{ VERSION => JENAVER, BUILD_DATE => JENABUILD }
     import com.hp.hpl.jena.tdb.TDB.{ VERSION => TDBVER, BUILD_DATE => TDBBUILD }
     import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
-    import util.Platform.{ OS, JAVAVER, SCALAVER }
+    import util.Platform.{ HOSTNAME, OS, JAVAVER, SCALAVER }
     val TGMVER = util.Version.get
-    val dateTime = util.DateTime.getDate
-    s"""[$dateTime]
+    val DATETIME = util.DateTime.getDate
+    s"""[$DATETIME]
 TriGraM:   $TGMVER
   code:    $TGMROOT
   data:    $TGMDATA
@@ -39,7 +39,8 @@ Jena core: $JENAVER $JENABUILD
 Jena TDB:  $TDBVER $TDBBUILD
 Scala:     $SCALAVER
 Java:      $JAVAVER
-OS:        $OS"""
+OS:        $OS
+HOSTNAME:  $HOSTNAME"""
   }
 
   def run: Unit = {
