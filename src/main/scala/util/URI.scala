@@ -25,7 +25,8 @@ object URI {
 
   private val ub = new URIBuilder
   private def pathEscape(s: String) = {
-    val pathURI = ub.setPath(s).toString
+    val inCaseUncPathinLead = s.replace('\\', '/')
+    val pathURI = ub.setPath(inCaseUncPathinLead).toString
     if (pathURI.head == '/') pathURI else '/' + pathURI
   }
 

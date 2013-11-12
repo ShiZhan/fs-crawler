@@ -5,6 +5,7 @@ object URIprocess {
     val str = "r:\\Internet 临时文件\\Low\\Content.IE5\\XZC7FD6F\\T179zzFnhXXXXO75vn-225-90[1].jpg"
     val str1 = str.replace('\\', '/')
     val str2 = "/home/user/foo/测试 空格/test"
+    val str3 = "r:\\TEMP/home/user/foo/测试 空格/test"
     val ub = new URIBuilder
     ub.setHost(java.net.InetAddress.getLocalHost.getHostName)
     ub.setScheme("trigram")
@@ -13,6 +14,9 @@ object URIprocess {
     println(ub)
     ub.setPath(str2)
     println(str2)
+    println(ub)
+    ub.setPath(str3)
+    println(str3)
     println(ub)
   }
 }
