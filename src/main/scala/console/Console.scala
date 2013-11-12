@@ -29,18 +29,23 @@ object Console {
     import com.hp.hpl.jena.tdb.TDB.{ VERSION => TDBVER, BUILD_DATE => TDBBUILD }
     import util.Config.{ TGMROOT, CIMDATA }
     import util.Platform.{ HOSTNAME, OS, JAVAVER, SCALAVER }
+    import util.JVMstates.{ MEMFREE, MEMUSED, MEMTOTAL, MEMMAX }
     val TGMVER = util.Version.get
     s"""
-TriGraM:   $TGMVER
-  code:    $TGMROOT
-  data:    $loc
-  CIM:     $CIMDATA
-Jena core: $JENAVER $JENABUILD
-Jena TDB:  $TDBVER $TDBBUILD
-Scala:     $SCALAVER
-Java:      $JAVAVER
-OS:        $OS
-HOSTNAME:  $HOSTNAME
+TriGraM:     $TGMVER
+  code:      $TGMROOT
+  data:      $loc
+  CIM:       $CIMDATA
+Jena core:   $JENAVER $JENABUILD
+Jena TDB:    $TDBVER $TDBBUILD
+Scala:       $SCALAVER
+Java:        $JAVAVER
+  MEM FREE:  $MEMFREE MB
+  MEM USED:  $MEMUSED MB
+  MEM TOTAL: $MEMTOTAL MB
+  MEM MAX:   $MEMMAX MB
+OS:          $OS
+HOSTNAME:    $HOSTNAME
 """
   }
 

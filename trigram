@@ -19,4 +19,4 @@ fi
 
 # export TGM_DATA=r:/data
 
-scala -J-Xmx1g -cp "$CP" Trigram "$@" 
+scala -J-Xmx2g -cp "$CP" Trigram "$@" 
