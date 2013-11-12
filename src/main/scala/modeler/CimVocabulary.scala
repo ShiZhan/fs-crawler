@@ -25,8 +25,8 @@ object CimVocabulary {
    */
   private val cFN = CIMDATA + "CIM-CLASS"
   private val pFN = CIMDATA + "CIM-PROPERTY"
-  private val cList = readAllLines(cFN)
-  private val pList = readAllLines(pFN)
+  private lazy val cList = readAllLines(cFN)
+  private lazy val pList = readAllLines(pFN)
 
   /*
    * prepare vocabulary model
@@ -65,7 +65,7 @@ object CimVocabulary {
   val Association = model.createResource(URI("CIM_Association"))
 
   // CIM schema content
-  private val classList =
+  private lazy val classList =
     cList.map {
       case n => {
         val depImport = model.createResource(PURL(n))
@@ -82,7 +82,7 @@ object CimVocabulary {
   /*
    * vocabulary
    */
-  private val propertyList =
+  private lazy val propertyList =
     pList.map(n => n -> model.createProperty(URI(n))) toMap
 
   private val invalidProperty = model.createProperty(URI("invalidProperty"))
