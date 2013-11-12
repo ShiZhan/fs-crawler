@@ -14,6 +14,5 @@ libraryDependencies ++= Seq(
  "com.github.scala-incubator.io" % "scala-io-file_2.10" % "0.4.2",
  "org.apache.commons" % "commons-compress" % "1.6",
  "commons-codec" % "commons-codec" % "1.8",
- "org.apache.httpcomponents" % "httpclient" % "4.3.1",
- "net.sf.opencsv" % "opencsv" % "2.3"
+ "org.apache.httpcomponents" % "httpclient" % "4.3.1"
 )

@@ -22,7 +22,6 @@
   <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\org.apache.commons\commons-compress\jars\commons-compress-1.6.jar"/>
   <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\org.tukaani\xz\jars\xz-1.4.jar"/>
   <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\commons-codec\commons-codec\jars\commons-codec-1.8.jar"/>
-  <classpathentry kind="lib" path="d:\java\sbt\.ivy2\cache\net.sf.opencsv\opencsv\jars\opencsv-2.3.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="bin"/>
 </classpath>

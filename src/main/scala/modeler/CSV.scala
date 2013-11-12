@@ -4,11 +4,10 @@
 package modeler
 
 import java.io.{ File, FileReader, FileOutputStream }
-import au.com.bytecode.opencsv.CSVReader
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, URI }
+import util.{ Logging, Version, DateTime, URI, CSVReader }
 
 /**
  * @author ShiZhan
@@ -58,8 +57,8 @@ object CSV extends Modeler with Logging {
     val Concept = m.createClass(ns + rowName)
     val Properties = colName map { n => m.createDatatypeProperty(ns + n) }
 
-    val reader = new CSVReader(new FileReader(data), ';')
-    val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
+    val reader = new CSVReader(new File(data), ';')
+    val entries = reader.iterator
     for (e <- entries) {
       val i = e(index)
       val uri = URI.fromString(i)
@@ -68,7 +67,6 @@ object CSV extends Modeler with Logging {
         c => r.addProperty(Properties(c), e(c), XSDnormalizedString)
       }
     }
-    reader.close
 
     val output = data + "-model.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")

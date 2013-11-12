@@ -5,8 +5,7 @@ package modeler
 
 import java.io.{ File, FileReader, FileOutputStream, OutputStreamWriter, BufferedWriter }
 import scala.xml.Utility.escape
-import au.com.bytecode.opencsv.CSVReader
-import util.{ Logging, Version, DateTime, URI }
+import util.{ Logging, Version, DateTime, URI, CSVReader }
 
 /**
  * @author ShiZhan
@@ -80,8 +79,8 @@ object CSVex extends Modeler with Logging {
     val properties = colName.map { n => dataTypePropertyT(ns + n) }.mkString
     m.write(headerT(ns, base, Version.get, DateTime.get, concept) + properties)
 
-    val reader = new CSVReader(new FileReader(data), ';')
-    val entries = Iterator.continually { reader.readNext }.takeWhile(_ != null)
+    val reader = new CSVReader(new File(data), ';')
+    val entries = reader.iterator
     for (e <- entries) {
       val i = escape(e(index))
       val hasProperties = (0 to e.length - 1).map {
@@ -90,7 +89,6 @@ object CSVex extends Modeler with Logging {
       val individual = individualT(rowName, URI.fromString(i), hasProperties)
       m.write(individual)
     }
-    reader.close
 
     m.write(footerT)
     m.close
