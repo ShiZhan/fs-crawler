@@ -6,6 +6,7 @@ package modeler
 import scala.xml.XML
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import util.Config.CIMDATA
+import util.Text.readAllLines
 
 /**
  * @author ShiZhan
@@ -24,12 +25,8 @@ object CimVocabulary {
    */
   private val cFN = CIMDATA + "CIM-CLASS"
   private val pFN = CIMDATA + "CIM-PROPERTY"
-  private val cFile = io.Source.fromFile(cFN)
-  private val pFile = io.Source.fromFile(pFN)
-  private val cList = cFile.getLines.toList
-  private val pList = pFile.getLines.toList
-  cFile.close
-  pFile.close
+  private val cList = readAllLines(cFN)
+  private val pList = readAllLines(pFN)
 
   /*
    * prepare vocabulary model

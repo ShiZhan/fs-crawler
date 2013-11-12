@@ -7,7 +7,7 @@ import java.io.{ File, FileReader, FileOutputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, URI, CSVReader }
+import util.{ Logging, Version, DateTime, URI, CSVReader, Text }
 
 /**
  * @author ShiZhan
@@ -32,8 +32,7 @@ object CSV extends Modeler with Logging {
     options.toList match {
       case data :: index :: Nil => translate(data, index.toInt, defaultNames)
       case data :: index :: nameFile :: Nil => {
-        val f = io.Source.fromFile(new File(nameFile))
-        val lines = f.getLines.toList
+        val lines = Text.readAllLines(nameFile)
         val len = lines.length
         val names = if (len < 128) lines ++ defaultNames.drop(len) else lines
         translate(data, index.toInt, names)
