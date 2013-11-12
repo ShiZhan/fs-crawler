@@ -5,7 +5,7 @@
 @echo off
 setlocal
 
-set JAVA_OPTS=%JAVA_OPTS% -Xmx1g
+set JAVA_OPTS=%JAVA_OPTS% -Xmx2g
 set CP=
 set TGM_ROOT=%~dp0
 @REM set TGM_DATA=r:/data
