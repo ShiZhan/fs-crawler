@@ -50,24 +50,27 @@ object Checksum extends Modeler with Logging {
 
     val fileSize = inputFile.length
     val stream = new FileInputStream(inputFile)
-    val total = (fileSize / chunkSize) toInt
+    val total = fileSize / chunkSize
     val remain = fileSize % chunkSize
     val fileMD5 = DigestUtils.md5Hex(stream)
     println(fileMD5)
+
     stream.close
 
-//    val base = URI.fromHost
-//    val ns = base + "CHK#"
-//    val m = ModelFactory.createOntologyModel
-//    m.setNsPrefix(key, ns)
-//    m.createOntology(base)
-//      .addProperty(DC.date, DateTime.get, XSDdateTime)
-//      .addProperty(DC.description, "TriGraM file chunk checksum model", XSDstring)
-//      .addProperty(OWL.versionInfo, Version.get, XSDstring)
-//
-//    val output = inputFile.getAbsolutePath + "-chk.owl"
-//    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-//
-//    logger.info("[{}] triples generated in [{}]", m.size, output)
+    val base = URI.fromHost
+    val ns = base + "CHK#"
+    val m = ModelFactory.createOntologyModel
+    m.setNsPrefix(key, ns)
+    m.setNsPrefix(CimSchema.key, CIM.NS)
+    m.createOntology(base)
+      .addProperty(DC.date, DateTime.get, XSDdateTime)
+      .addProperty(DC.description, "TriGraM file chunk checksum model", XSDstring)
+      .addProperty(OWL.versionInfo, Version.get, XSDstring)
+
+    
+    val output = inputFile.getAbsolutePath + "-chk.owl"
+    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
+
+    logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 }
