@@ -60,13 +60,6 @@ object Merger extends Logging {
   def combine(modelFiles: List[String]) {
     val combinedModel = join(modelFiles map load)
 
-    val stmtVer = combinedModel.listStatements(null, OWL.versionInfo, null)
-    val stmtDes = combinedModel.listStatements(null, DC.description, null)
-    val stmtDat = combinedModel.listStatements(null, DC.date, null)
-    combinedModel.remove(stmtVer)
-    combinedModel.remove(stmtDes)
-    combinedModel.remove(stmtDat)
-
     val combinedFile = modelFiles.head + "-combined.owl"
     val mFOS = new java.io.FileOutputStream(combinedFile)
     combinedModel.write(mFOS, "RDF/XML-ABBREV")
