@@ -11,7 +11,8 @@ package console
  */
 object Console {
 
-  private val store = new Store(util.Config.TGMDATA)
+  private val loc = util.Config.TGMDATA
+  private val store = new Store(loc)
   private val handler = new Handler(store)
 
   private val usage = """ [Console Usage]
@@ -26,13 +27,13 @@ object Console {
   private val status = {
     import com.hp.hpl.jena.Jena.{ VERSION => JENAVER, BUILD_DATE => JENABUILD }
     import com.hp.hpl.jena.tdb.TDB.{ VERSION => TDBVER, BUILD_DATE => TDBBUILD }
-    import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
+    import util.Config.{ TGMROOT, CIMDATA }
     import util.Platform.{ HOSTNAME, OS, JAVAVER, SCALAVER }
     val TGMVER = util.Version.get
     s"""
 TriGraM:   $TGMVER
   code:    $TGMROOT
-  data:    $TGMDATA
+  data:    $loc
   CIM:     $CIMDATA
 Jena core: $JENAVER $JENABUILD
 Jena TDB:  $TDBVER $TDBBUILD
@@ -56,7 +57,7 @@ HOSTNAME:  $HOSTNAME
         case "status" :: Nil => status
         case "time" :: Nil => util.DateTime.get
         case "tdbinfo" :: Nil =>
-          tdb.tdbstats.main("--loc=" + util.Config.CIMDATA); null
+          tdb.tdbstats.main("--loc=" + loc); null
 
         case "query" :: Nil => handler.doQuery
         case "update" :: Nil => handler.doUpdate
@@ -67,7 +68,6 @@ HOSTNAME:  $HOSTNAME
       }
 
       if (output != null) println(output)
-
       print(prompt)
     }
   }
