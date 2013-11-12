@@ -116,9 +116,11 @@ How to use
 
       download a set of meta-model for academic literature (for future use).
 
+9.  Use [sbt assembly](https://github.com/sbt/sbt-assembly) to create a portable all-in-one JAR.
+
 NOTE:
 
-1.  the loaders will search dependencies in `target\scala-2.10\lib\` (step 4).
+1.  `trigram|translator` will search dependencies in `target\scala-2.10\lib\` (step 4).
 
 2.  The sbt ivy cache should be located in a folder without spaces in its name.
 
@@ -141,7 +143,7 @@ Design
 
 -   Command line interface:
 
-    * TriGraM main program
+    **TriGraM main program**
 
       provides 5 entries:
 
@@ -157,7 +159,7 @@ Design
 
       default entry: enter console
 
-    * TriGraM translator program
+    **TriGraM translator program**
 
       provides 6 entries:
 
