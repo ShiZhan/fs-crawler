@@ -14,25 +14,26 @@ class Handler(store: Store) {
     io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
   }
 
-  def doQuery: Unit = {
+  def doQuery = {
     val sparql = readSPARQL
 
     try {
       val result = store.queryAny(sparql)
-      println("\nResult: " + result)
+      println(result)
+      "Query executed normally"
     } catch {
-      case e: Exception => println(e)
+      case e: Exception => "Exception:\n" + e.toString
     }
   }
 
-  def doUpdate: Unit = {
+  def doUpdate = {
     val sparql = readSPARQL
 
     try {
       store.update(sparql)
-      println("\nSPARQL: " + sparql + "\nExecuted normally")
+      "Update Executed normally"
     } catch {
-      case e: Exception => println(e)
+      case e: Exception => "Exception:\n" + e.toString
     }
   }
 
