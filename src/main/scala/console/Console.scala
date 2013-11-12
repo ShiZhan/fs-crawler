@@ -30,7 +30,8 @@ object Console {
     import util.Platform.{ HOSTNAME, OS, JAVAVER, SCALAVER }
     val TGMVER = util.Version.get
     val DATETIME = util.DateTime.getDate
-    s"""[$DATETIME]
+    s"""
+Date:      $DATETIME
 TriGraM:   $TGMVER
   code:    $TGMROOT
   data:    $TGMDATA
@@ -40,7 +41,8 @@ Jena TDB:  $TDBVER $TDBBUILD
 Scala:     $SCALAVER
 Java:      $JAVAVER
 OS:        $OS
-HOSTNAME:  $HOSTNAME"""
+HOSTNAME:  $HOSTNAME
+"""
   }
 
   def run: Unit = {
@@ -55,6 +57,8 @@ HOSTNAME:  $HOSTNAME"""
         case "help" :: Nil => usage
         case "status" :: Nil => status
         case "time" :: Nil => util.DateTime.get
+        case "tdbinfo" :: Nil =>
+          tdb.tdbstats.main("--loc=" + util.Config.CIMDATA); null
 
         case "query" :: Nil => handler.doQuery
         case "update" :: Nil => handler.doUpdate
