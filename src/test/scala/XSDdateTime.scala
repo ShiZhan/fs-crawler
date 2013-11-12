@@ -1,18 +1,7 @@
-/**
- * XML Schema dateTime
- */
-package util
+object XSDdateTime {
+  import java.util.{ Calendar, Date, TimeZone }
+  import java.text.SimpleDateFormat
 
-import java.util.{ Calendar, Date, TimeZone }
-import java.text.SimpleDateFormat
-
-/**
- * @author ShiZhan
- * according to:
- * http://www.w3.org/TR/xmlschema-2/#dateTime
- * http://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
- */
-object DateTime {
   private val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
   private val formatDate = new SimpleDateFormat("yyyy-MM-dd")
   private val calendar = Calendar.getInstance
@@ -25,4 +14,9 @@ object DateTime {
   def get(i: Long) = toXSD11(format.format(i))
   
   def getDate = formatDate.format(calendar.getTime)
+
+  def main(args: Array[String]) = {
+    println("XSDdateTime:   " + get)
+    println("date:          " + getDate)
+  }
 }
