@@ -10,7 +10,6 @@ import java.io.File
  * CSV Reader
  */
 class CSVReader(csvFile: File, delimiter: Char) {
-  private val f = io.Source.fromFile(csvFile)
-  private val lines = f.getLines
-  val iterator = f.getLines.map { _.split(delimiter) }
+  def iterator =
+    io.Source.fromFile(csvFile).getLines.map { _.split(delimiter) }
 }
