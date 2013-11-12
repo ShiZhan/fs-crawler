@@ -29,9 +29,7 @@ object Console {
     import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
     import util.Platform.{ HOSTNAME, OS, JAVAVER, SCALAVER }
     val TGMVER = util.Version.get
-    val DATETIME = util.DateTime.getDate
     s"""
-Date:      $DATETIME
 TriGraM:   $TGMVER
   code:    $TGMROOT
   data:    $TGMDATA
