@@ -9,11 +9,13 @@ import com.hp.hpl.jena.util.FileManager
 /**
  * @author ShiZhan
  * Model Seq operation
- * 1. join: combine all models in Seq
- *          combine all models in Seq to base model
- * 2. load: load model from given file
- *          load model from given file with absolute base URI
- *    NOTE: use file input stream API for better compatibility
+ * 1. join:  combine all models in Seq
+ *           combine all models in Seq to base model
+ * 2. load:  load model from given file
+ *           load model from given file with absolute base URI
+ *    NOTE:  use file input stream API for better compatibility
+ * 3. write: encapsulate file output stream API for model writing
+ *           in given format
  */
 class Models(models: Seq[Model]) {
   def join = {
