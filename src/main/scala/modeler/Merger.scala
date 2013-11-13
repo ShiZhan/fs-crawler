@@ -16,11 +16,15 @@ import util.Logging
  */
 object Merger extends Logging {
 
+  private def isCimModelURI = (u: String) => u.startsWith(CIM.NS)
+
+  private def cimModelURI2Local =
+    (u: String) => CIM.PATH_BASE + u.substring(CIM.NS.size)
+
   private def readImports(modelFile: String): List[String] = {
     val m = load(modelFile)
-    val importURIs = m.listObjectsOfProperty(OWL.imports).toList
-    val importFiles =
-      importURIs.map(CIM.PATH_BASE + _.toString.substring(CIM.NS.size)).toList
+    val importURIs = m.listObjectsOfProperty(OWL.imports).map(_.toString)
+    val importFiles = importURIs.filter(isCimModelURI).map(cimModelURI2Local).toList
     m.close
     if (importFiles.isEmpty) List()
     else importFiles ::: importFiles.flatMap(readImports)
@@ -36,22 +40,16 @@ object Merger extends Logging {
     val gatheredModel = (files load) join baseModel
     val stmtImport = gatheredModel.listStatements(null, OWL.imports, null)
     gatheredModel.remove(stmtImport)
-
     val gatheredFile = modelFile + "-gathered.owl"
-    val mFOS = new java.io.FileOutputStream(gatheredFile)
-    gatheredModel.write(mFOS, "RDF/XML-ABBREV")
-    mFOS.close
+    gatheredModel.write(gatheredFile)
 
     logger.info("wrote [{}] triples to [{}]", gatheredModel.size, gatheredFile)
   }
 
   def combine(modelFiles: List[String]) {
     val combinedModel = (modelFiles load) join
-
     val combinedFile = modelFiles.head + "-combined.owl"
-    val mFOS = new java.io.FileOutputStream(combinedFile)
-    combinedModel.write(mFOS, "RDF/XML-ABBREV")
-    mFOS.close
+    combinedModel.write(combinedFile)
 
     logger.info("wrote [{}] triples to [{}]", combinedModel.size, combinedFile)
   }
