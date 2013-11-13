@@ -6,7 +6,7 @@ package modeler
 import scala.xml.XML
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import util.Config.CIMDATA
-import util.Text.readAllLines
+import util.Strings.{ fromFile, strings }
 
 /**
  * @author ShiZhan
@@ -23,10 +23,10 @@ object CimVocabulary {
    * CIM-CLASS: CIM classes
    * CIM-PROPERTY: CIM properties, including references and data properties
    */
-  private val cFN = CIMDATA + "CIM-CLASS"
-  private val pFN = CIMDATA + "CIM-PROPERTY"
-  private lazy val cList = readAllLines(cFN)
-  private lazy val pList = readAllLines(pFN)
+  private val cimClassFileName = CIMDATA + "CIM-CLASS"
+  private val cimPropertyFileName = CIMDATA + "CIM-PROPERTY"
+  private lazy val cList = fromFile(cimClassFileName)
+  private lazy val pList = fromFile(cimPropertyFileName)
 
   /*
    * prepare vocabulary model
@@ -94,15 +94,10 @@ object CimVocabulary {
     val cNodes = i \\ "CIM" \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
     val rNodes = cNodes.flatMap(c => c \ "PROPERTY.REFERENCE")
     val pNodes = cNodes.flatMap(c => c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY")
-    val rNames = rNodes.map(_ \ "@NAME" text) distinct
-    val pNames = pNodes.map(_ \ "@NAME" text) distinct
     val cNames = cNodes.map(_ \ "@NAME" text)
-    val cFile = new java.io.File(cFN)
-    val pFile = new java.io.File(pFN)
-    val cFileStream = new java.io.PrintStream(cFile)
-    val pFileStream = new java.io.PrintStream(pFile)
-    cNames.foreach(cFileStream.println) // beware the tailing blank line
-    rNames.foreach(pFileStream.println)
-    pNames.foreach(pFileStream.println)
+    val rNames = rNodes.map(_ \ "@NAME" text).distinct
+    val pNames = pNodes.map(_ \ "@NAME" text).distinct
+    cNames.toFile(cimClassFileName) // beware the tailing blank line
+    (rNames ++ pNames).toFile(cimPropertyFileName)
   }
 }

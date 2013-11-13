@@ -5,7 +5,7 @@ package modeler
 
 import java.io.{ File, FileReader, FileOutputStream, OutputStreamWriter, BufferedWriter }
 import scala.xml.Utility.escape
-import util.{ Logging, Version, DateTime, URI, CSVReader, Text }
+import util.{ Logging, Version, DateTime, URI, CSVReader, Strings }
 
 /**
  * @author ShiZhan
@@ -23,7 +23,7 @@ object CSVex extends Modeler with Logging {
     options.toList match {
       case data :: index :: Nil => translate(data, index.toInt, defaultNames)
       case data :: index :: nameFile :: Nil => {
-        val lines = Text.readAllLines(nameFile)
+        val lines = Strings.fromFile(nameFile)
         val len = lines.length
         val names = if (len < 128) lines ++ defaultNames.drop(len) else lines
         translate(data, index.toInt, names)
