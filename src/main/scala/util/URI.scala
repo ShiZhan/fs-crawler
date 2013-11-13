@@ -27,8 +27,8 @@ object URI {
     val rootUNC = if (path.head.isLetter) ('/' + path) else path
     val posix = rootUNC.replace('\\', '/')
     val f = new File(posix)
-    val trimming = if (Platform.isWindows) 8 else 5
-    f.toURI.toString.substring(trimming)
+    val trim = if (Platform.isWindows && path.head == '/') 8 else 5
+    f.toURI.toString.substring(trim)
   }
 
   def fromString(str: String) = fromHost + pathString2URI(str)
