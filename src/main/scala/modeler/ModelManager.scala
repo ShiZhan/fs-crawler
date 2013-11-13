@@ -31,9 +31,24 @@ class ModelFiles(fileNames: Seq[String]) {
   def load(base: String) = fileNames map { ModelManager.load(_, base) }
 }
 
+class ModelWrapper(m: Model) {
+  def write(fileName: String) = {
+    val fos = new java.io.FileOutputStream(fileName)
+    m.write(fos, "RDF/XML-ABBREV")
+    fos.close
+  }
+
+  def write(fileName: String, format: String) = {
+    val fos = new java.io.FileOutputStream(fileName)
+    m.write(fos, format)
+    fos.close
+  }
+}
+
 object ModelManager {
   implicit def modelSeq2models(models: Seq[Model]) = new Models(models)
   implicit def fileNames2models(fileNames: Seq[String]) = new ModelFiles(fileNames)
+  implicit def model2wrapper(m: Model) = new ModelWrapper(m)
 
   def load(fileName: String) = {
     val m = ModelFactory.createDefaultModel
