@@ -15,6 +15,7 @@ import org.apache.http.client.utils.URIBuilder
  * 3. Generate path URI from Path instance with hostname
  * 4. Generate URI from path String with hostname
  * another set: use dedicated prefix
+ * TODO: URIBuilder will escape UTF-8 characters, but File/Path API won't.
  */
 object URI {
   val scheme = "trigram:"
