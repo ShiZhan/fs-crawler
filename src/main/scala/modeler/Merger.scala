@@ -4,11 +4,9 @@
 package modeler
 
 import scala.collection.JavaConversions._
-import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
-import com.hp.hpl.jena.util.FileManager
-import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
-
+import com.hp.hpl.jena.vocabulary.OWL
 import modeler.{ CimVocabulary => CIM }
+import modeler.ModelManager._
 import util.Logging
 
 /**
@@ -17,17 +15,6 @@ import util.Logging
  * collect CimSchemaEx sub-models dependency from owl:import chain
  */
 object Merger extends Logging {
-
-  private def load(fileName: String) = {
-    val m = ModelFactory.createDefaultModel
-    val mFIS = FileManager.get.open(fileName)
-    m.read(mFIS, "")
-  }
-
-  private def join(models: List[Model]) = {
-    val baseModel = ModelFactory.createDefaultModel
-    (baseModel /: models) { (r, m) => r union m }
-  }
 
   private def readImports(modelFile: String): List[String] = {
     val m = load(modelFile)
@@ -45,7 +32,8 @@ object Merger extends Logging {
     logger.info("[{}] CIM classes imported:", files.length)
     files foreach println
 
-    val gatheredModel = join({ files :+ modelFile } map load)
+    val baseModel = load(modelFile)
+    val gatheredModel = (files load) join baseModel
     val stmtImport = gatheredModel.listStatements(null, OWL.imports, null)
     gatheredModel.remove(stmtImport)
 
@@ -58,7 +46,7 @@ object Merger extends Logging {
   }
 
   def combine(modelFiles: List[String]) {
-    val combinedModel = join(modelFiles map load)
+    val combinedModel = (modelFiles load) join
 
     val combinedFile = modelFiles.head + "-combined.owl"
     val mFOS = new java.io.FileOutputStream(combinedFile)
