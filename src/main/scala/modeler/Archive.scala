@@ -82,8 +82,7 @@ object Archive extends Modeler with Logging {
       val size = e.getSize.toString
       val modi = DateTime.get(e.getLastModifiedDate)
       val hash = e.hashCode.toHexString
-      val cimClass =
-        if (e.isDirectory) CIM.CLASS("CIM_Directory") else CIM.CLASS("CIM_DataFile")
+      val cimClass = CIM.CLASS(if (e.isDirectory) "CIM_Directory" else "CIM_DataFile")
       val entry = m.createIndividual(uri, cimClass)
         .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
