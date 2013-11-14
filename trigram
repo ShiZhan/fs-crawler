@@ -9,7 +9,8 @@ esac
 
 export TGM_ROOT=$(dirname `which $0`)
 # export TGM_DATA=$TGM_ROOT/data
-CP=`ls -1 $TGM_ROOT/target/scala-2.10/lib | sed 's/*//g' | awk -v tr="$TGM_ROOT" '{printf tr"/target/scala-2.10/lib/"$1":"}'`
+LIB=$TGM_ROOT/target/scala-2.10/lib/
+CP=`ls -1 $LIB | awk -v lib=$LIB 'BEGIN { FS = "*" }; {printf lib$1":"}'`
 CP=$CP$TGM_ROOT:$TGM_ROOT/target/scala-2.10/classes
 
 if $cygwin; then
