@@ -13,20 +13,20 @@ object pattern {
   import java.awt.image.BufferedImage
   import org.jfree.chart.renderer.category.{ BarRenderer, StandardBarPainter }
 
-  val Fill = List(
+  val Fill = Array(
     (0, 0, 5, 5), (0, 0, 5, 0), (0, 5, 5, 0),
     (0, 0, 0, 5), (0, 0, 0, 0), (1, 1, 3, 3)) map {
       case (x1, y1, x2, y2) => {
-        val bufferedImage = new BufferedImage(5, 5, BufferedImage.TYPE_BYTE_GRAY)
-        val big = bufferedImage.createGraphics
+        val bi = new BufferedImage(5, 5, BufferedImage.TYPE_BYTE_GRAY)
+        val big = bi.createGraphics
         big.setColor(Color.white)
         big.fillRect(0, 0, 5, 5)
         big.setColor(Color.black)
         big.drawLine(x1, y1, x2, y2)
-        val imageRect = new Rectangle(0, 0, 5, 5)
-        new TexturePaint(bufferedImage, imageRect)
+        val ir = new Rectangle(0, 0, 5, 5)
+        new TexturePaint(bi, ir)
       }
-    } toArray
+    }
 
   val Renderer = new BarRenderer
   Renderer.setBarPainter(new StandardBarPainter)
