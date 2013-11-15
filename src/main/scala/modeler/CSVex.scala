@@ -99,7 +99,7 @@ object CSVex extends Modeler with Logging {
     val properties = pURI.map { dataTypePropertyT(_) }.mkString
 
     m.write(
-      headerT(prefixes, cimImport, URI.fromHost, Version.get, DateTime.get, cURI)
+      headerT(prefixes, URI.fromHost, cimImport, Version.get, DateTime.get, cURI)
         + properties)
 
     val reader = new CSVReader(new File(data), ';')
