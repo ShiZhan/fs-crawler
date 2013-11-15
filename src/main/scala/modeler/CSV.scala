@@ -18,43 +18,54 @@ import util.{ Logging, Version, DateTime, URI, CSVReader, Strings }
  * index column: key property, individual ID = base URI + key
  * column 0~127: all other properties as "COLxxx"
  * rows:         individuals of "ROW"
- * schema (optional) format:
+ * uri file (optional) format:
  * row 0:   The name of concept that holds all the individuals (rows)
  * row 1~m: The name of properties that connect all the values (columns)
+ * NOTE:
+ * the concept should be imported/combined for the resulting model to be
+ * fully functional
+ * TODO: 1. all modelers add OWL.imports if uri file contains CIM concepts
+ * TODO: 2. just invoke model combine, to combine those models directly,
+ *       the same to other modelers, since the model combine BUG on imports is fixed.
+ *       Except for those plain text translated ones, they will use import instead. 
  */
 object CSV extends Modeler with Logging {
   override val key = "csv"
 
-  override val usage = "<CSV> <index column> [<names>] => [triples]"
+  override val usage = "<CSV> <index column> [<uri file>] => [triples]"
 
   def run(options: Array[String]) = {
+    val defaultNS = URI.fromHost + "/CSV#"
     val defaultNames = List("ROW") ++ { (0 to 127) map { "COL%03d".format(_) } }
+    val defaultURIs = defaultNames map (defaultNS + _)
     options.toList match {
-      case data :: index :: Nil => translate(data, index.toInt, defaultNames)
+      case data :: index :: Nil => translate(data, index.toInt, defaultURIs)
       case data :: index :: nameFile :: Nil => {
         val lines = Strings.fromFile(nameFile)
         val len = lines.length
-        val names = if (len < 128) lines ++ defaultNames.drop(len) else lines
-        translate(data, index.toInt, names)
+        val uris = if (len < 128) lines ++ defaultURIs.drop(len) else lines
+
+        logger.info("[{}] URIs used:", lines.length)
+        lines foreach println
+        logger.warn("If any of them are declared in other models such as CIM models,")
+        logger.warn("they should be imported or combined if needed.")
+
+        translate(data, index.toInt, uris)
       }
       case _ => { logger.error("parameter error: [{}]", options) }
     }
   }
 
-  def translate(data: String, index: Integer, names: List[String]) = {
+  def translate(data: String, index: Integer, uris: List[String]) = {
     val base = URI.fromHost
-    val ns = base + "/CSV#"
     val m = ModelFactory.createOntologyModel
-    m.setNsPrefix(key, ns)
     m.createOntology(base)
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM CSV model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
-    val rowName = names.head
-    val colName = names.drop(1)
-    val Concept = m.createClass(ns + rowName)
-    val Properties = colName map { n => m.createDatatypeProperty(ns + n) }
+    val Concept = m.createClass(uris.head)
+    val Properties = uris.drop(1) map { m.createDatatypeProperty(_) }
 
     val reader = new CSVReader(new File(data), ';')
     val entries = reader.iterator
