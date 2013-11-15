@@ -5,7 +5,7 @@ package modeler
 
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.vocabulary.OWL
-import modeler.{ CimVocabulary => CIM }
+import CimVocabulary.{ isCimURI, PURL2FN }
 import modeler.ModelManager._
 import util.Logging
 
@@ -17,15 +17,10 @@ import util.Logging
  */
 object Merger extends Logging {
 
-  private def isCimModelURI = (u: String) => u.startsWith(CIM.NS)
-
-  private def cimModelURI2Local =
-    (u: String) => CIM.PATH_BASE + u.substring(CIM.NS.size)
-
   private def readCimImports(modelFile: String): List[String] = {
     val m = load(modelFile)
     val importURIs = m.listObjectsOfProperty(OWL.imports).map(_.toString)
-    val importFiles = importURIs.filter(isCimModelURI).map(cimModelURI2Local).toList
+    val importFiles = importURIs.filter(isCimURI).map(PURL2FN).toList
     m.close
     if (importFiles.isEmpty) List()
     else importFiles ::: importFiles.flatMap(readCimImports)

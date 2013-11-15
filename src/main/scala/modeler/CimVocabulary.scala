@@ -40,6 +40,9 @@ object CimVocabulary {
   def FN(n: String) = n + ".owl"
   def PURL(n: String) = NS + FN(n)
   def URI(n: String) = NS + n
+  def isCimURI(uri: String) = uri.startsWith(NS)
+  def URI2PURL(uri: String) = uri + ".owl"
+  def PURL2FN(purl: String) = PATH_BASE + purl.substring(NS.size)
 
   private val all = "CIM_All" // for all in one model (CimSchema)
   private val base = "CIM_Base" // for model group (CimSchemaEx)
