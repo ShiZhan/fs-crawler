@@ -13,6 +13,7 @@ import util.Logging
  * @author ShiZhan
  * CIM Model Merger
  * collect CimSchemaEx sub-models dependency from owl:import chain
+ * TODO: "gather" will remove all OWL.imports including those not from CIM models
  */
 object Merger extends Logging {
 
@@ -21,17 +22,17 @@ object Merger extends Logging {
   private def cimModelURI2Local =
     (u: String) => CIM.PATH_BASE + u.substring(CIM.NS.size)
 
-  private def readImports(modelFile: String): List[String] = {
+  private def readCimImports(modelFile: String): List[String] = {
     val m = load(modelFile)
     val importURIs = m.listObjectsOfProperty(OWL.imports).map(_.toString)
     val importFiles = importURIs.filter(isCimModelURI).map(cimModelURI2Local).toList
     m.close
     if (importFiles.isEmpty) List()
-    else importFiles ::: importFiles.flatMap(readImports)
+    else importFiles ::: importFiles.flatMap(readCimImports)
   }
 
   def gather(modelFile: String) = {
-    val files = readImports(modelFile).distinct
+    val files = readCimImports(modelFile).distinct
 
     logger.info("[{}] CIM classes imported:", files.length)
     files foreach println
