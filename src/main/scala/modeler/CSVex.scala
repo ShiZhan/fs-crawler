@@ -5,6 +5,7 @@ package modeler
 
 import java.io.{ File, FileReader, FileOutputStream, OutputStreamWriter, BufferedWriter }
 import scala.xml.Utility.escape
+import CimVocabulary.{ isCimURI, URI2PURL }
 import util.{ Logging, Version, DateTime, URI, CSVReader, Strings }
 
 /**
@@ -31,8 +32,6 @@ object CSVex extends Modeler with Logging {
 
         logger.info("[{}] URIs used:", lines.length)
         lines foreach println
-        logger.warn("If any of them are declared in other models such as CIM models,")
-        logger.warn("they should be imported or combined if needed.")
 
         translate(data, index.toInt, uris)
       }
@@ -42,16 +41,18 @@ object CSVex extends Modeler with Logging {
 
   private def prefixT = (prefix: String, ns: String) => s"""
     xmlns:$prefix="$ns""""
-
+  private def importT = (purl: String) => s"""
+    <owl:imports rdf:resource="$purl"/>"""
   private def headerT =
-    (prefixes: String, base: String, version: String, dateTime: String, cUri: String) =>
+    (prefixes: String, base: String, cimImport: String,
+      version: String, dateTime: String, cUri: String) =>
       s"""<rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"$prefixes
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-  <owl:Ontology rdf:about="$base">
+  <owl:Ontology rdf:about="$base">$cimImport
     <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >$version</owl:versionInfo>
     <dc:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -60,14 +61,12 @@ object CSVex extends Modeler with Logging {
     >$dateTime</dc:date>
   </owl:Ontology>
   <owl:Class rdf:about="$cUri"/>"""
-
   private def dataTypePropertyT = (uri: String) => s"""
   <owl:DatatypeProperty rdf:about="$uri"/>"""
 
   private def hasPropertyT = (ns: String, pName: String, value: String) => s"""
     <$ns:$pName rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
     >$value</$ns:$pName>"""
-
   private def individualT =
     (ns: String, cName: String, uri: String, hasProperties: String) => s"""
   <$ns:$cName rdf:about="$uri">$hasProperties
@@ -76,12 +75,10 @@ object CSVex extends Modeler with Logging {
   private val footerT = """
 </rdf:RDF>"""
 
-  def translate(data: String, index: Integer, uris: List[String]) = {
+  private def translate(data: String, index: Integer, uris: List[String]) = {
     val output = data + "-model.owl"
     val m = new BufferedWriter(
       new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
-
-    val base = URI.fromHost
 
     val prefixAndName = uris map { p =>
       val splitAtPosition = (p.lastIndexOf('#') max p.lastIndexOf('/')) + 1
@@ -97,10 +94,13 @@ object CSVex extends Modeler with Logging {
     } mkString
 
     val cURI = uris.head
+    val cimImport = if (isCimURI(cURI)) importT(URI2PURL(cURI)) else ""
     val pURI = uris.drop(1)
     val properties = pURI.map { dataTypePropertyT(_) }.mkString
 
-    m.write(headerT(prefixes, base, Version.get, DateTime.get, cURI) + properties)
+    m.write(
+      headerT(prefixes, cimImport, URI.fromHost, Version.get, DateTime.get, cURI)
+        + properties)
 
     val reader = new CSVReader(new File(data), ';')
     val entries = reader.iterator

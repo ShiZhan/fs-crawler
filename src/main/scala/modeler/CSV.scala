@@ -7,6 +7,7 @@ import java.io.{ File, FileReader, FileOutputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ OWL, DC_11 => DC }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
+import CimVocabulary.{ isCimURI, URI2PURL }
 import util.{ Logging, Version, DateTime, URI, CSVReader, Strings }
 
 /**
@@ -24,10 +25,6 @@ import util.{ Logging, Version, DateTime, URI, CSVReader, Strings }
  * NOTE:
  * the concept should be imported/combined for the resulting model to be
  * fully functional
- * TODO: 1. all modelers add OWL.imports if uri file contains CIM concepts
- * TODO: 2. just invoke model combine, to combine those models directly,
- *       the same to other modelers, since the model combine BUG on imports is fixed.
- *       Except for those plain text translated ones, they will use import instead. 
  */
 object CSV extends Modeler with Logging {
   override val key = "csv"
@@ -47,8 +44,6 @@ object CSV extends Modeler with Logging {
 
         logger.info("[{}] URIs used:", lines.length)
         lines foreach println
-        logger.warn("If any of them are declared in other models such as CIM models,")
-        logger.warn("they should be imported or combined if needed.")
 
         translate(data, index.toInt, uris)
       }
@@ -57,15 +52,19 @@ object CSV extends Modeler with Logging {
   }
 
   def translate(data: String, index: Integer, uris: List[String]) = {
+    val cURI = uris.head
+    val pURI = uris.drop(1)
+
     val base = URI.fromHost
     val m = ModelFactory.createOntologyModel
-    m.createOntology(base)
+    val o = m.createOntology(base)
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM CSV model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
+    if (isCimURI(cURI)) o.addProperty(OWL.imports, URI2PURL(cURI))
 
-    val Concept = m.createClass(uris.head)
-    val Properties = uris.drop(1) map { m.createDatatypeProperty(_) }
+    val Concept = m.createClass(cURI)
+    val Properties = pURI map { m.createDatatypeProperty(_) }
 
     val reader = new CSVReader(new File(data), ';')
     val entries = reader.iterator
