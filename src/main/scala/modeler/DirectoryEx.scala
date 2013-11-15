@@ -59,7 +59,7 @@ object DirectoryEx extends Modeler with Logging {
   </owl:Ontology>"""
 
       def logicalFileT =
-        (pathURI: String, cimClass: String,
+        (pathURI: String, cimClass: String, dcf: String,
           name: String, size: Long, lastModified: String,
           canRead: Boolean, canWrite: Boolean, canExecute: Boolean) => s"""
   <owl:NamedIndividual rdf:about="$pathURI">
@@ -75,20 +75,16 @@ object DirectoryEx extends Modeler with Logging {
     <cim:Writeable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
     >$canWrite</cim:Writeable>
     <cim:Executable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
-    >$canExecute</cim:Executable>
+    >$canExecute</cim:Executable>$dcf
   </owl:NamedIndividual>
 """
 
       def partComponentT = (fileURI: String) => s"""
     <cim:PartComponent rdf:resource="$fileURI"/>"""
 
-      def directoryContainsFileT =
-        (dirURI: String, partComponent: String) => s"""
-  <owl:NamedIndividual rdf:about="$dirURI.dcf">
-    $partComponent
-    <cim:GroupComponent rdf:resource="$dirURI"/>
+      def directoryContainsFileT = (dirURI: String, partComponent: String) => s"""
     <rdf:type rdf:resource="$URI_DCF"/>
-  </owl:NamedIndividual>"""
+    <cim:GroupComponent rdf:resource="$dirURI"/>$partComponent"""
 
       val footerT = "</rdf:RDF>"
 
@@ -101,16 +97,15 @@ object DirectoryEx extends Modeler with Logging {
         val size = if (node.size.nonEmpty) node.size.get else 0
         val dateTime = DateTime.get(node.lastModified)
 
-        val logicalFile = logicalFileT(uri, cimClass,
-          name, size, dateTime, node.canRead, node.canWrite, node.canExecute)
-
-        val directoryConainsFile = if (isDirectory) {
+        val dcf = if (isDirectory) {
           val subNodeList = node * "*"
           val partComponent =
             subNodeList.map(s => partComponentT(escape(URI.fromPath(s)))).mkString
           directoryContainsFileT(uri, partComponent)
         } else ""
-        logicalFile + directoryConainsFile
+
+        logicalFileT(uri, cimClass, dcf,
+          name, size, dateTime, node.canRead, node.canWrite, node.canExecute)
       }
 
       val output = if (options.length > 1) options(1) else input + "-model.owl"
@@ -139,7 +134,6 @@ object DirectoryEx extends Modeler with Logging {
       println("translating [100%]")
 
       m.write(footerT)
-
       m.close
 
       logger.info("[{}] individuals generated in [{}]", total, output)

@@ -31,8 +31,8 @@ object Directory extends Modeler with Logging {
     val canExecute = p.canExecute.toString
 
     if (p.isDirectory) {
-      val dirUri = URI.fromPath(p)
-      val dirRes = m.createResource(dirUri, OWL2.NamedIndividual)
+      val uri = URI.fromPath(p)
+      val res = m.createResource(uri, OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
         .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
@@ -40,15 +40,13 @@ object Directory extends Modeler with Logging {
         .addProperty(CIM.PROP("Readable"), canRead, XSDboolean)
         .addProperty(CIM.PROP("Writeable"), canWrite, XSDboolean)
         .addProperty(CIM.PROP("Executable"), canExecute, XSDboolean)
-      val dirRef = m.createResource(dirUri + ".dcf", OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
-        .addProperty(CIM.PROP("GroupComponent"), dirRes)
 
+      res.addProperty(CIM.PROP("GroupComponent"), res)
       for (subPath <- p * "*") {
         val subPathRes = m.getResource(URI.fromPath(subPath))
-        dirRef.addProperty(CIM.PROP("PartComponent"), subPathRes)
+        res.addProperty(CIM.PROP("PartComponent"), subPathRes)
       }
-
     } else {
       m.createResource(URI.fromPath(p), OWL2.NamedIndividual)
         .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
