@@ -36,7 +36,7 @@ object CimVocabulary {
   /*
    * naming convention for CIM/OWL name space, local file name & persistent URL
    */
-  val NS = "https://sites.google.com/site/ontology2013/"
+  val NS = "https://sites.google.com/site/ontology2013/cim/"
   def FN(n: String) = n + ".owl"
   def PURL(n: String) = NS + FN(n)
   def URI(n: String) = NS + n
