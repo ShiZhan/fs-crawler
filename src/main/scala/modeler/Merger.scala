@@ -38,8 +38,8 @@ object Merger extends Logging {
 
     val baseModel = load(modelFile)
     val gatheredModel = (files load) join baseModel
-    val stmtImport = gatheredModel.listStatements(null, OWL.imports, null)
-    gatheredModel.remove(stmtImport)
+    val imports = gatheredModel.listStatements(null, OWL.imports, null)
+    gatheredModel.remove(imports)
     val gatheredFile = modelFile + "-gathered.owl"
     gatheredModel.write(gatheredFile)
 
@@ -47,7 +47,10 @@ object Merger extends Logging {
   }
 
   def combine(modelFiles: List[String]) {
-    val combinedModel = (modelFiles load) join
+    val models = modelFiles load
+    val combinedModel = models join
+    val imports = models flatMap { _.listStatements(null, OWL.imports, null) }
+    imports.foreach{ i => combinedModel.add(i) }
     val combinedFile = modelFiles.head + "-combined.owl"
     combinedModel.write(combinedFile)
 
