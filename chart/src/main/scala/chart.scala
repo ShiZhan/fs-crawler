@@ -73,7 +73,7 @@ object barchart {
     val plot = bChart.plot
     plot.setBackgroundPaint(Color.white)
     plot.setRangeGridlinePaint(Color.blue)
-    plot.setRenderer(util.pattern.Renderer)
+    plot.setRenderer(new util.pattern.Renderer)
     bChart.show
     bChart.saveAsPDF("r:/barchart.pdf", (500, 375))
   }
@@ -99,7 +99,7 @@ object multibarchart {
     val plot = bChart.plot
     plot.setBackgroundPaint(Color.white)
     plot.setRangeGridlinePaint(Color.lightGray)
-    plot.setRenderer(util.pattern.Renderer)
+    plot.setRenderer(new util.pattern.Renderer)
     bChart.show
     bChart.saveAsPDF("r:/multibarchart.pdf", (500, 375))
   }

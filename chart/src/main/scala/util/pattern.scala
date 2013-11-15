@@ -28,9 +28,10 @@ object pattern {
       }
     }
 
-  val Renderer = new BarRenderer
-  Renderer.setBarPainter(new StandardBarPainter)
-  Renderer.setShadowVisible(false)
-  Renderer.setDrawBarOutline(true)
-  (0 to Fill.length - 1) foreach (i => Renderer.setSeriesPaint(i, Fill(i)))
+  class Renderer extends BarRenderer {
+    setBarPainter(new StandardBarPainter)
+    setShadowVisible(false)
+    setDrawBarOutline(true)
+    (0 to Fill.length - 1) foreach (i => setSeriesPaint(i, Fill(i)))
+  }
 }
