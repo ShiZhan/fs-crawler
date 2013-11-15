@@ -40,8 +40,8 @@ object CSVex extends Modeler with Logging {
     }
   }
 
-  private def prefixT = (index: Int, ns: String) => s"""
-    xmlns:n.$index="$ns""""
+  private def prefixT = (prefix: String, ns: String) => s"""
+    xmlns:$prefix="$ns""""
 
   private def headerT =
     (prefixes: String, base: String, version: String, dateTime: String, cUri: String) =>
@@ -83,15 +83,18 @@ object CSVex extends Modeler with Logging {
 
     val base = URI.fromHost
 
-    val PrefixAndName = uris map { p =>
+    val prefixAndName = uris map { p =>
       val splitAtPosition = (p.lastIndexOf('#') max p.lastIndexOf('/')) + 1
       (p.substring(0, splitAtPosition), p.substring(splitAtPosition))
     }
-    val nsList = PrefixAndName map (_._1) distinct
-    def nsOf(uriIndex: Int) = "n." + nsList.indexOf(PrefixAndName(uriIndex)._1)
-    def nameOf(uriIndex: Int) = PrefixAndName(uriIndex)._2
+    val prefixList = prefixAndName map (_._1) distinct
+    def prefixName(prefixIndex: Int) = "n." + prefixIndex
+    def prefixOf(uriIndex: Int) = prefixName(prefixList.indexOf(prefixAndName(uriIndex)._1))
+    def nameOf(uriIndex: Int) = prefixAndName(uriIndex)._2
 
-    val prefixes = (0 to nsList.length - 1) map { i => prefixT(i, nsList(i))} mkString
+    val prefixes = (0 to prefixList.length - 1) map {
+      i => prefixT(prefixName(i), prefixList(i))
+    } mkString
 
     val cURI = uris.head
     val pURI = uris.drop(1)
@@ -104,9 +107,9 @@ object CSVex extends Modeler with Logging {
     for (e <- entries) {
       val i = escape(e(index))
       val hasProperties = (0 to e.length - 1).map {
-        c => hasPropertyT(nsOf(c + 1), nameOf(c + 1), escape(e(c)))
+        c => hasPropertyT(prefixOf(c + 1), nameOf(c + 1), escape(e(c)))
       }.mkString
-      val individual = individualT(nsOf(0), nameOf(0), URI.fromString(i), hasProperties)
+      val individual = individualT(prefixOf(0), nameOf(0), URI.fromString(i), hasProperties)
       m.write(individual)
     }
 
