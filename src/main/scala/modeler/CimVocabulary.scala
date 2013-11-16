@@ -69,18 +69,11 @@ object CimVocabulary {
 
   // CIM schema content
   private lazy val classList =
-    cList.map {
-      case n => {
-        val depImport = model.createResource(PURL(n))
-        val depClass = model.createResource(URI(n))
-        n -> (depImport, depClass)
-      }
-    } toMap
+    cList.map { case n => (n -> model.createResource(URI(n))) } toMap
 
   private val unknown = model.createResource
 
-  def IMPORT(name: String) = classList.getOrElse(name, (unknown, unknown))._1
-  def CLASS(name: String) = classList.getOrElse(name, (unknown, unknown))._2
+  def CLASS(name: String) = classList.getOrElse(name, unknown)
 
   /*
    * vocabulary
