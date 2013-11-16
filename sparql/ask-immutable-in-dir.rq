@@ -3,7 +3,7 @@
 # and use test/test.cmd to deploy a testing directory all in one.
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX cim: <https://sites.google.com/site/ontology2013/>
+PREFIX cim: <https://sites.google.com/site/ontology2013/cim/>
 PREFIX imm: <http://www.semanticweb.org/ontologies/2013/immutable#>
 ASK {
   ?x rdf:type imm:immutable.
