@@ -11,7 +11,7 @@ object DIYCSVReader {
    *  test my own CSV reader
    */
   val sample =
-"""0deb75a703b0129bbd1270e51494668c;r:\TEMP/Cache/_CACHE_MAP_
+    """0deb75a703b0129bbd1270e51494668c;r:\TEMP/Cache/_CACHE_MAP_
 95206ac415d1578dbd6ef79ec9c7155d;r:\TEMP/Cache/0/E9/2D476d01
 a6e86aec0475cb8ddeb06df5822b22b6;r:\TEMP/Cache/0/B4/8DF03d01
 32c0ad5badb02447e62b5a8c81ba00a9;r:\TEMP/Cache/0/1F/5FF3Cd01

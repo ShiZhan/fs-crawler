@@ -14,7 +14,7 @@ object URIprocess {
     val posix = rootUNC.replace('\\', '/')
     val f = new File(posix)
     val trimming = if (isWindows) 8 else 5
-//    val trimming = 5
+    //    val trimming = 5
     f.toURI.toString.substring(trimming)
   }
 

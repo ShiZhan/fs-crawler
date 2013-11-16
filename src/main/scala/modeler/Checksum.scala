@@ -67,7 +67,6 @@ object Checksum extends Modeler with Logging {
       .addProperty(DC.description, "TriGraM file chunk checksum model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
 
-    
     val output = inputFile.getAbsolutePath + "-chk.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
