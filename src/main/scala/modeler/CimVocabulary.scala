@@ -54,13 +54,6 @@ object CimVocabulary {
   val PATH_BASE = CIMDATA + "models/"
 
   /*
-   * imports
-   */
-  val ALL = model.createResource(PURL_ALL)
-  val BASE = model.createResource(PURL_BASE)
-  // imports of other individual sub-models (CimSchemaEx) will be defined while been used
-
-  /*
    * concepts
    */
   // meta concepts
@@ -71,7 +64,7 @@ object CimVocabulary {
   private lazy val classList =
     cList.map { case n => (n -> model.createResource(URI(n))) } toMap
 
-  private val unknown = model.createResource
+  private val unknown = model.createResource(URI("unknownCimClass"))
 
   def CLASS(name: String) = classList.getOrElse(name, unknown)
 
@@ -81,7 +74,7 @@ object CimVocabulary {
   private lazy val propertyList =
     pList.map(n => n -> model.createProperty(URI(n))) toMap
 
-  private val invalidProperty = model.createProperty(URI("invalidProperty"))
+  private val invalidProperty = model.createProperty(URI("invalidCimProperty"))
 
   def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
 
