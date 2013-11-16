@@ -100,6 +100,8 @@ object CimVocabulary {
     val cNames = cNodes.map(_ \ "@NAME" text)
     val rNames = rNodes.map(_ \ "@NAME" text).distinct
     val pNames = pNodes.map(_ \ "@NAME" text).distinct
+    val cimData = new java.io.File(CIMDATA)
+    if (cimData.exists) assert(!cimData.isFile) else cimData.mkdir
     cNames.toFile(cimClassFileName) // beware the tailing blank line
     (rNames ++ pNames).toFile(cimPropertyFileName)
   }
