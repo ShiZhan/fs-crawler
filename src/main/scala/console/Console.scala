@@ -10,8 +10,10 @@ package console
  * main entry to Command Line Interface
  */
 object Console {
+  import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
+  import util.Platform.BRIEFING
 
-  private val loc = util.Config.TGMDATA
+  private val loc = TGMDATA
   private val store = new Store(loc)
   private val handler = new Handler(store)
 
@@ -24,30 +26,12 @@ object Console {
   private val title = "TriGraM Console"
   private val prompt = "# "
 
-  private val status = {
-    import com.hp.hpl.jena.Jena.{ VERSION => JENAVER, BUILD_DATE => JENABUILD }
-    import com.hp.hpl.jena.tdb.TDB.{ VERSION => TDBVER, BUILD_DATE => TDBBUILD }
-    import util.Config.{ TGMROOT, CIMDATA }
-    import util.Platform.{ HOSTNAME, OS, JAVAVER, SCALAVER }
-    import util.JVMstates.{ MEMFREE, MEMUSED, MEMTOTAL, MEMMAX }
-    val TGMVER = util.Version.get
-    s"""
+  private val TGMVER = util.Version.get
+  private val status = s"""
 TriGraM:     $TGMVER
   code:      $TGMROOT
   data:      $loc
-  CIM:       $CIMDATA
-Jena core:   $JENAVER $JENABUILD
-Jena TDB:    $TDBVER $TDBBUILD
-Scala:       $SCALAVER
-Java:        $JAVAVER
-  MEM FREE:  $MEMFREE MB
-  MEM USED:  $MEMUSED MB
-  MEM TOTAL: $MEMTOTAL MB
-  MEM MAX:   $MEMMAX MB
-OS:          $OS
-HOSTNAME:    $HOSTNAME
-"""
-  }
+  CIM:       $CIMDATA""" + BRIEFING
 
   def run: Unit = {
     println(title)
@@ -76,5 +60,4 @@ HOSTNAME:    $HOSTNAME
       print(prompt)
     }
   }
-
 }
