@@ -41,13 +41,11 @@ metadata-manager/storage-server/client nodes, and fast deployment.
 How to use
 ----------
 
-1.  deploy [sbt](https://github.com/harrah/xsbt/wiki) with
-    [sbteclipse](https://github.com/typesafehub/sbteclipse), open sbt
-    console in project root directory, type `update`, wait until all the
-    dependencies are resolved.
+1.  deploy [sbt](https://github.com/harrah/xsbt/wiki), open sbt console in project root directory,
+    type `update`, wait until all the dependencies are resolved.
 
 2.  use `eclipse` to generate eclipse project, include `.project` and
-    `.classpath`.
+    `.classpath`, this is based on [sbteclipse](https://github.com/typesafehub/sbteclipse).
 
 3.  use `compile`.
 
