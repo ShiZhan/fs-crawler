@@ -13,22 +13,25 @@ The original motivation is described in
 [my thesis](http://cdmd.cnki.com.cn/Article/CDMD-10487-1012268216.htm).
 
 Preliminary version was developed as a simple XQuery program during 2011.2\~2011.8,
-and can be run from [XQilla](http://xqilla.sourceforge.net/HomePage) command line,
-the input source file is from [DMTF CIM](http://www.dmtf.org/standards/cim) model
+and can be run from [XQilla](http://xqilla.sourceforge.net/HomePage) command line.
+The input source file is from [DMTF CIM](http://www.dmtf.org/standards/cim) model
 and must be compiled by OpenPegasus, and the basic idea is to use translated
-semantic model in helping storage resource management.
+semantic model in helping storage management.
+
+However, the XQuery-based version has many limitations, such as costly XML processing,
+program portability and hard to maintain.
 
 In late 2011, switch the whole tool-chain to Python and
-[RDFLib](https://github.com/RDFLib/rdflib) for flexible development,
-called [SEED](#seed), aims at efficient meta-data storage for distributed file
-systems.
+[RDFLib](https://github.com/RDFLib/rdflib), Python is easy to code, and RDFLib has
+a neat interface for semantic model manipulation. The new project named [SEED](#seed),
+its functionality had been expanded to efficient meta-data storage for distributed
+file systems.
 
-In late 2012, for the scalable consideration, the main framework
-switched once more, to [Scala](http://www.scala-lang.org/) +
-[Jena](http://jena.apache.org/), Scala provides the language-level parallelism,
+In late 2012, scalability became an important issue, on both the code and triples,
+so the program framework switched once more, to [Scala](http://www.scala-lang.org/) +
+[Jena](http://jena.apache.org/). Scala provides the language-level parallelism,
 and Jena is a comprehensive framework for both model manipulation and persistent
-storage, the latter is implemented as
-[TDB](http://jena.apache.org/documentation/tdb/).
+storage, the triple storage is [TDB](http://jena.apache.org/documentation/tdb/).
 
 ### SEED
 

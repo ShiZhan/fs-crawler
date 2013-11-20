@@ -1,7 +1,6 @@
 TODO:
 
-If the imported models are available as local files, just invoke model combine right after modelling process, to combine those models directly. The same applies to all modelers, since the model combine BUG on OWL:imports is fixed.
+If the imported models are available as local files, just invoke model combine right after modeling process, to combine those models directly. The same applies to all modelers, since the model combine BUG on OWL:imports is fixed.
 
-Except for those plain text translated ones, they will use import instead. Because they are aimed to massive model creation, maybe to large for model combine. In this case, the use of triple database is encouraged.
-
+Except for those plain text translated ones, they will use import instead. Because they are aimed to massive model creation, maybe too large for model combine. In this case, the use of triple database is encouraged.
 
