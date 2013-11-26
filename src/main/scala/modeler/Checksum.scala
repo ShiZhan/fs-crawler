@@ -30,8 +30,10 @@ object Checksum extends Modeler with Logging {
           logger.error("input source does not exist")
         else if (!f.isFile)
           logger.error("input source is not file")
-        else
-          translate(f, getInt(chunkSizeStr) getOrElse 65536)
+        else {
+          val chunkSize = getInt(chunkSizeStr) getOrElse 65536
+          translate(f, chunkSize)
+        }
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
@@ -45,11 +47,11 @@ object Checksum extends Modeler with Logging {
     }
   }
 
-  private def translate(inputFile: File, chunkSize: Int) = {
-    logger.info("Model file [{}]", inputFile.getAbsolutePath)
+  private def translate(f: File, chunkSize: Int) = {
+    logger.info("Model file [{}]", f.getAbsolutePath)
 
-    val fileSize = inputFile.length
-    val stream = new FileInputStream(inputFile)
+    val fileSize = f.length
+    val stream = new FileInputStream(f)
     val total = fileSize / chunkSize
     val remain = fileSize % chunkSize
     val fileMD5 = DigestUtils.md5Hex(stream)
@@ -66,8 +68,19 @@ object Checksum extends Modeler with Logging {
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM file chunk checksum model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
+      .addProperty(OWL.imports, CIM.PURL("CIM_DataFile"))
 
-    val output = inputFile.getAbsolutePath + "-chk.owl"
+    val chkURI = URI.fromFile(f)
+
+    val chkPath = f.getAbsolutePath
+    val chkSize = f.length.toString
+    val chkModi = DateTime.get(f.lastModified)
+    val chkFile = m.createIndividual(chkURI, CIM.CLASS("CIM_Directory"))
+      .addProperty(CIM.PROP("Name"), chkPath, XSDnormalizedString)
+      .addProperty(CIM.PROP("FileSize"), chkSize, XSDunsignedLong)
+      .addProperty(CIM.PROP("LastModified"), chkModi, XSDdateTime)
+
+    val output = f.getAbsolutePath + "-chk.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
