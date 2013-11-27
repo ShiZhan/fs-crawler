@@ -68,7 +68,7 @@ object Checksum extends Modeler with Logging {
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM file chunk checksum model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      .addProperty(OWL.imports, CIM.PURL("CIM_DataFile"))
+      .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
 
     val chkURI = URI.fromFile(f)
 

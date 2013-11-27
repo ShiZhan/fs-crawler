@@ -76,9 +76,9 @@ object Directory extends Modeler with Logging {
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM Directory model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, CIM.PURL("CIM_Directory"))
-        .addProperty(OWL.imports, CIM.PURL("CIM_DataFile"))
-        .addProperty(OWL.imports, CIM.PURL("CIM_DirectoryContainsFile"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
+        .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
 
       assignAttributes(m, p)
 

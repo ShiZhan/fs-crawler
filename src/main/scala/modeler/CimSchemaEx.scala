@@ -94,7 +94,7 @@ permissions and limitations under the License.
     val cIsAsso = "true" == readValue(cQualifier, "@NAME", "Association")
     val cComment = readValue(cQualifier, "@NAME", "Description")
     val cVersion = readValue(cQualifier, "@NAME", "Version")
-    val cImport = if (cSuperName.isEmpty) CIM.PURL_BASE else CIM.PURL(cSuperName)
+    val cImport = if (cSuperName.isEmpty) CIM.BASE else CIM.IMPORT(cSuperName)
 
     // create & initialize the model
     val m = ModelFactory.createDefaultModel

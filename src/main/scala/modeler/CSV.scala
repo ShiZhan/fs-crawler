@@ -61,7 +61,8 @@ object CSV extends Modeler with Logging {
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM CSV model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
-    if (isCimURI(cURI)) o.addProperty(OWL.imports, URI2PURL(cURI))
+    if (isCimURI(cURI))
+      o.addProperty(OWL.imports, m.createResource(URI2PURL(cURI)))
 
     val Concept = m.createClass(cURI)
     val Properties = pURI map { m.createDatatypeProperty(_) }

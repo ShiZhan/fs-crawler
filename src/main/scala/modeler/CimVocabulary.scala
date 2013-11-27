@@ -56,17 +56,25 @@ object CimVocabulary {
   /*
    * concepts
    */
+  // OWL.imports
+  val ALL = model.createResource(PURL_ALL)
+  val BASE = model.createResource(PURL_BASE)
   // meta concepts
   val Meta_Class = model.createResource(URI("CIM_Meta_Class"))
   val Association = model.createResource(URI("CIM_Association"))
 
   // CIM schema content
   private lazy val classList =
-    cList.map { case n => (n -> model.createResource(URI(n))) } toMap
+    cList.map {
+      case n =>
+        (n -> (model.createResource(URI(n)), model.createResource(PURL(n))))
+    } toMap
 
-  private val unknown = model.createResource(URI("unknownCimClass"))
+  private val unknown =
+    (model.createResource(URI("unknown")), model.createResource(PURL("unknown")))
 
-  def CLASS(name: String) = classList.getOrElse(name, unknown)
+  def CLASS(name: String) = classList.getOrElse(name, unknown)._1
+  def IMPORT(name: String) = classList.getOrElse(name, unknown)._2
 
   /*
    * vocabulary
