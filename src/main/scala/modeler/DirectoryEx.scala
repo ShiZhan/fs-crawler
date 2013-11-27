@@ -76,8 +76,7 @@ object DirectoryEx extends Modeler with Logging {
     >$canWrite</cim:Writeable>
     <cim:Executable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
     >$canExecute</cim:Executable>$dcf
-  </owl:NamedIndividual>
-"""
+  </owl:NamedIndividual>"""
 
       def partComponentT = (fileURI: String) => s"""
     <cim:PartComponent rdf:resource="$fileURI"/>"""
@@ -86,7 +85,8 @@ object DirectoryEx extends Modeler with Logging {
     <rdf:type rdf:resource="$URI_DCF"/>
     <cim:GroupComponent rdf:resource="$dirURI"/>$partComponent"""
 
-      val footerT = "</rdf:RDF>"
+      val footerT = """
+</rdf:RDF>"""
 
       def nodeT(uri: String, node: Path) = {
         val uri = escape(URI.fromPath(node))
