@@ -97,6 +97,10 @@ How to use
     use `trigram -m <modeler with options>` to invoke the corresponding modeler,
     translate designated resources into semantic models.
 
+    NOTE: some modelers, related to file system modeling, are using file URI to create
+    individuals, so the absolute file path must be globally unique, it is important to
+    set full path in modeler parameters, for them to generate consistent URIs.
+
 5.  Model combining and importing
 
     Several interrelated models can be put together as a single model file for using
