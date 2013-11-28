@@ -3,12 +3,13 @@
  */
 package modeler
 
-import java.io.{ File, FileInputStream, FileOutputStream }
+import scala.io.Source
+import java.io.{ File, FileOutputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
+import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import org.apache.commons.codec.digest.DigestUtils
-import util.{ Logging, Version, DateTime, Hash, URI }
+import util.{ Logging, Version, DateTime, URI }
 
 import modeler.{ CimVocabulary => CIM }
 
@@ -51,13 +52,10 @@ object Checksum extends Modeler with Logging {
     logger.info("Model file [{}]", f.getAbsolutePath)
 
     val fileSize = f.length
-    val stream = new FileInputStream(f)
-    val total = fileSize / chunkSize
-    val remain = fileSize % chunkSize
-    val fileMD5 = DigestUtils.md5Hex(stream)
-    println(fileMD5)
-
-    stream.close
+    val fileBS = Source.fromFile(f)
+    val chunks = fileBS.grouped(chunkSize)
+    val MD5List = chunks.map { c => DigestUtils.md5Hex(c.mkString) }.toList
+    fileBS.close
 
     val base = URI.fromHost
     val ns = base + "CHK#"
@@ -71,16 +69,32 @@ object Checksum extends Modeler with Logging {
       .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
       .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
       .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
+      .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
 
-    val chkURI = URI.fromFile(f)
+    val uri = URI.fromFile(f)
+    val path = f.getAbsolutePath
+    val size = fileSize.toString
+    val modi = DateTime.get(f.lastModified)
+    val file = m.createIndividual(uri, CIM.CLASS("CIM_Directory"))
+      .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
+      .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+      .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
+      .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
+    file.addProperty(CIM.PROP("GroupComponent"), file)
 
-    val chkPath = f.getAbsolutePath
-    val chkSize = f.length.toString
-    val chkModi = DateTime.get(f.lastModified)
-    val chkFile = m.createIndividual(chkURI, CIM.CLASS("CIM_Directory"))
-      .addProperty(CIM.PROP("Name"), chkPath, XSDnormalizedString)
-      .addProperty(CIM.PROP("FileSize"), chkSize, XSDunsignedLong)
-      .addProperty(CIM.PROP("LastModified"), chkModi, XSDdateTime)
+    for ((md5, i) <- MD5List.zipWithIndex) {
+      val chunkURI = uri + '.' + i
+      val chunkName = path + '.' + i
+      val realSize = if (i == MD5List.length - 1) fileSize % chunkSize else chunkSize
+      val chunk = m.createIndividual(chunkURI, CIM.CLASS("CIM_DataFile"))
+        .addProperty(CIM.PROP("Name"), chunkName, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileSize"), realSize.toString, XSDunsignedLong)
+        .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
+        .addProperty(CIM.PROP("MD5Checksum"), md5, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileName"), chunkName, XSDnormalizedString)
+      file.addProperty(CIM.PROP("PartComponent"), chunk)
+    }
 
     val output = f.getAbsolutePath + "-chk.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
