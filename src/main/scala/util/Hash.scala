@@ -15,7 +15,11 @@ object Hash {
   private val sha = MessageDigest.getInstance("SHA-1")
   private val sha256 = MessageDigest.getInstance("SHA-256")
 
-  def getMD5(s: String) =
-    md5.digest(s.getBytes).map("%02x".format(_)).mkString
+  def md5sum(bytes: Iterator[Byte]) = {
+    md5.reset
+    try { bytes.foreach(md5.update) }
+    catch { case e: Exception => throw e }
+    md5.digest.map("%02x".format(_)).mkString
+  }
 
 }

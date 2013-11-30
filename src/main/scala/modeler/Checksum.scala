@@ -8,8 +8,7 @@ import java.io.{ File, FileOutputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import org.apache.commons.codec.digest.DigestUtils
-import util.{ Logging, Version, DateTime, URI }
+import util.{ Logging, Version, DateTime, URI, Hash }
 
 import modeler.{ CimVocabulary => CIM }
 
@@ -48,14 +47,27 @@ object Checksum extends Modeler with Logging {
     }
   }
 
+  private def fileMD5(file: File) = {
+    val fileBuffer = Source.fromFile(file, "ISO-8859-1")
+    val fileBytes = fileBuffer.map(_.toByte)
+    val md5 = Hash.md5sum(fileBytes)
+    fileBuffer.close
+    md5
+  }
+
+  private def chunkMD5(file: File, chunkSize: Int) = {
+    val fileBuffer = Source.fromFile(file, "ISO-8859-1")
+    val chunks = fileBuffer.grouped(chunkSize).map(_.map(_.toByte).iterator)
+    val md5List = chunks.map { Hash.md5sum }.toList
+    fileBuffer.close
+    md5List
+  }
+
   private def translate(f: File, chunkSize: Int) = {
     logger.info("Model file [{}]", f.getAbsolutePath)
 
-    val fileSize = f.length
-    val fileBS = Source.fromFile(f)
-    val chunks = fileBS.grouped(chunkSize)
-    val MD5List = chunks.map { c => DigestUtils.md5Hex(c.mkString) }.toList
-    fileBS.close
+    val md5 = fileMD5(f)
+    val md5List = chunkMD5(f, chunkSize)
 
     val base = URI.fromHost
     val ns = base + "CHK#"
@@ -71,6 +83,7 @@ object Checksum extends Modeler with Logging {
       .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
       .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
 
+    val fileSize = f.length
     val uri = URI.fromFile(f)
     val path = f.getAbsolutePath
     val size = fileSize.toString
@@ -82,10 +95,10 @@ object Checksum extends Modeler with Logging {
       .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
     file.addProperty(CIM.PROP("GroupComponent"), file)
 
-    for ((md5, i) <- MD5List.zipWithIndex) {
+    for ((md5, i) <- md5List.zipWithIndex) {
       val chunkURI = uri + '.' + i
       val chunkName = path + '.' + i
-      val realSize = if (i == MD5List.length - 1) fileSize % chunkSize else chunkSize
+      val realSize = if (i == md5List.length - 1) fileSize % chunkSize else chunkSize
       val chunk = m.createIndividual(chunkURI, CIM.CLASS("CIM_DataFile"))
         .addProperty(CIM.PROP("Name"), chunkName, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), realSize.toString, XSDunsignedLong)
