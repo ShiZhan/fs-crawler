@@ -27,9 +27,9 @@ object MyBuild extends Build {
     )
   )
 
-  lazy val accessory = Project(
-    id = "accessory",
-    base = file("accessory"),
+  lazy val utility = Project(
+    id = "utility",
+    base = file("utility"),
     settings = Defaults.defaultSettings ++ Seq(
       copyDepTask
     )
