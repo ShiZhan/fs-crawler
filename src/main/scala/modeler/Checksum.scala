@@ -66,8 +66,8 @@ object Checksum extends Modeler with Logging {
   private def translate(f: File, chunkSize: Int) = {
     logger.info("Model file [{}]", f.getAbsolutePath)
 
-    val md5 = fileMD5(f)
-    val md5List = chunkMD5(f, chunkSize)
+    val md5File = fileMD5(f)
+    val md5Chunks = chunkMD5(f, chunkSize)
 
     val base = URI.fromHost
     val ns = base + "CHK#"
@@ -92,13 +92,16 @@ object Checksum extends Modeler with Logging {
       .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
       .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
       .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
+      .addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
+      .addProperty(CIM.PROP("MD5Checksum"), md5File, XSDnormalizedString)
+      .addProperty(CIM.PROP("FileName"), path, XSDnormalizedString)
       .addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
     file.addProperty(CIM.PROP("GroupComponent"), file)
 
-    for ((md5, i) <- md5List.zipWithIndex) {
+    for ((md5, i) <- md5Chunks.zipWithIndex) {
       val chunkURI = uri + '.' + i
       val chunkName = path + '.' + i
-      val realSize = if (i == md5List.length - 1) fileSize % chunkSize else chunkSize
+      val realSize = if (i == md5Chunks.length - 1) fileSize % chunkSize else chunkSize
       val chunk = m.createIndividual(chunkURI, CIM.CLASS("CIM_DataFile"))
         .addProperty(CIM.PROP("Name"), chunkName, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), realSize.toString, XSDunsignedLong)
