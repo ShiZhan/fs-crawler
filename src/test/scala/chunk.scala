@@ -10,10 +10,10 @@ object chunk {
     else {
       val file = new File(args(0))
       val chunkSize = args(1).toInt
-      val fBS = Source.fromFile(file)
-      val chunks = fBS.grouped(chunkSize)
+      val fBS = Source.fromFile(file, "ISO-8859-1")
+      val chunks = fBS.grouped(chunkSize).map(_.map(_.toByte).toArray)
       for ((c, i) <- chunks.zipWithIndex) {
-        println(i + ":\t" + DigestUtils.md5Hex(c.mkString))
+        println(i + ":\t" + DigestUtils.md5Hex(c))
       }
       fBS.close
     }
