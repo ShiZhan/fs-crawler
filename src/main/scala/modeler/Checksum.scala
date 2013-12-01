@@ -117,12 +117,10 @@ object Checksum extends Modeler with Logging {
     }
 
     for ((fMD5, cMD5s) <- md5Tree) {
-      if (cMD5s.isEmpty) {
-        addMD5sum(fMD5)
-      } else {
-        val chunked = addMD5sum(fMD5)
-          .addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
-        chunked.addProperty(CIM.PROP("GroupComponent"), chunked)
+      val chunked = addMD5sum(fMD5)
+      if (!cMD5s.isEmpty) {
+        chunked.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
+          .addProperty(CIM.PROP("GroupComponent"), chunked)
         for (cMD5 <- cMD5s) {
           val chunk = addMD5sum(cMD5)
           chunked.addProperty(CIM.PROP("PartComponent"), chunk)
