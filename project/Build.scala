@@ -30,16 +30,14 @@ object MyBuild extends Build {
   lazy val utility = Project(
     id = "utility",
     base = file("utility"),
-    settings = Defaults.defaultSettings ++ Seq(
-      copyDepTask
-    )
+    settings = Defaults.defaultSettings ++
+    sbtassembly.Plugin.assemblySettings
   )
 
   lazy val chart = Project(
     id = "chart",
     base = file("chart"),
-    settings = Defaults.defaultSettings ++ Seq(
-      copyDepTask
-    )
+    settings = Defaults.defaultSettings ++
+    sbtassembly.Plugin.assemblySettings
   )
 }

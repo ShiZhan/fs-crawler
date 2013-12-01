@@ -1,29 +1,19 @@
 object SyncMan {
 
   import scala.io.Source
-  import java.io.{ File, InputStream, PrintWriter }
+  import java.io.File
   import java.security.MessageDigest
 
   def md5(bytes: Iterator[Byte]) = {
     val md5 = MessageDigest.getInstance("MD5")
     try {
       bytes.foreach(md5.update)
+//      md5.update(bytes.toArray)
     } catch {
       case e: Exception => throw e
     }
     md5.digest.map("%02x".format(_)).mkString
   }
-
-  //  def md5(bytes: Iterator[Byte]) = {
-  //    val md5 = MessageDigest.getInstance("MD5")
-  //    try {
-  //      md5.update(bytes.toArray)
-  //    }
-  //    catch {
-  //      case e: Exception => throw e
-  //    }
-  //    md5.digest.map("%02x".format(_)).mkString
-  //  }
 
   def fileMD5(file: File) = {
     val fileBuffer = Source.fromFile(file, "ISO-8859-1")
@@ -36,9 +26,30 @@ object SyncMan {
   def chunkMD5(file: File, chunkSize: Int) = {
     val fileBuffer = Source.fromFile(file, "ISO-8859-1")
     val chunks = fileBuffer.grouped(chunkSize).map(_.map(_.toByte).iterator)
-    val md5sumList = chunks.map { md5 }.toList
+    val md5sumList = chunks.map { md5 }.toArray
     fileBuffer.close
     md5sumList
+  }
+
+  def collect(dir: File, chunkSize: Int) = {
+
+    def checkDir(d: File): Array[(String, String)] = {
+      val (files, dirs) = d.listFiles.partition(_.isFile)
+      val md5Files = files.flatMap { f =>
+        val path = f.getAbsolutePath
+        val md5File = fileMD5(f)
+        val md5Chunks =
+          if (f.length > chunkSize) {
+            val list = chunkMD5(f, chunkSize).zipWithIndex
+            list.map { case (m, i) => (m, path + "." + i) }
+          } else
+            Array[(String, String)]()
+        Array((md5File, path)) ++ md5Chunks
+      }
+      md5Files ++ dirs.flatMap(checkDir)
+    }
+ 
+    checkDir(dir)
   }
 
   def main(args: Array[String]) = {
@@ -51,28 +62,8 @@ object SyncMan {
       else if (dir.isFile)
         println("input source is file")
       else {
-        val chunkSize = args(1).toInt
-        val dirName = dir.getName
-        val sumFile = new PrintWriter(dirName + "-sum.csv")
- 
-        def checkDir(d: File): Unit = {
-          val items = d.listFiles
-          val (files, dirs) = items.partition(_.isFile)
-          for (f <- files) {
-            val path = f.getAbsolutePath
-            val md5 = fileMD5(f)
-            val md5List =
-              if (f.length > chunkSize) chunkMD5(f, chunkSize).zipWithIndex else Nil
-  
-            sumFile.println(md5 + ";" + path)
-            md5List.foreach { case (m, i) => sumFile.println(m + ";" + path + "." + i) }
-          }
-          dirs.foreach(checkDir)
-        }
-
-        checkDir(dir)
-
-        sumFile.close
+        val md5sums = collect(dir, args(1).toInt)
+        for((m, p) <- md5sums) println(m + ';' +p)
       }
     }
   }
