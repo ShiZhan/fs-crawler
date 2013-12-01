@@ -8,7 +8,7 @@ object SyncMan {
     val md5 = MessageDigest.getInstance("MD5")
     try {
       bytes.foreach(md5.update)
-      //      md5.update(bytes.toArray)
+      //md5.update(bytes.toArray)
     } catch {
       case e: Exception => throw e
     }
@@ -33,7 +33,7 @@ object SyncMan {
 
   def collect(dir: File, chunkSize: Int) = {
 
-    def checkDir(d: File): Array[(String, String, Array[(String, String)])] = {
+    def checkDir(d: File): Array[((String, String), Array[(String, String)])] = {
       val (files, dirs) = d.listFiles.partition(_.isFile)
       val md5Files = files.map { f =>
         val path = f.getAbsolutePath
@@ -44,7 +44,7 @@ object SyncMan {
             list.map { case (m, i) => (m, path + "." + i) }
           } else
             Array[(String, String)]()
-        (md5File, path, md5Chunks)
+        ((md5File, path), md5Chunks)
       }
       md5Files ++ dirs.flatMap(checkDir)
     }
@@ -63,7 +63,7 @@ object SyncMan {
         println("input source is file")
       else {
         val md5tree = collect(dir, args(1).toInt)
-        val md5list = md5tree.flatMap { case (m, p, c) => Array((m, p)) ++ c }
+        val md5list = md5tree.flatMap { case (f, c) => Array(f) ++ c }
         for ((m, p) <- md5list) println(m + ';' + p)
       }
     }
