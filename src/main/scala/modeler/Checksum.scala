@@ -1,5 +1,5 @@
 /**
- * Modeler to translate file content into (checksum, position) model
+ * Modeler to translate directory content checksum into tree-structural model
  */
 package modeler
 
@@ -8,14 +8,14 @@ import java.io.{ File, FileOutputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, URI, Hash }
 
+import util.{ Logging, Version, DateTime, URI, Hash }
 import modeler.{ CimVocabulary => CIM }
 
 /**
  * @author ShiZhan
  * Translate content characteristics of recognized data source into
- * structural model [(checksum, id(path)), [(, ), ...]] for comparison
+ * tree-structural model [(checksum, id(path)), [(, ), ...]] for comparison
  */
 object Checksum extends Modeler with Logging {
   override val key = "chk"
@@ -40,11 +40,8 @@ object Checksum extends Modeler with Logging {
   }
 
   private def getInt(s: String): Option[Int] = {
-    try {
-      Some(s.toInt)
-    } catch {
-      case e: Exception => None
-    }
+    try { Some(s.toInt) }
+    catch { case e: Exception => None }
   }
 
   private def fileMD5(file: File) = {
@@ -77,9 +74,9 @@ object Checksum extends Modeler with Logging {
             val lastChunk = size / chunkSize
             val lastSize = size % chunkSize
             val list = chunkMD5(f, chunkSize).zipWithIndex
-            list.map { case (m, i) =>
-              val cLength = if (i == lastChunk) lastSize else chunkSize
-              (m, path + "." + i, cLength)
+            list.map {
+              case (m, i) =>
+                (m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
             }
           } else
             Array[md5Tuple]()
