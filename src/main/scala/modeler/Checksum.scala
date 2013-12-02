@@ -4,7 +4,9 @@
 package modeler
 
 import scala.io.Source
-import java.io.{ File, FileOutputStream }
+import java.io.{ File, BufferedInputStream, FileInputStream, FileOutputStream }
+import java.util.zip._
+import org.apache.commons.codec.digest.DigestUtils
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -55,9 +57,28 @@ object Checksum extends Modeler with Logging {
   private def chunkMD5(file: File, chunkSize: Int) = {
     val fileBuffer = Source.fromFile(file, "ISO-8859-1")
     val chunks = fileBuffer.grouped(chunkSize).map(_.map(_.toByte).iterator)
-    val md5sumList = chunks.map { Hash.md5sum }.toArray
+    val md5sumArray = chunks.map { Hash.md5sum }.toArray
     fileBuffer.close
-    md5sumList
+    md5sumArray
+  }
+
+  private def zipMD5(file: File) = {
+    val zip = new ZipFile(file)
+    val entries = zip.entries
+    try {
+      val md5sumArray = Iterator.continually {
+        val e = entries.nextElement
+        val n = file.getAbsolutePath + '/' + e.getName
+        val s = e.getSize
+        val data = zip.getInputStream(e)
+        val md5 = DigestUtils.md5Hex(data)
+        (md5, n, s)
+      }.takeWhile(_ != null).toArray
+      zip.close
+      md5sumArray
+    } catch {
+      case e: Exception => throw e 
+    }
   }
 
   type md5Tuple = (String, String, Long)
