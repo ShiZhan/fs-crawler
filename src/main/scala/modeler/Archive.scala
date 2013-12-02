@@ -53,7 +53,7 @@ object Archive extends Modeler with Logging {
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
       .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
       .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_DirectoryContainsFile"))
+      .addProperty(OWL.imports, CIM.IMPORT("CIM_Component"))
 
     val arcURI = URI.fromFile(f)
     val bFIS = new BufferedInputStream(new FileInputStream(f))
@@ -65,11 +65,11 @@ object Archive extends Modeler with Logging {
     val arcSize = f.length.toString
     val arcModi = DateTime.get(f.lastModified)
     val arcFile = m.createResource(arcURI, OWL2.NamedIndividual)
-      .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
+      .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
       .addProperty(CIM.PROP("Name"), arcPath, XSDnormalizedString)
       .addProperty(CIM.PROP("FileSize"), arcSize, XSDunsignedLong)
       .addProperty(CIM.PROP("LastModified"), arcModi, XSDdateTime)
-    arcFile.addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
+    arcFile.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
       .addProperty(CIM.PROP("GroupComponent"), arcFile)
 
     for (e <- iAIS) {
