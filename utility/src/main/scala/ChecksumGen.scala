@@ -1,4 +1,4 @@
-object SyncMan {
+object ChecksumGen {
 
   import scala.io.Source
   import java.io.File
@@ -55,22 +55,44 @@ object SyncMan {
     checkDir(dir)
   }
 
+  private def collect(dir: File) = {
+
+    def checkDir(d: File): Array[md5Tuple] = {
+      val (files, dirs) = d.listFiles.partition(_.isFile)
+      val md5Files = files.map { fileMD5 }
+      md5Files ++ dirs.flatMap(checkDir)
+    }
+
+    checkDir(dir)
+  }
+
   def main(args: Array[String]) = {
-    if (args.length < 2)
-      println("usage: SyncMan <directory> <chunk size>")
-    else {
-      val dir = new File(args(0))
-      if (!dir.exists)
+    if (args.length == 1) {
+      val source = new File(args(0))
+      if (!source.exists)
         println("input source does not exist")
-      else if (dir.isFile)
-        println("input source is file")
+      else if (source.isFile)
+        fileMD5(source) match { case (m, p, s) => println(m + ';' + p + ';' + s) }
       else {
-        val chunkSize = args(1).toInt
-        val md5tree = collect(dir, chunkSize)
+        val md5list = collect(source)
+        for ((m, p, s) <- md5list) println(m + ';' + p + ';' + s)
+      }
+    } else if (args.length == 2) {
+      val source = new File(args(0))
+      val chunkSize = args(1).toInt
+      if (!source.exists)
+        println("input source does not exist")
+      else if (source.isFile)
+        chunkMD5(source, chunkSize) foreach {
+          case (m, p, s) => println(m + ';' + p + ';' + s)
+        }
+      else {
+        val md5tree = collect(source, chunkSize)
         val md5list = md5tree.flatMap { case (f, c) => Array(f) ++ c }
         for ((m, p, s) <- md5list) println(m + ';' + p + ';' + s)
       }
-    }
+    } else
+      println("usage: ChecksumGen <source> [<chunk size>]")
   }
 
 }
