@@ -4,9 +4,7 @@
 package modeler
 
 import scala.io.Source
-import java.io.{ File, BufferedInputStream, FileInputStream, FileOutputStream }
-import java.util.zip._
-import org.apache.commons.codec.digest.DigestUtils
+import java.io.{ File, FileOutputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -46,63 +44,40 @@ object Checksum extends Modeler with Logging {
     catch { case e: Exception => None }
   }
 
+  type md5Tuple = (String, String, Long)
+
   private def fileMD5(file: File) = {
     val fileBuffer = Source.fromFile(file, "ISO-8859-1")
     val fileBytes = fileBuffer.map(_.toByte)
-    val md5sum = Hash.md5sum(fileBytes)
+    val md5 = Hash.md5sum(fileBytes)
     fileBuffer.close
-    md5sum
+    (md5, file.getAbsolutePath, file.length)
   }
 
   private def chunkMD5(file: File, chunkSize: Int) = {
-    val fileBuffer = Source.fromFile(file, "ISO-8859-1")
-    val chunks = fileBuffer.grouped(chunkSize).map(_.map(_.toByte).iterator)
-    val md5sumArray = chunks.map { Hash.md5sum }.toArray
-    fileBuffer.close
-    md5sumArray
+    val size = file.length
+    if (size > chunkSize) {
+      val fileBuffer = Source.fromFile(file, "ISO-8859-1")
+      val fileBytes = fileBuffer.map(_.toByte)
+      val chunks = fileBytes.grouped(chunkSize).map(_.iterator)
+      val md5Array = chunks.map(Hash.md5sum).toArray
+      fileBuffer.close
+      val lastChunk = size / chunkSize
+      val lastSize = size % chunkSize
+      val path = file.getAbsolutePath
+      md5Array.zipWithIndex.map {
+        case (m, i) =>
+          (m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
+      }
+    } else
+      Array[md5Tuple]()
   }
-
-  private def zipMD5(file: File) = {
-    val zip = new ZipFile(file)
-    val entries = zip.entries
-    try {
-      val md5sumArray = Iterator.continually {
-        val e = entries.nextElement
-        val n = file.getAbsolutePath + '/' + e.getName
-        val s = e.getSize
-        val data = zip.getInputStream(e)
-        val md5 = DigestUtils.md5Hex(data)
-        (md5, n, s)
-      }.takeWhile(_ != null).toArray
-      zip.close
-      md5sumArray
-    } catch {
-      case e: Exception => throw e 
-    }
-  }
-
-  type md5Tuple = (String, String, Long)
 
   private def collect(dir: File, chunkSize: Int) = {
 
     def checkDir(d: File): Array[(md5Tuple, Array[md5Tuple])] = {
       val (files, dirs) = d.listFiles.partition(_.isFile)
-      val md5Files = files.map { f =>
-        val path = f.getAbsolutePath
-        val size = f.length
-        val md5File = fileMD5(f)
-        val md5Chunks =
-          if (size > chunkSize) {
-            val lastChunk = size / chunkSize
-            val lastSize = size % chunkSize
-            chunkMD5(f, chunkSize).zipWithIndex.map {
-              case (m, i) =>
-                (m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
-            }
-          } else
-            Array[md5Tuple]()
-        ((md5File, path, size), md5Chunks)
-      }
+      val md5Files = files.map { f => (fileMD5(f), chunkMD5(f, chunkSize)) }
       md5Files ++ dirs.flatMap(checkDir)
     }
 

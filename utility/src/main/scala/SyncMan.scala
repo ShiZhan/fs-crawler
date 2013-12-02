@@ -15,44 +15,40 @@ object SyncMan {
     md5.digest.map("%02x".format(_)).mkString
   }
 
-  def fileMD5(file: File) = {
+  type md5Tuple = (String, String, Long)
+
+  private def fileMD5(file: File) = {
     val fileBuffer = Source.fromFile(file, "ISO-8859-1")
     val fileBytes = fileBuffer.map(_.toByte)
     val md5sum = md5(fileBytes)
     fileBuffer.close
-    md5sum
+    (md5sum, file.getAbsolutePath, file.length)
   }
 
-  def chunkMD5(file: File, chunkSize: Int) = {
-    val fileBuffer = Source.fromFile(file, "ISO-8859-1")
-    val chunks = fileBuffer.grouped(chunkSize).map(_.map(_.toByte).iterator)
-    val md5sumList = chunks.map { md5 }.toArray
-    fileBuffer.close
-    md5sumList
+  private def chunkMD5(file: File, chunkSize: Int) = {
+    val size = file.length
+    if (size > chunkSize) {
+      val fileBuffer = Source.fromFile(file, "ISO-8859-1")
+      val fileBytes = fileBuffer.map(_.toByte)
+      val chunks = fileBytes.grouped(chunkSize).map(_.iterator)
+      val md5sumArray = chunks.map(md5).toArray
+      fileBuffer.close
+      val lastChunk = size / chunkSize
+      val lastSize = size % chunkSize
+      val path = file.getAbsolutePath
+      md5sumArray.zipWithIndex.map {
+        case (m, i) =>
+          (m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
+      }
+    } else
+      Array[md5Tuple]()
   }
 
-  type md5Tuple = (String, String, Long)
   private def collect(dir: File, chunkSize: Int) = {
 
     def checkDir(d: File): Array[(md5Tuple, Array[md5Tuple])] = {
       val (files, dirs) = d.listFiles.partition(_.isFile)
-      val md5Files = files.map { f =>
-        val path = f.getAbsolutePath
-        val size = f.length
-        val md5File = fileMD5(f)
-        val md5Chunks =
-          if (size > chunkSize) {
-            val lastChunk = size / chunkSize
-            val lastSize = size % chunkSize
-            val list = chunkMD5(f, chunkSize).zipWithIndex
-            list.map { case (m, i) =>
-              val cLength = if (i == lastChunk) lastSize else chunkSize
-              (m, path + "." + i, cLength)
-            }
-          } else
-            Array[md5Tuple]()
-        ((md5File, path, size), md5Chunks)
-      }
+      val md5Files = files.map { f => (fileMD5(f), chunkMD5(f, chunkSize)) }
       md5Files ++ dirs.flatMap(checkDir)
     }
 
@@ -69,7 +65,8 @@ object SyncMan {
       else if (dir.isFile)
         println("input source is file")
       else {
-        val md5tree = collect(dir, args(1).toInt)
+        val chunkSize = args(1).toInt
+        val md5tree = collect(dir, chunkSize)
         val md5list = md5tree.flatMap { case (f, c) => Array(f) ++ c }
         for ((m, p, s) <- md5list) println(m + ';' + p + ';' + s)
       }
