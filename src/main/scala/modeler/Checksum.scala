@@ -61,6 +61,7 @@ object Checksum extends Modeler with Logging {
   }
 
   type md5Tuple = (String, String, Long)
+
   private def collect(dir: File, chunkSize: Int) = {
 
     def checkDir(d: File): Array[(md5Tuple, Array[md5Tuple])] = {
@@ -73,8 +74,7 @@ object Checksum extends Modeler with Logging {
           if (size > chunkSize) {
             val lastChunk = size / chunkSize
             val lastSize = size % chunkSize
-            val list = chunkMD5(f, chunkSize).zipWithIndex
-            list.map {
+            chunkMD5(f, chunkSize).zipWithIndex.map {
               case (m, i) =>
                 (m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
             }
