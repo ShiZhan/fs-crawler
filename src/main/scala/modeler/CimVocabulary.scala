@@ -6,7 +6,7 @@ package modeler
 import scala.xml.XML
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import util.Config.CIMDATA
-import util.Strings.{ fromFile, strings }
+import util.Strings._
 
 /**
  * @author ShiZhan
@@ -18,16 +18,6 @@ import util.Strings.{ fromFile, strings }
  * --- Shi.Zhan
  */
 object CimVocabulary {
-  /*
-   * load vocabulary files:
-   * CIM-CLASS: CIM classes
-   * CIM-PROPERTY: CIM properties, including references and data properties
-   */
-  private val cimClassFileName = CIMDATA + "CIM-CLASS"
-  private val cimPropertyFileName = CIMDATA + "CIM-PROPERTY"
-  private lazy val cList = fromFile(cimClassFileName)
-  private lazy val pList = fromFile(cimPropertyFileName)
-
   /*
    * prepare vocabulary model
    */
@@ -56,18 +46,19 @@ object CimVocabulary {
   /*
    * concepts
    */
-  // OWL.imports
+  // OWL.imports for CIM all-in-one and CIM base models
   val ALL = model.createResource(PURL_ALL)
   val BASE = model.createResource(PURL_BASE)
-  // meta concepts
+
+  // meta concepts in CIM base model
   val Meta_Class = model.createResource(URI("CIM_Meta_Class"))
   val Association = model.createResource(URI("CIM_Association"))
 
-  // CIM schema content
+  // CIM classes and imports
+  private val cimClassFileName = CIMDATA + "CIM-CLASS"
   private lazy val classList =
-    cList.map {
-      case n =>
-        (n -> (model.createResource(URI(n)), model.createResource(PURL(n))))
+    fromFile(cimClassFileName) map {
+      n => n -> (model.createResource(URI(n)), model.createResource(PURL(n)))
     } toMap
 
   private val unknown =
@@ -77,15 +68,19 @@ object CimVocabulary {
   def IMPORT(name: String) = classList.getOrElse(name, unknown)._2
 
   /*
-   * vocabulary
+   * properties
    */
+  private val cimPropertyFileName = CIMDATA + "CIM-PROPERTY"
   private lazy val propertyList =
-    pList.map(n => n -> model.createProperty(URI(n))) toMap
+    fromFile(cimPropertyFileName) map { n => n -> model.createProperty(URI(n)) } toMap
 
   private val invalidProperty = model.createProperty(URI("invalidCimProperty"))
 
   def PROP(n: String) = propertyList.getOrElse(n, invalidProperty)
 
+  /*
+   * generate vocabulary from CIM schema XML
+   */
   def generator(cimSchema: String) = {
     val i = XML.loadFile(cimSchema)
     val cNodes = i \\ "CIM" \ "DECLARATION" \ "DECLGROUP" \ "VALUE.OBJECT" \ "CLASS"
