@@ -3,7 +3,7 @@
  */
 package util
 
-import java.io.{ File, PrintStream }
+import java.io.{ File, PrintWriter }
 
 /**
  * @author ShiZhan
@@ -14,9 +14,9 @@ import java.io.{ File, PrintStream }
 class Strings[T](lines: Seq[T]) {
   def toFile(fileName: String) = {
     val f = new File(fileName)
-    val s = new PrintStream(f)
-    lines.foreach(s.println)
-    s.close
+    val p = new PrintWriter(f)
+    lines.foreach(p.println)
+    p.close
   }
 }
 
