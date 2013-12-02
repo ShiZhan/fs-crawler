@@ -64,13 +64,11 @@ object Archive extends Modeler with Logging {
     val arcPath = f.getAbsolutePath
     val arcSize = f.length.toString
     val arcModi = DateTime.get(f.lastModified)
-    val arcHash = f.hashCode.toHexString
     val arcFile = m.createResource(arcURI, OWL2.NamedIndividual)
       .addProperty(RDF.`type`, CIM.CLASS("CIM_Directory"))
       .addProperty(CIM.PROP("Name"), arcPath, XSDnormalizedString)
       .addProperty(CIM.PROP("FileSize"), arcSize, XSDunsignedLong)
       .addProperty(CIM.PROP("LastModified"), arcModi, XSDdateTime)
-      .addProperty(CIM.PROP("InstanceID"), arcHash, XSDnormalizedString)
     arcFile.addProperty(RDF.`type`, CIM.CLASS("CIM_DirectoryContainsFile"))
       .addProperty(CIM.PROP("GroupComponent"), arcFile)
 
@@ -79,14 +77,12 @@ object Archive extends Modeler with Logging {
       val uri = URI.fromString(arcPath + '/' + name)
       val size = e.getSize.toString
       val modi = DateTime.get(e.getLastModifiedDate)
-      val hash = e.hashCode.toHexString
       val cimClass = CIM.CLASS(if (e.isDirectory) "CIM_Directory" else "CIM_DataFile")
       val entry = m.createResource(uri, OWL2.NamedIndividual)
         .addProperty(RDF.`type`, cimClass)
         .addProperty(CIM.PROP("Name"), name, XSDnormalizedString)
         .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
         .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
-        .addProperty(CIM.PROP("InstanceID"), hash, XSDnormalizedString)
 
       arcFile.addProperty(CIM.PROP("PartComponent"), entry)
     }
