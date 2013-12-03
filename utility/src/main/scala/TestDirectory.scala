@@ -4,7 +4,7 @@ object TestDirectory {
   import scala.util.Random
 
   def randomStr(length: Int) = {
-    val chars = ('a' to 'z') ++ ('A' to 'Z')
+    val chars = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') ++ Array('\n', ' ')
     (0 to length) map { c => chars(Random.nextInt(chars.length)) } mkString
   }
 
@@ -15,12 +15,10 @@ object TestDirectory {
   }
 
   def createDir(name: String) = new File(name).mkdir
-  def createDirs(name: String) = new File(name).mkdirs
 
   class Names[T](nList: Seq[String]) {
     def in(parent: String) = nList map { parent + '/' + _ }
     def mkdir = nList foreach createDir
-    def mkdirs = nList foreach createDirs
     def create = nList foreach createFile
   }
 
@@ -28,24 +26,12 @@ object TestDirectory {
 
   def names(n: Int) = (1 to n) map { i => "%08x".format(i) }
 
-//  def createLevel(root: Seq[String], levels: List[Int]): Unit = {
-//    levels match {
-//      case current :: next => {
-//        root.mkdir
-//        val currentLevel = root flatMap { names(current) in _ }
-//        createLevel(currentLevel, next)
-//      }
-//      case Nil => root.create
-//    }
-//  }
-
   def main(args: Array[String]) = {
     if (args.length < 3)
-      println("usage: TestDirectory <target directory> <level1> ...")
+      println("usage: TestDirectory <target directory> <level 1>...<level n>")
     else {
       val root = Seq(args(0) + "/test")
       val levels = args.drop(1).map(_.toInt).toList
-      //createLevel(root, levels)
 
       (root /: levels) { (r, l) => r.mkdir; r flatMap { names(l) in _ } }.create
 
