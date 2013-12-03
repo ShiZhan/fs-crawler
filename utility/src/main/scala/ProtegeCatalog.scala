@@ -1,4 +1,4 @@
-object GenerateProtegeCatalog {
+object ProtegeCatalog {
 
   import java.io.{ File, PrintWriter }
   import scala.collection.JavaConversions._
