@@ -24,9 +24,7 @@ object GenerateProtegeCatalog {
       val owls = repo.list.filter(_.endsWith(".owl"))
       val uris = owls map { o => uriLn.format(getBaseURI(args(0) + "/" + o), o) }
       val cat = new PrintWriter(args(0) + "/catalog-v001.xml")
-      cat.print(header)
-      cat.print(uris.mkString)
-      cat.print(footer)
+      cat.print(header + uris.mkString + footer)
       cat.close
     }
 
