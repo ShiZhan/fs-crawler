@@ -161,7 +161,7 @@ object Checksum extends Modeler with Logging {
       }
     }
 
-    val output = file.getAbsolutePath + "checksums.owl"
+    val output = file.getAbsolutePath + chunkSize + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
@@ -218,7 +218,7 @@ object Checksum extends Modeler with Logging {
       }
     }
 
-    val output = dir.getAbsolutePath + "checksums.owl"
+    val output = dir.getAbsolutePath + chunkSize +"checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
