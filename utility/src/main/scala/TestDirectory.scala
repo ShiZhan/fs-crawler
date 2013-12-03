@@ -4,7 +4,7 @@ object TestDirectory {
   import scala.util.Random
 
   def randomStr(length: Int) = {
-    val chars = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') ++ Array('\n', ' ')
+    val chars = ('a' to 'z') ++ ('A' to 'Z') ++ Array('\n', ' ')
     (0 to length) map { c => chars(Random.nextInt(chars.length)) } mkString
   }
 
