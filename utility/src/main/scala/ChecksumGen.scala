@@ -67,32 +67,33 @@ object ChecksumGen {
   }
 
   def main(args: Array[String]) = {
-    if (args.length == 1) {
-      val source = new File(args(0))
-      if (!source.exists)
-        println("input source does not exist")
-      else if (source.isFile)
-        fileMD5(source) match { case (m, p, s) => println(m + ';' + p + ';' + s) }
-      else {
-        val md5list = collect(source)
-        for ((m, p, s) <- md5list) println(m + ';' + p + ';' + s)
-      }
-    } else if (args.length == 2) {
-      val source = new File(args(0))
-      val chunkSize = args(1).toInt
-      if (!source.exists)
-        println("input source does not exist")
-      else if (source.isFile)
-        chunkMD5(source, chunkSize) foreach {
-          case (m, p, s) => println(m + ';' + p + ';' + s)
+    args.toList match {
+      case fileName :: Nil => {
+        val source = new File(fileName)
+        if (!source.exists) println("input source does not exist")
+        else if (source.isFile)
+          fileMD5(source) match { case (m, p, s) => println(m + ';' + p + ';' + s) }
+        else {
+          val md5list = collect(source)
+          for ((m, p, s) <- md5list) println(m + ';' + p + ';' + s)
         }
-      else {
-        val md5tree = collect(source, chunkSize)
-        val md5list = md5tree.flatMap { case (f, c) => Array(f) ++ c }
-        for ((m, p, s) <- md5list) println(m + ';' + p + ';' + s)
       }
-    } else
-      println("usage: ChecksumGen <source> [<chunk size>]")
+      case fileName :: chunkSizeStr :: Nil => {
+        val source = new File(fileName)
+        val chunkSize = chunkSizeStr.toInt
+        if (!source.exists) println("input source does not exist")
+        else if (source.isFile)
+          chunkMD5(source, chunkSize) foreach {
+            case (m, p, s) => println(m + ';' + p + ';' + s)
+          }
+        else {
+          val md5tree = collect(source, chunkSize)
+          val md5list = md5tree.flatMap { case (f, c) => Array(f) ++ c }
+          for ((m, p, s) <- md5list) println(m + ';' + p + ';' + s)
+        }
+      }
+      case _ => println("usage: ChecksumGen <source> [<chunk size>]")
+    }
   }
 
 }
