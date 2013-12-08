@@ -24,14 +24,3 @@ project/plugins/project/
 
 .cache
 
-*.aux
-*.log
-*.nav
-*.out
-*.pdf
-*.snm
-*.toc
-*.bbl
-*.blg
-*.vrb
-*.spl

@@ -33,11 +33,4 @@ object MyBuild extends Build {
     settings = Defaults.defaultSettings ++
     sbtassembly.Plugin.assemblySettings
   )
-
-  lazy val chart = Project(
-    id = "chart",
-    base = file("chart"),
-    settings = Defaults.defaultSettings ++
-    sbtassembly.Plugin.assemblySettings
-  )
 }
