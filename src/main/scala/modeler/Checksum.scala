@@ -18,6 +18,17 @@ import modeler.{ CimVocabulary => CIM }
  * Translate content characteristics of recognized data source into
  * tree-structural model [(checksum, id(path)), [(, ), ...]] for comparison
  */
+case class md5Tuple(md5sum: String, path: String, size: Long) {
+  def -->(model: OntModel) = {
+    model.createIndividual(URI.fromString(path), CIM.CLASS("CIM_DataFile"))
+      .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
+      .addProperty(CIM.PROP("FileSize"), size.toString, XSDunsignedLong)
+      .addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
+      .addProperty(CIM.PROP("MD5Checksum"), md5sum, XSDnormalizedString)
+      .addProperty(CIM.PROP("FileName"), path, XSDnormalizedString)
+  }
+}
+
 object Checksum extends Modeler with Logging {
   override val key = "chk"
 
@@ -50,14 +61,12 @@ object Checksum extends Modeler with Logging {
     catch { case e: Exception => None }
   }
 
-  type md5Tuple = (String, String, Long)
-
   private def fileMD5(file: File) = {
     val fileBuffer = Source.fromFile(file, "ISO-8859-1")
     val fileBytes = fileBuffer.map(_.toByte)
     val md5 = Hash.md5sum(fileBytes)
     fileBuffer.close
-    (md5, file.getAbsolutePath, file.length)
+    md5Tuple(md5, file.getAbsolutePath, file.length)
   }
 
   private def chunkMD5(file: File, chunkSize: Int) = {
@@ -73,7 +82,7 @@ object Checksum extends Modeler with Logging {
       val path = file.getAbsolutePath
       md5Array.zipWithIndex.map {
         case (m, i) =>
-          (m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
+          md5Tuple(m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
       }
     } else
       Array[md5Tuple]()
@@ -101,16 +110,6 @@ object Checksum extends Modeler with Logging {
     checkDir(dir)
   }
 
-  private def addMD5sum(model: OntModel, md5tuple: md5Tuple) = {
-    val (md5, path, size) = md5tuple
-    model.createIndividual(URI.fromString(path), CIM.CLASS("CIM_DataFile"))
-      .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
-      .addProperty(CIM.PROP("FileSize"), size.toString, XSDunsignedLong)
-      .addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
-      .addProperty(CIM.PROP("MD5Checksum"), md5, XSDnormalizedString)
-      .addProperty(CIM.PROP("FileName"), path, XSDnormalizedString)
-  }
-
   private def translateFile(file: File) = {
     logger.info("Model source [{}]", file.getAbsolutePath)
 
@@ -126,7 +125,7 @@ object Checksum extends Modeler with Logging {
       .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
       .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
 
-    addMD5sum(m, fileMD5(file))
+    fileMD5(file) --> m
 
     val output = file.getAbsolutePath + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
@@ -150,13 +149,13 @@ object Checksum extends Modeler with Logging {
       .addProperty(OWL.imports, CIM.IMPORT("CIM_Component"))
       .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
 
-    val chunked = addMD5sum(m, fileMD5(file))
+    val chunked = fileMD5(file) --> m
     val cMD5s = chunkMD5(file, chunkSize)
     if (!cMD5s.isEmpty) {
       chunked.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
         .addProperty(CIM.PROP("GroupComponent"), chunked)
       for (cMD5 <- cMD5s) {
-        val chunk = addMD5sum(m, cMD5)
+        val chunk = cMD5 --> m
         chunked.addProperty(CIM.PROP("PartComponent"), chunk)
       }
     }
@@ -182,7 +181,7 @@ object Checksum extends Modeler with Logging {
       .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
       .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
 
-    collect(dir) foreach { addMD5sum(m, _) }
+    collect(dir) foreach { _ --> m }
 
     val output = dir.getAbsolutePath + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
@@ -207,12 +206,12 @@ object Checksum extends Modeler with Logging {
       .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
 
     for ((fMD5, cMD5s) <- collect(dir, chunkSize)) {
-      val chunked = addMD5sum(m, fMD5)
+      val chunked = fMD5 --> m
       if (!cMD5s.isEmpty) {
         chunked.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
           .addProperty(CIM.PROP("GroupComponent"), chunked)
         for (cMD5 <- cMD5s) {
-          val chunk = addMD5sum(m, cMD5)
+          val chunk = cMD5 --> m
           chunked.addProperty(CIM.PROP("PartComponent"), chunk)
         }
       }
