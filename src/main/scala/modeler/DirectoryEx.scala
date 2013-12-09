@@ -5,7 +5,6 @@ package modeler
 
 import xml.Utility.escape
 import java.io.{ File, FileOutputStream, OutputStreamWriter, BufferedWriter }
-import scalax.file.Path
 import modeler.{ CimVocabulary => CIM }
 import util.{ Logging, Version, DateTime, URI }
 
@@ -23,10 +22,10 @@ object DirectoryEx extends Modeler with Logging {
 
   def run(options: Array[String]) = {
     val input = options(0)
-    val p = Path(new File(input))
+    val f = new File(input)
 
-    if (p.isDirectory) {
-      logger.info("creating model for *HUGE* directory [{}]", p.toAbsolute.path)
+    if (f.isDirectory) {
+      logger.info("creating model for *HUGE* directory [{}]", f.getAbsolutePath)
 
       val CIM_NS = CIM.NS
       val PURL_DCF = CIM.PURL("CIM_DirectoryContainsFile")
@@ -88,19 +87,19 @@ object DirectoryEx extends Modeler with Logging {
       val footerT = """
 </rdf:RDF>"""
 
-      def nodeT(uri: String, node: Path) = {
-        val uri = escape(URI.fromPath(node))
+      def nodeT(uri: String, node: File) = {
+        val uri = escape(URI.fromFile(node))
         val isDirectory = node.isDirectory
 
         val cimClass = if (isDirectory) URI_DIR else URI_DAT
-        val name = escape(node.toAbsolute.path)
-        val size = if (node.size.nonEmpty) node.size.get else 0
+        val name = escape(node.getAbsolutePath)
+        val size = node.length
         val dateTime = DateTime.get(node.lastModified)
 
         val dcf = if (isDirectory) {
-          val subNodeList = node * "*"
+          val subNodeList = node.listFiles
           val partComponent =
-            subNodeList.map(s => partComponentT(escape(URI.fromPath(s)))).mkString
+            subNodeList.map(s => partComponentT(escape(URI.fromFile(s)))).mkString
           directoryContainsFileT(uri, partComponent)
         } else ""
 
@@ -112,11 +111,11 @@ object DirectoryEx extends Modeler with Logging {
       val m = new BufferedWriter(
         new OutputStreamWriter(new FileOutputStream(output), "UTF-8"))
 
-      m.write(headerT(base, Version.get, DateTime.get) + nodeT(base, p))
+      m.write(headerT(base, Version.get, DateTime.get) + nodeT(base, f))
 
       logger.info("reading directory ...")
 
-      val ps = p ** "*"
+      val ps = Directory.listAllFiles(f)
 
       val total = ps.size
       val delta = if (total < 100) 1 else total / 100
@@ -138,7 +137,7 @@ object DirectoryEx extends Modeler with Logging {
 
       logger.info("[{}] individuals generated in [{}]", total, output)
     } else {
-      logger.info("[{}] is not a directory", p.name)
+      logger.info("[{}] is not a directory", f.getAbsolutePath)
     }
   }
 
