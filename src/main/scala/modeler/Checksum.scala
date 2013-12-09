@@ -4,13 +4,14 @@
 package modeler
 
 import scala.io.Source
-import java.io.{ File, FileOutputStream }
+import java.io.{ File, FileInputStream, FileOutputStream, BufferedInputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.ontology.OntModel
 import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
+import org.apache.commons.codec.digest.DigestUtils.md5Hex
 
-import util.{ Logging, Version, DateTime, URI, Hash }
+import util.{ Logging, Version, DateTime, URI }
 import modeler.{ CimVocabulary => CIM }
 
 /**
@@ -62,10 +63,9 @@ object Checksum extends Modeler with Logging {
   }
 
   private def fileMD5(file: File) = {
-    val fileBuffer = Source.fromFile(file, "ISO-8859-1")
-    val fileBytes = fileBuffer.map(_.toByte)
-    val md5 = Hash.md5sum(fileBytes)
-    fileBuffer.close
+    val fIS = new BufferedInputStream(new FileInputStream(file))
+    val md5 = md5Hex(fIS)
+    fIS.close
     md5Tuple(md5, file.getAbsolutePath, file.length)
   }
 
@@ -73,9 +73,8 @@ object Checksum extends Modeler with Logging {
     val size = file.length
     if (size > chunkSize) {
       val fileBuffer = Source.fromFile(file, "ISO-8859-1")
-      val fileBytes = fileBuffer.map(_.toByte)
-      val chunks = fileBytes.grouped(chunkSize).map(_.iterator)
-      val md5Array = chunks.map(Hash.md5sum).toArray
+      val chunks = fileBuffer.map(_.toByte).grouped(chunkSize)
+      val md5Array = chunks.map { bytes => md5Hex(bytes.toArray) }.toArray
       fileBuffer.close
       val lastChunk = size / chunkSize
       val lastSize = size % chunkSize
