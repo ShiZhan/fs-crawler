@@ -132,8 +132,8 @@ object Directory extends Modeler with Logging {
   override val usage = "<directory> [<output> <--text>] => [triples]"
 
   def listAllFiles(f: File): Array[File] = {
-    val floor = f.listFiles
-    floor ++ floor.filter(_.isDirectory).flatMap(listAllFiles)
+    val list = f.listFiles
+    if (list == null) Array[File]() else list ++ list.filter(_.isDirectory).flatMap(listAllFiles)
   }
 
   private def translate(f: File, output: String) = {
