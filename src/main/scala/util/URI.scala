@@ -14,11 +14,6 @@ package util
 object URI {
   import java.io.File
 
-  val scheme = "trigram:"
-
-  def fromHost = scheme + '/' + Platform.HOSTNAME
-  def fromFile(f: File) = f.toURI.toString.replaceFirst("file:", fromHost)
-
   def pathString2URI(path: String) = {
     val rootUNC = if (path.head.isLetter) ('/' + path) else path
     val posix = rootUNC.replace('\\', '/')
@@ -27,10 +22,13 @@ object URI {
     f.toURI.toString.substring(trim)
   }
 
+  val scheme = "trigram:"
+
+  def fromHost = scheme + '/' + Platform.HOSTNAME
+  def fromFile(f: File) = fromHost + f.toURI.getRawPath
   def fromString(str: String) = fromHost + pathString2URI(str)
 
   def fromHost(s: String) = s + '/' + Platform.HOSTNAME
-  def fromFile(s: String, f: File) = f.toURI.toString.replaceFirst("file:", fromHost(s))
-
+  def fromFile(s: String, f: File) = fromHost(s) + f.toURI.getRawPath
   def fromString(s: String, str: String) = fromHost(s) + pathString2URI(str)
 }
