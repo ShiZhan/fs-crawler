@@ -8,7 +8,7 @@ import xml.Utility.escape
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, Platform, URI }
+import util.{ Logging, Version, DateTime, URI }
 import modeler.{ CimVocabulary => CIM }
 
 /**
@@ -22,7 +22,7 @@ case class DirectoryTreeModel(base: String, prefix: String) {
   val version = Version.get
   val cimNs = CIM.NS
   val cimPrefix = CimSchema.key
-  val imports = Array("CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
+  val imports = Seq("CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
 
   def create = {
     val m = ModelFactory.createDefaultModel
@@ -41,7 +41,6 @@ case class DirectoryTreeModel(base: String, prefix: String) {
       ("" /: imports) { (r, i) =>
         r + "\n    <owl:imports rdf:resource=\"%s\"/>".format(CIM.PURL(i))
       }
-
     s"""<rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
@@ -92,7 +91,8 @@ case class FileModel(f: File) {
   }
 
   override def toString = {
-    val uriString = escape(uri)
+    val uriInXML = escape(uri)
+    val nameInXML = escape(name)
     val cimClass = if (isDirectory) CIM.URI("CIM_Directory") else CIM.URI("CIM_DataFile")
     val cimDCF = CIM.URI("CIM_DirectoryContainsFile")
     val dcf = if (isDirectory) {
@@ -103,14 +103,14 @@ case class FileModel(f: File) {
         }
       s"""
     <rdf:type rdf:resource="$cimDCF"/>
-    <cim:GroupComponent rdf:resource="$uriString"/>$partComponent"""
+    <cim:GroupComponent rdf:resource="$uriInXML"/>$partComponent"""
     } else ""
 
     s"""
-  <owl:NamedIndividual rdf:about="$uriString">
+  <owl:NamedIndividual rdf:about="$uriInXML">
     <rdf:type rdf:resource="$cimClass"/>
     <cim:Name rdf:datatype="http://www.w3.org/2001/XMLSchema#normalizedString"
-    >$name</cim:Name>
+    >$nameInXML</cim:Name>
     <cim:FileSize rdf:datatype="http://www.w3.org/2001/XMLSchema#unsignedLong"
     >$size</cim:FileSize>
     <cim:LastModified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"
@@ -192,15 +192,12 @@ object Directory extends Modeler with Logging {
   }
 
   def run(options: Array[String]) = {
-    val f = new File(options(0))
-    val input = f.getAbsolutePath
-    val output = if (options.length > 1) options(1) else input + "-model.owl"
-    val inText = if (options.length > 2) if (options(2) == "--text") true else false else false
-
-    if (f.isDirectory) {
-      if (inText) translateEx(f, output) else translate(f, output)
-    } else {
-      logger.info("[{}] is not a directory", input)
+    options.toList match {
+      case file :: output :: Nil =>
+        translate(new File(file), output)
+      case file :: output :: "--text" :: Nil =>
+        translateEx(new File(file), output)
+      case _ => logger.error("incorrect options: [{}]", options)
     }
   }
 }
