@@ -26,7 +26,7 @@ object Modelers {
     CimSchema,
     CimSchemaEx,
     Directory,
-    ZipArchive,
+    Archive,
     Checksum,
     CSV,
     CSVex)
