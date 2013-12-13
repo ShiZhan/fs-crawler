@@ -29,13 +29,22 @@ object Merger extends Logging {
     val files = readCimImports(modelFile).distinct
 
     logger.info("[{}] CIM classes imported:", files.length)
+
     files foreach println
 
     val baseModel = load(modelFile)
     val gatheredModel = (files load) join baseModel
-    val imports = gatheredModel.listStatements(null, OWL.imports, null)
-    val cimImports = imports.filter { i => isCimURI(i.getObject.toString) }.toList
+
+    val importStatements = gatheredModel.listStatements(null, OWL.imports, null)
+    val cimImports =
+      importStatements.filter { i => isCimURI(i.getObject.toString) }.toList
     cimImports.foreach(gatheredModel.remove)
+
+    val cimOntologies = cimImports.map(_.getObject.asResource)
+    cimOntologies.foreach { o =>
+      gatheredModel.remove(gatheredModel.listStatements(o, null, null))
+    }
+
     val gatheredFile = modelFile + "-gathered.owl"
     gatheredModel.write(gatheredFile)
 
