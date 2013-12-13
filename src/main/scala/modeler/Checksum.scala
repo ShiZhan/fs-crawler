@@ -3,14 +3,13 @@
  */
 package modeler
 
-import scala.io.Source
 import java.io.{ File, FileInputStream, FileOutputStream, BufferedInputStream }
 import com.hp.hpl.jena.rdf.model.ModelFactory
 import com.hp.hpl.jena.ontology.OntModel
 import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import org.apache.commons.codec.digest.DigestUtils.md5Hex
-
+import util.DigestUtilsAddon.md5HexChunk
 import util.{ Logging, Version, DateTime, URI }
 import modeler.{ CimVocabulary => CIM }
 
@@ -19,14 +18,76 @@ import modeler.{ CimVocabulary => CIM }
  * Translate content characteristics of recognized data source into
  * tree-structural model [(checksum, id(path)), [(, ), ...]] for comparison
  */
-case class md5Tuple(md5sum: String, path: String, size: Long) {
-  def -->(model: OntModel) = {
-    model.createIndividual(URI.fromString(path), CIM.CLASS("CIM_DataFile"))
-      .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
-      .addProperty(CIM.PROP("FileSize"), size.toString, XSDunsignedLong)
-      .addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
-      .addProperty(CIM.PROP("MD5Checksum"), md5sum, XSDnormalizedString)
-      .addProperty(CIM.PROP("FileName"), path, XSDnormalizedString)
+object FileCheckers {
+  case class md5Tuple(md5sum: String, path: String, size: Long) {
+    def addTo(model: OntModel) = {
+      model.createIndividual(URI.fromString(path), CIM.CLASS("CIM_DataFile"))
+        .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileSize"), size.toString, XSDunsignedLong)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
+        .addProperty(CIM.PROP("MD5Checksum"), md5sum, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileName"), path, XSDnormalizedString)
+    }
+  }
+
+  def fileMD5(file: File) = {
+    val fIS = new BufferedInputStream(new FileInputStream(file))
+    val md5 = md5Hex(fIS)
+    fIS.close
+    md5Tuple(md5, file.getAbsolutePath, file.length)
+  }
+
+  def chunkMD5(file: File, chunkSize: Long) = {
+    val fileSize = file.length
+    if (fileSize > chunkSize) {
+      val indexOfLastChunk = fileSize / chunkSize
+      val sizeOfLastChunk = fileSize % chunkSize
+      val fileAbsolutePath = file.getAbsolutePath
+      val fileInputStream = new BufferedInputStream(new FileInputStream(file))
+      val md5Array = (0 to indexOfLastChunk.toInt).map { i =>
+        val md5 = md5HexChunk(fileInputStream, chunkSize)
+        val path = fileAbsolutePath + "." + i
+        val size = if (i == indexOfLastChunk) sizeOfLastChunk else chunkSize
+        md5Tuple(md5, path, size)
+      }.toArray
+      fileInputStream.close
+      md5Array
+    } else
+      Array[md5Tuple]()
+  }
+}
+
+case class ChecksumModel(base: String, nsPrefix: String) {
+  val ns = base + "CHK#"
+  val m = ModelFactory.createOntologyModel
+  m.setNsPrefix(nsPrefix, ns)
+  m.setNsPrefix(CimSchema.key, CIM.NS)
+  m.createOntology(base)
+    .addProperty(DC.date, DateTime.get, XSDdateTime)
+    .addProperty(DC.description, "TriGraM checksum model", XSDstring)
+    .addProperty(OWL.versionInfo, Version.get, XSDstring)
+    .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
+    .addProperty(OWL.imports, CIM.IMPORT("CIM_Component"))
+    .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
+  def create = m
+}
+
+case class FileChecksumModel(file: File) {
+  def addTo(model: OntModel) = FileCheckers.fileMD5(file) addTo model
+}
+
+case class ChunkChecksumModel(file: File, chunkSize: Long) {
+  def addTo(model: OntModel) = {
+    val chunked = FileCheckers.fileMD5(file) addTo model
+    val cMD5s = FileCheckers.chunkMD5(file, chunkSize)
+    if (!cMD5s.isEmpty) {
+      chunked.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
+        .addProperty(CIM.PROP("GroupComponent"), chunked)
+      for (cMD5 <- cMD5s) {
+        val chunk = cMD5 addTo model
+        chunked.addProperty(CIM.PROP("PartComponent"), chunk)
+      }
+    }
   }
 }
 
@@ -36,25 +97,26 @@ object Checksum extends Modeler with Logging {
   override val usage = "<source> [<chunk size: Bytes>] => [structural checksum tree]"
 
   def run(options: Array[String]) = {
-    if (options.length == 1) {
-      val source = new File(options(0))
-      if (!source.exists)
-        println("input source does not exist")
-      else if (source.isFile)
-        translateFile(source)
-      else
-        translateDir(source)
-    } else if (options.length == 2) {
-      val source = new File(options(0))
-      val chunkSize = getInt(options(1)) getOrElse 65536
-      if (!source.exists)
-        println("input source does not exist")
-      else if (source.isFile)
-        translateFile(source, chunkSize)
-      else
-        translateDir(source, chunkSize)
-    } else
-      logger.error("parameter error: [{}]", options)
+    options.toList match {
+      case fileName :: Nil => {
+        val source = new File(fileName)
+        if (!source.exists) logger.error("input source does not exist")
+        else if (source.isFile)
+          translateFile(source)
+        else
+          translateDir(source)
+      }
+      case fileName :: chunkSizeStr :: Nil => {
+        val source = new File(fileName)
+        val chunkSize = chunkSizeStr.toLong
+        if (!source.exists) logger.error("input source does not exist")
+        else if (source.isFile)
+          translateFile(source, chunkSize)
+        else
+          translateDir(source, chunkSize)
+      }
+      case _ => logger.error("parameter error: [{}]", options)
+    }
   }
 
   private def getInt(s: String): Option[Int] = {
@@ -62,69 +124,17 @@ object Checksum extends Modeler with Logging {
     catch { case e: Exception => None }
   }
 
-  private def fileMD5(file: File) = {
-    val fIS = new BufferedInputStream(new FileInputStream(file))
-    val md5 = md5Hex(fIS)
-    fIS.close
-    md5Tuple(md5, file.getAbsolutePath, file.length)
-  }
-
-  private def chunkMD5(file: File, chunkSize: Int) = {
-    val size = file.length
-    if (size > chunkSize) {
-      val fileBuffer = Source.fromFile(file, "ISO-8859-1")
-      val chunks = fileBuffer.map(_.toByte).grouped(chunkSize)
-      val md5Array = chunks.map { bytes => md5Hex(bytes.toArray) }.toArray
-      fileBuffer.close
-      val lastChunk = size / chunkSize
-      val lastSize = size % chunkSize
-      val path = file.getAbsolutePath
-      md5Array.zipWithIndex.map {
-        case (m, i) =>
-          md5Tuple(m, path + "." + i, if (i == lastChunk) lastSize else chunkSize)
-      }
-    } else
-      Array[md5Tuple]()
-  }
-
-  private def collect(dir: File, chunkSize: Int) = {
-
-    def checkDir(d: File): Array[(md5Tuple, Array[md5Tuple])] = {
-      val (files, dirs) = d.listFiles.partition(_.isFile)
-      val md5Files = files.map { f => (fileMD5(f), chunkMD5(f, chunkSize)) }
-      md5Files ++ dirs.flatMap(checkDir)
-    }
-
-    checkDir(dir)
-  }
-
-  private def collect(dir: File) = {
-
-    def checkDir(d: File): Array[md5Tuple] = {
-      val (files, dirs) = d.listFiles.partition(_.isFile)
-      val md5Files = files.map { fileMD5 }
-      md5Files ++ dirs.flatMap(checkDir)
-    }
-
-    checkDir(dir)
+  private def listAllFiles(dir: File): Array[File] = {
+    assert(dir.isDirectory)
+    val list = dir.listFiles
+    list ++ list.filter(_.isDirectory).flatMap(listAllFiles)
   }
 
   private def translateFile(file: File) = {
     logger.info("Model source [{}]", file.getAbsolutePath)
 
-    val base = URI.fromHost
-    val ns = base + "CHK#"
-    val m = ModelFactory.createOntologyModel
-    m.setNsPrefix(key, ns)
-    m.setNsPrefix(CimSchema.key, CIM.NS)
-    m.createOntology(base)
-      .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM checksum model", XSDstring)
-      .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
-
-    fileMD5(file) --> m
+    val m = ChecksumModel(URI.fromHost, key).create
+    FileChecksumModel(file) addTo m
 
     val output = file.getAbsolutePath + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
@@ -132,32 +142,11 @@ object Checksum extends Modeler with Logging {
     logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 
-  private def translateFile(file: File, chunkSize: Int) = {
+  private def translateFile(file: File, chunkSize: Long) = {
     logger.info("Model source [{}]", file.getAbsolutePath)
 
-    val base = URI.fromHost
-    val ns = base + "CHK#"
-    val m = ModelFactory.createOntologyModel
-    m.setNsPrefix(key, ns)
-    m.setNsPrefix(CimSchema.key, CIM.NS)
-    m.createOntology(base)
-      .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM checksum model", XSDstring)
-      .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_Component"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
-
-    val chunked = fileMD5(file) --> m
-    val cMD5s = chunkMD5(file, chunkSize)
-    if (!cMD5s.isEmpty) {
-      chunked.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
-        .addProperty(CIM.PROP("GroupComponent"), chunked)
-      for (cMD5 <- cMD5s) {
-        val chunk = cMD5 --> m
-        chunked.addProperty(CIM.PROP("PartComponent"), chunk)
-      }
-    }
+    val m = ChecksumModel(URI.fromHost, key).create
+    ChunkChecksumModel(file, chunkSize) addTo m
 
     val output = file.getAbsolutePath + chunkSize + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
@@ -168,19 +157,8 @@ object Checksum extends Modeler with Logging {
   private def translateDir(dir: File) = {
     logger.info("Model source [{}]", dir.getAbsolutePath)
 
-    val base = URI.fromHost
-    val ns = base + "CHK#"
-    val m = ModelFactory.createOntologyModel
-    m.setNsPrefix(key, ns)
-    m.setNsPrefix(CimSchema.key, CIM.NS)
-    m.createOntology(base)
-      .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM checksum model", XSDstring)
-      .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
-
-    collect(dir) foreach { _ --> m }
+    val m = ChecksumModel(URI.fromHost, key).create
+    listAllFiles(dir).filter(_.isFile) foreach { FileChecksumModel(_) addTo m }
 
     val output = dir.getAbsolutePath + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
@@ -188,35 +166,15 @@ object Checksum extends Modeler with Logging {
     logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 
-  private def translateDir(dir: File, chunkSize: Int) = {
+  private def translateDir(dir: File, chunkSize: Long) = {
     logger.info("Model source [{}]", dir.getAbsolutePath)
 
-    val base = URI.fromHost
-    val ns = base + "CHK#"
-    val m = ModelFactory.createOntologyModel
-    m.setNsPrefix(key, ns)
-    m.setNsPrefix(CimSchema.key, CIM.NS)
-    m.createOntology(base)
-      .addProperty(DC.date, DateTime.get, XSDdateTime)
-      .addProperty(DC.description, "TriGraM checksum model", XSDstring)
-      .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_Component"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
-
-    for ((fMD5, cMD5s) <- collect(dir, chunkSize)) {
-      val chunked = fMD5 --> m
-      if (!cMD5s.isEmpty) {
-        chunked.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
-          .addProperty(CIM.PROP("GroupComponent"), chunked)
-        for (cMD5 <- cMD5s) {
-          val chunk = cMD5 --> m
-          chunked.addProperty(CIM.PROP("PartComponent"), chunk)
-        }
-      }
+    val m = ChecksumModel(URI.fromHost, key).create
+    listAllFiles(dir).filter(_.isFile).foreach {
+      ChunkChecksumModel(_, chunkSize) addTo m
     }
 
-    val output = dir.getAbsolutePath + chunkSize +"checksums.owl"
+    val output = dir.getAbsolutePath + chunkSize + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
