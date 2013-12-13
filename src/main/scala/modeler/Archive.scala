@@ -1,13 +1,13 @@
 /**
- * Modeler for compressed resources
+ * Modeler for compressed files
  */
 package modeler
 
 import java.io.{ File, FileOutputStream }
-import org.apache.commons.compress.archivers.ArchiveEntry
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model, Resource }
 import com.hp.hpl.jena.vocabulary.{ OWL, OWL2, DC_11 => DC, RDF }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
+import org.apache.commons.compress.archivers.ArchiveEntry
 import util.{ Logging, Version, DateTime, URI }
 import modeler.{ CimVocabulary => CIM }
 
@@ -77,11 +77,37 @@ object ArchiveCheckers {
     }
   }
 
-  /*
-   * @TODO: handler for 7zip
-   */
   private def check7Zip(file: File) = {
-    Iterator[ArcEntryModel]()
+    import org.apache.commons.compress.archivers.sevenz.SevenZFile
+    import org.apache.commons.codec.digest.DigestUtils.getDigest
+    import org.apache.commons.codec.binary.Hex.encodeHexString
+
+    val STREAM_BUFFER_LENGTH = 1024 * 64
+    def md5Hex7Zip(data: SevenZFile, size: Long) = {
+      val MD = getDigest("MD5")
+      var buffer = new Array[Byte](STREAM_BUFFER_LENGTH)
+      var total = 0
+      val goal = size.toInt
+      while (total < goal) {
+        val read = data.read(buffer, 0, (goal - total) min STREAM_BUFFER_LENGTH)
+        total += read
+        MD.update(buffer, 0, read)
+      }
+      encodeHexString(MD.digest)
+    }
+
+    try {
+      val zf = new SevenZFile(file)
+      val entries = Iterator.continually { zf.getNextEntry }
+        .takeWhile(null !=).filter(!_.isDirectory)
+      entries map { e =>
+        val size = e.getSize
+        val md5 = md5Hex7Zip(zf, size)
+        ArcEntryModel(e, md5)
+      }
+    } catch {
+      case e: Exception => e.printStackTrace; Iterator[ArcEntryModel]()
+    }
   }
 
   type arcChecker = (File => Iterator[ArcEntryModel])
@@ -166,33 +192,29 @@ object Archive extends Modeler with Logging {
 
   override val key = "arc"
 
-  override val usage = "<archive> => [triples],\n\t\tnow support [zip, tar.gz, tar.bz2]."
+  override val usage = "<archive> <output> => [triples]," +
+    "\n\t\tnow support [zip, tar.gz, tar.bz2, 7z]."
 
   def run(options: Array[String]) = {
     options.toList match {
-      case fileName :: Nil => {
+      case fileName :: output :: Nil => {
         val f = new File(fileName)
-        if (!f.exists)
-          logger.error("input source does not exist")
-        else if (!f.isFile)
-          logger.error("input source is not file")
-        else
-          translate(f)
+        if (!f.exists) logger.error("input source does not exist")
+        else if (!f.isFile) logger.error("input source is not file")
+        else translate(f, output)
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
   }
 
-  private def translate(f: File) = {
+  private def translate(f: File, output: String) = {
     val arcPath = f.getAbsolutePath
-
     logger.info("Model archive file [{}]", arcPath)
 
     val m = ArcModel(URI.fromHost, key).create
     val arcFile = ArcFileModel(f).addTo(m)
     ArchiveCheckers.checkArc(f) foreach { _.addTo(m, arcFile, arcPath + '/') }
 
-    val output = arcPath + "-model.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
