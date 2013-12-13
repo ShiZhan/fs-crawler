@@ -94,87 +94,77 @@ case class ChunkChecksumModel(file: File, chunkSize: Long) {
 object Checksum extends Modeler with Logging {
   override val key = "chk"
 
-  override val usage = "<source> [<chunk size: Bytes>] => [structural checksum tree]"
+  override val usage = "<source> <output> [<chunk size: Bytes>] => [checksum triples]"
 
   def run(options: Array[String]) = {
     options.toList match {
-      case fileName :: Nil => {
+      case fileName :: output :: Nil => {
         val source = new File(fileName)
         if (!source.exists) logger.error("input source does not exist")
         else if (source.isFile)
-          translateFile(source)
+          translateFile(source, output)
         else
-          translateDir(source)
+          translateDir(source, output)
       }
-      case fileName :: chunkSizeStr :: Nil => {
+      case fileName :: output :: chunkSizeStr :: Nil => {
         val source = new File(fileName)
         val chunkSize = chunkSizeStr.toLong
         if (!source.exists) logger.error("input source does not exist")
         else if (source.isFile)
-          translateFile(source, chunkSize)
+          translateFile(source, output, chunkSize)
         else
-          translateDir(source, chunkSize)
+          translateDir(source, output, chunkSize)
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
   }
 
-  private def getInt(s: String): Option[Int] = {
-    try { Some(s.toInt) }
-    catch { case e: Exception => None }
-  }
-
   private def listAllFiles(dir: File): Array[File] = {
     assert(dir.isDirectory)
+
     val list = dir.listFiles
     list ++ list.filter(_.isDirectory).flatMap(listAllFiles)
   }
 
-  private def translateFile(file: File) = {
+  private def translateFile(file: File, output: String) = {
     logger.info("Model source [{}]", file.getAbsolutePath)
 
     val m = ChecksumModel(URI.fromHost, key).create
     FileChecksumModel(file) addTo m
 
-    val output = file.getAbsolutePath + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 
-  private def translateFile(file: File, chunkSize: Long) = {
+  private def translateFile(file: File, output: String, chunkSize: Long) = {
     logger.info("Model source [{}]", file.getAbsolutePath)
 
     val m = ChecksumModel(URI.fromHost, key).create
     ChunkChecksumModel(file, chunkSize) addTo m
 
-    val output = file.getAbsolutePath + chunkSize + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 
-  private def translateDir(dir: File) = {
+  private def translateDir(dir: File, output: String) = {
     logger.info("Model source [{}]", dir.getAbsolutePath)
 
     val m = ChecksumModel(URI.fromHost, key).create
-    listAllFiles(dir).filter(_.isFile) foreach { FileChecksumModel(_) addTo m }
+    listAllFiles(dir).filter(_.isFile).foreach(FileChecksumModel(_) addTo m)
 
-    val output = dir.getAbsolutePath + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 
-  private def translateDir(dir: File, chunkSize: Long) = {
+  private def translateDir(dir: File, output: String, chunkSize: Long) = {
     logger.info("Model source [{}]", dir.getAbsolutePath)
 
     val m = ChecksumModel(URI.fromHost, key).create
-    listAllFiles(dir).filter(_.isFile).foreach {
-      ChunkChecksumModel(_, chunkSize) addTo m
-    }
+    listAllFiles(dir).filter(_.isFile).foreach(ChunkChecksumModel(_, chunkSize) addTo m)
 
-    val output = dir.getAbsolutePath + chunkSize + "checksums.owl"
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
