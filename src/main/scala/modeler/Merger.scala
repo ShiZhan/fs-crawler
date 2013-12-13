@@ -5,6 +5,7 @@ package modeler
 
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.vocabulary.OWL
+import com.hp.hpl.jena.rdf.model.Model
 import CimVocabulary.{ isCimURI, PURL2FN }
 import modeler.ModelManager._
 import util.Logging
@@ -25,6 +26,15 @@ object Merger extends Logging {
     else importFiles ::: importFiles.flatMap(readCimImports)
   }
 
+  private def clearCimImports(m: Model) = {
+    val cimImports = m.listStatements(null, OWL.imports, null)
+      .filter { i => isCimURI(i.getObject.toString) }.toList
+    cimImports.foreach(m.remove)
+
+    val cimOntologies = cimImports.map(_.getObject.asResource)
+    cimOntologies.foreach { o => m.remove(m.listStatements(o, null, null)) }
+  }
+
   def gather(modelFile: String) = {
     val files = readCimImports(modelFile).distinct
 
@@ -35,15 +45,7 @@ object Merger extends Logging {
     val baseModel = load(modelFile)
     val gatheredModel = (files load) join baseModel
 
-    val importStatements = gatheredModel.listStatements(null, OWL.imports, null)
-    val cimImports =
-      importStatements.filter { i => isCimURI(i.getObject.toString) }.toList
-    cimImports.foreach(gatheredModel.remove)
-
-    val cimOntologies = cimImports.map(_.getObject.asResource)
-    cimOntologies.foreach { o =>
-      gatheredModel.remove(gatheredModel.listStatements(o, null, null))
-    }
+    clearCimImports(gatheredModel)
 
     val gatheredFile = modelFile + "-gathered.owl"
     gatheredModel.write(gatheredFile)
@@ -55,7 +57,7 @@ object Merger extends Logging {
     val models = modelFiles load
     val combinedModel = models join
     val imports = models flatMap { _.listStatements(null, OWL.imports, null) }
-    imports.foreach { i => combinedModel.add(i) }
+    imports.foreach { combinedModel.add(_) }
     val combinedFile = modelFiles.head + "-combined.owl"
     combinedModel.write(combinedFile)
 
