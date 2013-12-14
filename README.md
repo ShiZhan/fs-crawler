@@ -183,10 +183,6 @@ Design
 
     `doc/design.odg`
 
--   Brief introduction:
-
-    `doc/oam.odt`
-
 -   Command line interface:
 
     provides the following entries:
