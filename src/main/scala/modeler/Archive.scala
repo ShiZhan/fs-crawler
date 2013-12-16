@@ -129,8 +129,10 @@ object ArchiveCheckers {
     "bz2" -> checkBz2,
     "7z" -> check7Zip)
   private def defaultChecker(f: File) = Iterator[ArcEntryModel]()
-  val knownExt = arcCheckers map { case (k, c) => k } toSet
+  private val exts = arcCheckers map { case (k, c) => k } toSet
+  def extKnown(file: File) = exts contains file.getName.split('.').last
   def checkArc(file: File) = {
+    assert(file.isFile)
     val fileNameExtension = file.getName.split('.').last
     arcCheckers.getOrElse(fileNameExtension, defaultChecker _)(file)
   }
@@ -199,9 +201,14 @@ object Archive extends Modeler with Logging {
     options.toList match {
       case fileName :: output :: Nil => {
         val f = new File(fileName)
-        if (!f.exists) logger.error("input source does not exist")
-        else if (!f.isFile) logger.error("input source is not file")
-        else translate(f, output)
+        if (!f.exists)
+          logger.error("input source does not exist")
+        else if (f.isFile)
+          translate(f, output)
+        else if (f.isDirectory)
+          translateAll(f, output)
+        else
+          logger.error("input source is neither file nor directory")
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
@@ -214,6 +221,30 @@ object Archive extends Modeler with Logging {
     val m = ArcModel(URI.fromHost, key).create
     val arcFile = ArcFileModel(f).addTo(m)
     ArchiveCheckers.checkArc(f) foreach { _.addTo(m, arcFile, arcPath + '/') }
+
+    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
+
+    logger.info("[{}] triples generated in [{}]", m.size, output)
+  }
+
+  private def listAllFiles(dir: File): Array[File] = {
+    assert(dir.isDirectory)
+
+    val list = dir.listFiles
+    list ++ list.filter(_.isDirectory).flatMap(listAllFiles)
+  }
+
+  private def translateAll(d: File, output: String) = {
+    val arcPath = d.getAbsolutePath
+    logger.info("Model all supported archive file in [{}]", arcPath)
+
+    val m = ArcModel(URI.fromHost, key).create
+    listAllFiles(d).foreach { f =>
+      if (f.isFile & ArchiveCheckers.extKnown(f)) {
+        val knownArcFile = ArcFileModel(f).addTo(m)
+        ArchiveCheckers.checkArc(f) foreach { _.addTo(m, knownArcFile, arcPath + '/') }
+      }
+    }
 
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
