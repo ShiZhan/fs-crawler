@@ -146,7 +146,7 @@ case class ArcModel(base: String, nsPrefix: String) {
     .addProperty(OWL.versionInfo, Version.get, XSDstring)
     .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
     .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-    .addProperty(OWL.imports, CIM.IMPORT("CIM_Component"))
+    .addProperty(OWL.imports, CIM.IMPORT("CIM_ConcreteComponent"))
     .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
   def create = m
 }
@@ -162,7 +162,7 @@ case class ArcFileModel(f: File) {
       .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
       .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
       .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
-    arcFile.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
+    arcFile.addProperty(RDF.`type`, CIM.CLASS("CIM_ConcreteComponent"))
       .addProperty(CIM.PROP("GroupComponent"), arcFile)
   }
 }
