@@ -67,7 +67,7 @@ case class ChecksumModel(base: String, nsPrefix: String) {
     .addProperty(DC.description, "TriGraM checksum model", XSDstring)
     .addProperty(OWL.versionInfo, Version.get, XSDstring)
     .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-    .addProperty(OWL.imports, CIM.IMPORT("CIM_Component"))
+    .addProperty(OWL.imports, CIM.IMPORT("CIM_OrderedComponent"))
     .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
   def create = m
 }
@@ -81,11 +81,12 @@ case class ChunkChecksumModel(file: File, chunkSize: Long) {
     val chunked = FileCheckers.fileMD5(file) addTo model
     val cMD5s = FileCheckers.chunkMD5(file, chunkSize)
     if (!cMD5s.isEmpty) {
-      chunked.addProperty(RDF.`type`, CIM.CLASS("CIM_Component"))
-        .addProperty(CIM.PROP("GroupComponent"), chunked)
-      for (cMD5 <- cMD5s) {
+      for ((cMD5, index) <- cMD5s.zipWithIndex) {
         val chunk = cMD5 addTo model
-        chunked.addProperty(CIM.PROP("PartComponent"), chunk)
+        chunk.addProperty(RDF.`type`, CIM.CLASS("CIM_OrderedComponent"))
+          .addProperty(CIM.PROP("GroupComponent"), chunked)
+          .addProperty(CIM.PROP("PartComponent"), chunk)
+          .addProperty(CIM.PROP("AssignedSequence"), index.toString, XSDunsignedInt)
       }
     }
   }
