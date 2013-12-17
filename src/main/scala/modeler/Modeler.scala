@@ -27,9 +27,7 @@ object Modelers {
     CimSchemaEx,
     Directory,
     Archive,
-    Checksum,
-    CSV,
-    CSVex)
+    Checksum)
 
   val help = ms.map { m => "  %s:  \t%s".format(m.key, m.usage) }.mkString("\n")
 
