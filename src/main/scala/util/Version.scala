@@ -10,7 +10,7 @@ package util
  */
 object Version {
 
-  private val masterHashFilePath = Config.TGMROOT + ".git/refs/heads/master"
+  private val masterHashFilePath = Config.TGMROOT + "/.git/refs/heads/master"
   private val masterHashFileExists = new java.io.File(masterHashFilePath).exists
 
   def get =

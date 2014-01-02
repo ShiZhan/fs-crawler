@@ -3,9 +3,6 @@
  */
 package util
 
-import java.io.File
-import scala.util.Properties.{ envOrElse, userDir }
-
 /**
  * @author ShiZhan
  * configuration information
@@ -17,18 +14,16 @@ import scala.util.Properties.{ envOrElse, userDir }
  * if above variables are not defined/exported, current directory will be used.
  */
 object Config {
+  import java.io.File
+  import scala.util.Properties.{ envOrElse, userDir }
+
   def UNC(fileName: String) = {
     val f = new File(fileName)
-    val uri = f.toURI.toString
-    if (Platform.isWindows)
-      f.toURI.toString.replaceFirst("file:/", "")
-    else
-      f.toURI.toString.replaceFirst("file:", "")
+    f.getAbsolutePath
   }
 
   val _PWD = userDir
-  val _TGMROOT = envOrElse("TGM_ROOT", _PWD)
-  val TGMROOT = UNC(_TGMROOT)
-  val TGMDATA = UNC(envOrElse("TGM_DATA", _PWD)) + ".trigram"
-  val CIMDATA = UNC(envOrElse("CIM_DATA", _TGMROOT)) + "cim/"
+  val TGMROOT = UNC(envOrElse("TGM_ROOT", _PWD))
+  val TGMDATA = UNC(envOrElse("TGM_DATA", _PWD) + "/.trigram")
+  val CIMDATA = UNC(envOrElse("CIM_DATA", _PWD) + "/cim/")
 }
