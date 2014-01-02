@@ -3,9 +3,6 @@
  */
 package util
 
-import java.util.{ Calendar, Date }
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime
-
 /**
  * @author ShiZhan
  * according to:
@@ -13,6 +10,9 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDateTime
  * http://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
  */
 object DateTime {
+  import java.util.{ Calendar, Date }
+  import com.hp.hpl.jena.datatypes.xsd.XSDDateTime
+
   private def _c = Calendar.getInstance
   private def _x = (c: Calendar) => new XSDDateTime(c) toString
 
