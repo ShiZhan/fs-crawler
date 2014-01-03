@@ -18,9 +18,11 @@ class Handler(store: Store) {
     val sparql = readSPARQL
 
     try {
+      val t1 = compat.Platform.currentTime
       val result = store.queryAny(sparql)
+      val t2 = compat.Platform.currentTime
       println(result)
-      "Query executed normally"
+      "Query executed in %d milliseconds".format(t2 - t1)
     } catch {
       case e: Exception => "Exception:\n" + e.toString
     }
@@ -30,8 +32,10 @@ class Handler(store: Store) {
     val sparql = readSPARQL
 
     try {
+      val t1 = compat.Platform.currentTime
       store.update(sparql)
-      "Update Executed normally"
+      val t2 = compat.Platform.currentTime
+      "Update Executed in %d milliseconds".format(t2 - t1)
     } catch {
       case e: Exception => "Exception:\n" + e.toString
     }
