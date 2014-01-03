@@ -55,7 +55,7 @@ object CimVocabulary {
   val Association = model.createResource(URI("CIM_Association"))
 
   // CIM classes and imports
-  private val cimClassFileName = CIMDATA + "CIM-CLASS"
+  private val cimClassFileName = CIMDATA + "/CIM-CLASS"
   private lazy val classList =
     fromFile(cimClassFileName) map {
       n => n -> (model.createResource(URI(n)), model.createResource(PURL(n)))
@@ -70,7 +70,7 @@ object CimVocabulary {
   /*
    * properties
    */
-  private val cimPropertyFileName = CIMDATA + "CIM-PROPERTY"
+  private val cimPropertyFileName = CIMDATA + "/CIM-PROPERTY"
   private lazy val propertyList =
     fromFile(cimPropertyFileName) map { n => n -> model.createProperty(URI(n)) } toMap
 

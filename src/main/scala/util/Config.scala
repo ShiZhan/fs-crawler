@@ -25,5 +25,5 @@ object Config {
   val _PWD = userDir
   val TGMROOT = UNC(envOrElse("TGM_ROOT", _PWD))
   val TGMDATA = UNC(envOrElse("TGM_DATA", _PWD) + "/.trigram")
-  val CIMDATA = UNC(envOrElse("CIM_DATA", _PWD) + "/cim/")
+  val CIMDATA = UNC(envOrElse("CIM_DATA", _PWD) + "/cim")
 }
