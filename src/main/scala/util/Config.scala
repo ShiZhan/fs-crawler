@@ -17,13 +17,14 @@ object Config {
   import java.io.File
   import scala.util.Properties.{ envOrElse, userDir }
 
-  def UNC(fileName: String) = {
-    val f = new File(fileName)
-    f.getAbsolutePath
-  }
-
   val _PWD = userDir
-  val TGMROOT = UNC(envOrElse("TGM_ROOT", _PWD))
-  val TGMDATA = UNC(envOrElse("TGM_DATA", _PWD) + "/.trigram")
-  val CIMDATA = UNC(envOrElse("CIM_DATA", _PWD) + "/cim")
+  val tgmRoot = new File(envOrElse("TGM_ROOT", _PWD))
+  val TGMROOT = tgmRoot.getAbsolutePath
+  val tgmData = new File(envOrElse("TGM_DATA", _PWD) + "/.trigram")
+  val TGMDATA = tgmData.getAbsolutePath
+  val cimData = new File(envOrElse("CIM_DATA", _PWD) + "/cim")
+  val CIMDATA = cimData.getAbsolutePath
+
+  if (!tgmData.exists) tgmData.mkdir
+  if (!cimData.exists) cimData.mkdir
 }
