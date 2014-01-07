@@ -28,7 +28,14 @@ object CimSchemaEx extends Modeler with Logging {
   override val usage = "<DMTF CIM schema> => [OWL classes]:\n\t\t" + CIM.PATH_BASE
 
   def run(options: Array[String]) = {
-    val input = options(0)
+    val input = options(0) // pick input
+    val path2Models = new File(CIM.PATH_BASE) // check CIM.PATH_BASE
+    if (path2Models.exists) {
+      assert(path2Models.isDirectory)
+    } else {
+      path2Models.mkdir
+    }
+
     logger.info("translate [{}] from [{}] to class models in [{}]", key, input, CIM.PATH_BASE)
 
     val xml = XML.loadFile(input)
@@ -59,14 +66,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing
 permissions and limitations under the License. 
 """
-
-  // Since all models will be put here, check it first.
-  private val path2Models = new File(CIM.PATH_BASE)
-  if (path2Models.exists) {
-    assert(!path2Models.isFile)
-  } else {
-    path2Models.mkdir
-  }
 
   def createCimBase = {
     val baseModel = ModelFactory.createDefaultModel
