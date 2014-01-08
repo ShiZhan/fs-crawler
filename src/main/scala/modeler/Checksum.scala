@@ -93,6 +93,8 @@ case class ChunkChecksumModel(file: File, chunkSize: Long) {
 }
 
 object Checksum extends Modeler with Logging {
+  import helper.FileEx.FileOps
+
   override val key = "chk"
 
   override val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"
@@ -118,13 +120,6 @@ object Checksum extends Modeler with Logging {
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
-  }
-
-  private def listAllFiles(dir: File): Array[File] = {
-    assert(dir.isDirectory)
-
-    val list = dir.listFiles
-    list ++ list.filter(_.isDirectory).flatMap(listAllFiles)
   }
 
   private def translateFile(file: File, output: String) = {
@@ -153,7 +148,7 @@ object Checksum extends Modeler with Logging {
     logger.info("Model source [{}]", dir.getAbsolutePath)
 
     val m = ChecksumModel(URI.fromHost, key).create
-    listAllFiles(dir).filter(_.isFile).foreach(FileChecksumModel(_) addTo m)
+    dir.flatten.filter(_.isFile).foreach(FileChecksumModel(_) addTo m)
 
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
@@ -164,7 +159,7 @@ object Checksum extends Modeler with Logging {
     logger.info("Model source [{}]", dir.getAbsolutePath)
 
     val m = ChecksumModel(URI.fromHost, key).create
-    listAllFiles(dir).filter(_.isFile).foreach(ChunkChecksumModel(_, chunkSize) addTo m)
+    dir.flatten.filter(_.isFile).foreach(ChunkChecksumModel(_, chunkSize) addTo m)
 
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
