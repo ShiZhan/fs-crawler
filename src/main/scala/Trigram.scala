@@ -4,7 +4,7 @@
  * @name TriGraM Project
  */
 object Trigram {
-  import console.{ Console, Store }
+  import console.{ Console, Store, TDBWrapper }
   import modeler.{ Modelers, CimVocabulary, Merger }
   import util.{ Config, Version }
   import Config.TGMDATA
@@ -42,8 +42,7 @@ usage: Trigram
       case Nil => Console.run
       case "-h" :: tail => println(usage)
       case "-v" :: tail => println(Version.get)
-      case "-i" :: modelList =>
-        modelList.foreach(tdb.tdbloader.main(s"--loc=$TGMDATA", _))
+      case "-i" :: modelList => modelList.foreach(TDBWrapper.loader)
       case "-q" :: queryFile :: tail => {
         val sparql = Console.fileInput(queryFile)
         Store(TGMDATA).doQuery(sparql)

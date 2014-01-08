@@ -12,8 +12,7 @@ object Console {
   import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
   import util.Platform.BRIEFING
 
-  private val loc = TGMDATA
-  private val store = Store(loc)
+  private val store = Store(TGMDATA)
 
   private val usage = """ [Console Usage]
   help           print this message
@@ -28,7 +27,7 @@ object Console {
   private val status = s"""
 TriGraM:     $TGMVER
   code:      $TGMROOT
-  data:      $loc
+  data:      $TGMDATA
   CIM:       $CIMDATA""" + BRIEFING
 
   def typeInput = {
@@ -54,11 +53,14 @@ TriGraM:     $TGMVER
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
         case "time" :: Nil => println(util.DateTime.get)
-        case "tdbinfo" :: Nil => tdb.tdbstats.main("--loc=" + loc)
+        case "tdbinfo" :: Nil => TDBWrapper.info
+        case "tdbload" :: modelFile :: Nil => TDBWrapper.loader(modelFile)
+        case "tdbquery" :: sparqlFile :: Nil => TDBWrapper.query(sparqlFile)
+        case "tdbupdate" :: sparqlFile :: Nil => TDBWrapper.update(sparqlFile)
         case "query" :: Nil => store.doQuery(typeInput)
         case "update" :: Nil => store.doUpdate(typeInput)
-        case "query" :: sqlFile :: Nil => store.doQuery(fileInput(sqlFile))
-        case "update" :: sqlFile :: Nil => store.doUpdate(fileInput(sqlFile))
+        case "query" :: sparqlFile :: Nil => store.doQuery(fileInput(sparqlFile))
+        case "update" :: sparqlFile :: Nil => store.doUpdate(fileInput(sparqlFile))
         case "" :: Nil => {}
         case _ => println(s"Unrecognized command: [$line]")
       }
