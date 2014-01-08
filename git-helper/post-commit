@@ -1,0 +1,2 @@
+#!/bin/sh
+cp $GIT_DIR/refs/heads/master $PWD/src/main/resources/
