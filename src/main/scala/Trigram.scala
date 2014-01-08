@@ -6,7 +6,7 @@
 object Trigram {
   import scala.io.Source
   import tdb.tdbloader.{ main => loader }
-  import console.{ Console, Handler, Store }
+  import console.{ Console, Store }
   import modeler.{ Modelers, CimVocabulary, Merger }
   import util.{ Config, Version }
 
@@ -73,7 +73,6 @@ usage: Trigram
     if (args.length == 0) Console.run
     else {
       val tgmData = Config.TGMDATA
-      val cimData = Config.CIMDATA
       val options = parseOption(args.toList)
 
       if (options.isEmpty) println(incorrectArgs)
@@ -85,12 +84,12 @@ usage: Trigram
       } else if (options.contains('query)) {
         val queryFile = options('query).toString
         val sparql = Source.fromFile(queryFile).mkString
-        val output = new Handler(new Store(tgmData)).doQuery(sparql)
+        val output = Store(tgmData).doQuery(sparql)
         println(output)
       } else if (options.contains('update)) {
         val updateFile = options('update).toString
         val sparql = Source.fromFile(updateFile).mkString
-        val output = new Handler(new Store(tgmData)).doUpdate(sparql)
+        val output = Store(tgmData).doUpdate(sparql)
         println(output)
       } else if (options.contains('combine)) {
         val modelFiles = options('combine).asInstanceOf[List[String]]
@@ -101,7 +100,7 @@ usage: Trigram
       } else if (options.contains('schema)) {
         val cimSchema = options('schema).toString
         CimVocabulary.generator(cimSchema)
-        println("CIM Vocabulary in [%s] are updated.".format(cimData))
+        println("CIM Vocabulary updated.")
       } else if (options.contains('gather)) {
         val baseModel = options('gather).toString
         Merger.gather(baseModel)

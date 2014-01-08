@@ -14,8 +14,7 @@ object Console {
   import util.Platform.BRIEFING
 
   private val loc = TGMDATA
-  private val store = new Store(loc)
-  private val handler = new Handler(store)
+  private val store = Store(loc)
 
   private val usage = """ [Console Usage]
   help           print this message
@@ -53,8 +52,8 @@ TriGraM:     $TGMVER
         case "tdbinfo" :: Nil =>
           tdb.tdbstats.main("--loc=" + loc); null
 
-        case "query" :: Nil => handler.doQuery(readInput)
-        case "update" :: Nil => handler.doUpdate(readInput)
+        case "query" :: Nil => store.doQuery(readInput)
+        case "update" :: Nil => store.doUpdate(readInput)
 
         case "" :: Nil => null
 
