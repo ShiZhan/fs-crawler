@@ -1,5 +1,5 @@
 /**
- * Console Application
+ * Console command loop
  */
 package console
 
@@ -7,7 +7,6 @@ package console
  * @author ShiZhan
  * 2013
  * Console command loop
- * main entry to Command Line Interface
  */
 object Console {
   import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
@@ -32,7 +31,7 @@ TriGraM:     $TGMVER
   data:      $loc
   CIM:       $CIMDATA""" + BRIEFING
 
-  def readInput = {
+  private def readInput = {
     println("input below, end with Ctrl+E.")
     io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
   }
@@ -42,25 +41,19 @@ TriGraM:     $TGMVER
     print(prompt)
 
     for (line <- io.Source.stdin.getLines) {
-      val output = line.split(" ").toList match {
-        case "exit" :: Nil =>
-          store.close; return
-
-        case "help" :: Nil => usage
-        case "status" :: Nil => status
-        case "time" :: Nil => util.DateTime.get
-        case "tdbinfo" :: Nil =>
-          tdb.tdbstats.main("--loc=" + loc); null
+      line.split(" ").toList match {
+        case "exit" :: Nil => store.close; return
+        case "help" :: Nil => println(usage)
+        case "status" :: Nil => println(status)
+        case "time" :: Nil => println(util.DateTime.get)
+        case "tdbinfo" :: Nil => tdb.tdbstats.main("--loc=" + loc)
 
         case "query" :: Nil => store.doQuery(readInput)
         case "update" :: Nil => store.doUpdate(readInput)
 
-        case "" :: Nil => null
-
         case _ => "Unrecognized command: [%s]".format(line)
       }
 
-      if (output != null) println(output)
       print(prompt)
     }
   }

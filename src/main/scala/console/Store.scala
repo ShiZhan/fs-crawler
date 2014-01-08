@@ -97,7 +97,7 @@ case class Store(val location: String) {
 object Store {
   /**
    * @author ShiZhan
-   * command handlers for reading and executing SPARQL in triple store
+   * additional handlers for executing SPARQL in triple store
    */
   implicit class StoreExt(store: Store) {
     def doQuery(sparql: String) = {
@@ -106,9 +106,9 @@ object Store {
         val result = store.queryAny(sparql)
         val t2 = compat.Platform.currentTime
         println(result)
-        "Query executed in %d milliseconds".format(t2 - t1)
+        println("Query executed in %d milliseconds".format(t2 - t1))
       } catch {
-        case e: Exception => "Exception:\n" + e.toString
+        case e: Exception => e.printStackTrace
       }
     }
 
@@ -117,9 +117,9 @@ object Store {
         val t1 = compat.Platform.currentTime
         store.update(sparql)
         val t2 = compat.Platform.currentTime
-        "Update Executed in %d milliseconds".format(t2 - t1)
+        println("Update Executed in %d milliseconds".format(t2 - t1))
       } catch {
-        case e: Exception => "Exception:\n" + e.toString
+        case e: Exception => e.printStackTrace
       }
     }
   }

@@ -47,13 +47,11 @@ usage: Trigram
         modelList.foreach(tdb.tdbloader.main(s"--loc=$TGMDATA", _))
       case "-q" :: queryFile :: tail => {
         val sparql = Source.fromFile(queryFile).mkString
-        val output = Store(TGMDATA).doQuery(sparql)
-        println(output)
+        Store(TGMDATA).doQuery(sparql)
       }
       case "-u" :: updateFile :: tail => {
         val sparql = Source.fromFile(updateFile).mkString
-        val output = Store(TGMDATA).doUpdate(sparql)
-        println(output)
+        Store(TGMDATA).doUpdate(sparql)
       }
       case "-c" :: modelFiles => {
         if (modelFiles.size > 1) {
