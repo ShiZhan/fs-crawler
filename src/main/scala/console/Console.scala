@@ -54,7 +54,7 @@ TriGraM:     $TGMVER
         case "status" :: Nil => println(status)
         case "time" :: Nil => println(util.DateTime.get)
         case "tdbinfo" :: Nil => TDBWrapper.info
-        case "tdbload" :: modelFile :: Nil => TDBWrapper.loader(modelFile)
+        case "tdbloader" :: modelFile :: Nil => TDBWrapper.loader(modelFile)
         case "tdbquery" :: sparqlFile :: Nil => TDBWrapper.query(sparqlFile)
         case "tdbupdate" :: sparqlFile :: Nil => TDBWrapper.update(sparqlFile)
         case "query" :: Nil => store.doQuery(typeInput)
