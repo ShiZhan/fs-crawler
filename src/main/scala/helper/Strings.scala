@@ -6,15 +6,14 @@ package helper
 /**
  * @author ShiZhan
  * Text related functions
- * 1. fromFile: read all lines to List from text file
- * 2. toFile: write all lines from List to text file
+ * 1. fromFile, toFile: read/write all lines to/from List from/to text file
+ * 2. StringWriter: write string to text file by buffered writer
  */
 object Strings {
-  import java.io.{ File, PrintWriter }
+  import java.io.{ BufferedWriter, File, FileOutputStream, OutputStreamWriter, PrintWriter }
 
   def fromFile(fileName: String) = {
-    val f = new File(fileName)
-    val buf = io.Source.fromFile(f)
+    val buf = io.Source.fromFile(new File(fileName))
     val lines = buf.getLines.toList
     buf.close
     lines
@@ -22,10 +21,21 @@ object Strings {
 
   implicit class Strings[T](lines: Seq[T]) {
     def toFile(fileName: String) = {
-      val f = new File(fileName)
-      val p = new PrintWriter(f)
+      val p = new PrintWriter(new File(fileName))
       lines.foreach(p.println)
       p.close
     }
+  }
+
+  implicit class GetWriter(fileName: String) {
+    def getWriter(coding: String) =
+      new BufferedWriter(
+        new OutputStreamWriter(
+          new FileOutputStream(
+            new File(fileName)), coding))
+  }
+
+  implicit class StringWriter(s: String) {
+    def writeTo(writer: BufferedWriter) = writer.write(s)
   }
 }
