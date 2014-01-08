@@ -50,8 +50,7 @@ TriGraM:     $TGMVER
 
     for (line <- io.Source.stdin.getLines) {
       line.split(" ").toList match {
-        case "exit" :: Nil =>
-          store.close; return
+        case "exit" :: Nil => { store.close; return }
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
         case "time" :: Nil => println(util.DateTime.get)
@@ -60,8 +59,8 @@ TriGraM:     $TGMVER
         case "update" :: Nil => store.doUpdate(typeInput)
         case "query" :: sqlFile :: Nil => store.doQuery(fileInput(sqlFile))
         case "update" :: sqlFile :: Nil => store.doUpdate(fileInput(sqlFile))
-
-        case _ => "Unrecognized command: [%s]".format(line)
+        case "" :: Nil => {}
+        case _ => println(s"Unrecognized command: [$line]")
       }
 
       print(prompt)
