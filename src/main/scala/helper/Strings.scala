@@ -1,7 +1,7 @@
 /**
  * Text related functions
  */
-package util
+package helper
 
 /**
  * @author ShiZhan

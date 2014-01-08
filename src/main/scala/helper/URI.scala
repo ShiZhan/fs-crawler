@@ -1,7 +1,7 @@
 /**
  * URI generator
  */
-package util
+package helper
 
 /**
  * @author ShiZhan

@@ -12,7 +12,7 @@ package console
  * Wrap these programs into "try ... catch" for encapsulation.
  */
 object TDBWrapper {
-  import util.Config.TGMDATA
+  import helper.Config.TGMDATA
 
   def loader(modelFile: String) =
     try { tdb.tdbloader.main("--loc=" + TGMDATA, modelFile) }

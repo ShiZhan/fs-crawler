@@ -5,8 +5,8 @@ package modeler
 
 import scala.xml.XML
 import com.hp.hpl.jena.rdf.model.ModelFactory
-import util.Config.CIMDATA
-import util.Strings._
+import helper.Config.CIMDATA
+import helper.Strings._
 
 /**
  * @author ShiZhan

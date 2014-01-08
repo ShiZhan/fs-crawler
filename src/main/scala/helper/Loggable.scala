@@ -1,7 +1,7 @@
 /**
  * slf4j wrapper
  */
-package util
+package helper
 
 /**
  * @author ShiZhan

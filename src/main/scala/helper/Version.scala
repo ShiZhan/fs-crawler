@@ -1,7 +1,7 @@
 /**
  * Get program version
  */
-package util
+package helper
 
 /**
  * @author ShiZhan

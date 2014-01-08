@@ -7,7 +7,7 @@ import scala.xml.{ XML, NodeSeq }
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Resource }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime }
+import helper.{ Logging, Version, DateTime }
 
 import modeler.{ CimVocabulary => CIM }
 

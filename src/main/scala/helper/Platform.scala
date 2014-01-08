@@ -1,7 +1,7 @@
 /**
  * check platform information
  */
-package util
+package helper
 
 /**
  * @author ShiZhan

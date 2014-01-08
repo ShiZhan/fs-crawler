@@ -8,7 +8,7 @@ import xml.Utility.escape
 import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
 import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import util.{ Logging, Version, DateTime, URI }
+import helper.{ Logging, Version, DateTime, URI }
 import modeler.{ CimVocabulary => CIM }
 
 /**

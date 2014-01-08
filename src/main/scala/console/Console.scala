@@ -9,8 +9,10 @@ package console
  * Console command loop
  */
 object Console {
-  import util.Config.{ TGMROOT, TGMDATA, CIMDATA }
-  import util.Platform.BRIEFING
+  import helper.Config.{ TGMROOT, TGMDATA, CIMDATA }
+  import helper.DateTime
+  import helper.Platform.BRIEFING
+  import helper.Version
 
   private val store = Store(TGMDATA)
 
@@ -23,7 +25,7 @@ object Console {
   private val title = "TriGraM Console"
   private val prompt = "# "
 
-  private val TGMVER = util.Version.get
+  private val TGMVER = Version.get
   private val status = s"""
 TriGraM:     $TGMVER
   code:      $TGMROOT
@@ -52,7 +54,7 @@ TriGraM:     $TGMVER
         case "exit" :: Nil => { store.close; return }
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
-        case "time" :: Nil => println(util.DateTime.get)
+        case "time" :: Nil => println(DateTime.get)
         case "tdbinfo" :: Nil => TDBWrapper.info
         case "tdbloader" :: modelFile :: Nil => TDBWrapper.loader(modelFile)
         case "tdbquery" :: sparqlFile :: Nil => TDBWrapper.query(sparqlFile)

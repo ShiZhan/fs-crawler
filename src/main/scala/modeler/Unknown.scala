@@ -3,7 +3,7 @@
  */
 package modeler
 
-import util.Logging
+import helper.Logging
 
 /**
  * @author ShiZhan
@@ -11,7 +11,5 @@ import util.Logging
  * also function as default object for modeler map
  */
 object Unknown extends Modeler with Logging {
-
   def run(o: Array[String]) = logger.info("Modeler type unkown")
-
 }

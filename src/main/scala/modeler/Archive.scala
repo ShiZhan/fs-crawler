@@ -8,7 +8,7 @@ import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model, Resource }
 import com.hp.hpl.jena.vocabulary.{ OWL, OWL2, DC_11 => DC, RDF }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import org.apache.commons.compress.archivers.ArchiveEntry
-import util.{ Logging, Version, DateTime, URI }
+import helper.{ Logging, Version, DateTime, URI }
 import modeler.{ CimVocabulary => CIM }
 
 /**
@@ -23,7 +23,7 @@ object ArchiveCheckers {
   import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
   import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
   import org.apache.commons.codec.digest.DigestUtils.md5Hex
-  import util.DigestUtilsAddon.md5HexChunk
+  import helper.DigestUtilsAddon.md5HexChunk
 
   private def checkZip(file: File) = {
     try {

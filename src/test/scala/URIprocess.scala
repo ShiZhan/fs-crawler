@@ -2,7 +2,7 @@ object URIprocess {
   import java.io.File
   import org.apache.http.client.utils.URIBuilder
   import com.hp.hpl.jena.util.FileUtils
-  import util.Platform.isWindows
+  import helper.Platform.isWindows
 
   def fileName2URI(fileName: String) = {
     val n = FileUtils.toURL(fileName)

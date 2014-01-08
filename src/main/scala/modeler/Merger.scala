@@ -8,7 +8,7 @@ import com.hp.hpl.jena.vocabulary.OWL
 import com.hp.hpl.jena.rdf.model.Model
 import CimVocabulary.{ isCimURI, PURL2FN }
 import modeler.ModelManager._
-import util.Logging
+import helper.Logging
 
 /**
  * @author ShiZhan

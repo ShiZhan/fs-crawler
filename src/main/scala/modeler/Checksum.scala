@@ -9,8 +9,8 @@ import com.hp.hpl.jena.ontology.OntModel
 import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC, DCTerms => DT }
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
 import org.apache.commons.codec.digest.DigestUtils.md5Hex
-import util.DigestUtilsAddon.md5HexChunk
-import util.{ Logging, Version, DateTime, URI }
+import helper.DigestUtilsAddon.md5HexChunk
+import helper.{ Logging, Version, DateTime, URI }
 import modeler.{ CimVocabulary => CIM }
 
 /**

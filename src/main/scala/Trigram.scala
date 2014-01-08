@@ -6,8 +6,8 @@
 object Trigram {
   import console.{ Console, Store, TDBWrapper }
   import modeler.{ Modelers, CimVocabulary, Merger }
-  import util.{ Config, Version }
-  import Config.TGMDATA
+  import helper.Version
+  import helper.Config.TGMDATA
 
   val usage = """
 usage: Trigram

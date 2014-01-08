@@ -1,7 +1,7 @@
 /**
  * Apache commons-codec DigestUtils Addon
  */
-package util
+package helper
 
 /**
  * @author ShiZhan

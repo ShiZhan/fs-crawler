@@ -1,7 +1,7 @@
 /**
  * JVM states
  */
-package util
+package helper
 
 /**
  * @author ShiZhan
