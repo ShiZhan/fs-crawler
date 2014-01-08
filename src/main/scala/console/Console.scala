@@ -31,9 +31,17 @@ TriGraM:     $TGMVER
   data:      $loc
   CIM:       $CIMDATA""" + BRIEFING
 
-  private def readInput = {
+  private def typeInput = {
     println("input below, end with Ctrl+E.")
     io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
+  }
+
+  private def fileInput(fileName: String) = {
+    try {
+      io.Source.fromFile(fileName).mkString
+    } catch {
+      case e: Exception => e.printStackTrace; ""
+    }
   }
 
   def run: Unit = {
@@ -42,14 +50,16 @@ TriGraM:     $TGMVER
 
     for (line <- io.Source.stdin.getLines) {
       line.split(" ").toList match {
-        case "exit" :: Nil => store.close; return
+        case "exit" :: Nil =>
+          store.close; return
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
         case "time" :: Nil => println(util.DateTime.get)
         case "tdbinfo" :: Nil => tdb.tdbstats.main("--loc=" + loc)
-
-        case "query" :: Nil => store.doQuery(readInput)
-        case "update" :: Nil => store.doUpdate(readInput)
+        case "query" :: Nil => store.doQuery(typeInput)
+        case "update" :: Nil => store.doUpdate(typeInput)
+        case "query" :: sqlFile :: Nil => store.doQuery(fileInput(sqlFile))
+        case "update" :: sqlFile :: Nil => store.doUpdate(fileInput(sqlFile))
 
         case _ => "Unrecognized command: [%s]".format(line)
       }
