@@ -3,19 +3,73 @@
  */
 package modeler
 
-import java.io.{ File, FileOutputStream }
-import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model, Resource }
-import com.hp.hpl.jena.vocabulary.{ OWL, OWL2, DC_11 => DC, RDF }
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-import org.apache.commons.compress.archivers.ArchiveEntry
-import helper.{ Logging, Version, DateTime, URI }
-import modeler.{ CimVocabulary => CIM }
-
 /**
  * @author ShiZhan
  * translate archive file contents into semantic model
  * can be used with Directory modeler to reveal the detail of a file system
  */
+object ArchiveModels {
+  import java.io.File
+  import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model, Resource }
+  import com.hp.hpl.jena.vocabulary.{ OWL, OWL2, DC_11 => DC, RDF }
+  import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
+  import org.apache.commons.compress.archivers.ArchiveEntry
+  import helper.{ Logging, Version, DateTime, URI }
+  import modeler.{ CimVocabulary => CIM }
+
+  case class ArcModel(base: String, nsPrefix: String) {
+    val m = ModelFactory.createDefaultModel
+    m.setNsPrefix(nsPrefix, base + "#")
+    m.setNsPrefix(CimSchema.key, CIM.NS)
+    m.createResource(base, OWL.Ontology)
+      .addProperty(DC.date, DateTime.get, XSDdateTime)
+      .addProperty(DC.description, "TriGraM Archive model", XSDstring)
+      .addProperty(OWL.versionInfo, Version.get, XSDstring)
+      .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
+      .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
+      .addProperty(OWL.imports, CIM.IMPORT("CIM_ConcreteComponent"))
+      .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
+    def create = m
+  }
+
+  case class ArcFileModel(f: File) {
+    def addTo(m: Model) = {
+      val path = f.getAbsolutePath
+      val uri = URI.fromFile(f)
+      val size = f.length.toString
+      val modi = DateTime.get(f.lastModified)
+      val arcFile = m.createResource(uri, OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
+        .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+        .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
+      arcFile.addProperty(RDF.`type`, CIM.CLASS("CIM_ConcreteComponent"))
+        .addProperty(CIM.PROP("GroupComponent"), arcFile)
+    }
+  }
+
+  case class ArcEntryModel(e: ArchiveEntry, checksum: String) {
+    def addTo(m: Model, zip: Resource, prefix: String) = {
+      val path = e.getName
+      val uri = URI.fromString(prefix + path)
+      val size = e.getSize.toString
+      val modi = DateTime.get(e.getLastModifiedDate)
+      val cimClass = CIM.CLASS(if (e.isDirectory) "CIM_Directory" else "CIM_DataFile")
+      val entry = m.createResource(uri, OWL2.NamedIndividual)
+        .addProperty(RDF.`type`, cimClass)
+        .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
+        .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
+        .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
+      if (!e.isDirectory) {
+        entry.addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
+          .addProperty(CIM.PROP("MD5Checksum"), checksum, XSDnormalizedString)
+          .addProperty(CIM.PROP("FileName"), path, XSDnormalizedString)
+      }
+      zip.addProperty(CIM.PROP("PartComponent"), entry)
+    }
+  }
+}
+
 object ArchiveCheckers {
   import java.io.{ File, FileInputStream }
   import org.apache.commons.compress.archivers.zip.ZipFile
@@ -24,6 +78,7 @@ object ArchiveCheckers {
   import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
   import org.apache.commons.codec.digest.DigestUtils.md5Hex
   import helper.DigestUtilsAddon.md5HexChunk
+  import ArchiveModels._
 
   private def checkZip(file: File) = {
     try {
@@ -138,59 +193,10 @@ object ArchiveCheckers {
   }
 }
 
-case class ArcModel(base: String, nsPrefix: String) {
-  val m = ModelFactory.createDefaultModel
-  m.setNsPrefix(nsPrefix, base + "#")
-  m.setNsPrefix(CimSchema.key, CIM.NS)
-  m.createResource(base, OWL.Ontology)
-    .addProperty(DC.date, DateTime.get, XSDdateTime)
-    .addProperty(DC.description, "TriGraM Archive model", XSDstring)
-    .addProperty(OWL.versionInfo, Version.get, XSDstring)
-    .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
-    .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-    .addProperty(OWL.imports, CIM.IMPORT("CIM_ConcreteComponent"))
-    .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
-  def create = m
-}
-
-case class ArcFileModel(f: File) {
-  def addTo(m: Model) = {
-    val path = f.getAbsolutePath
-    val uri = URI.fromFile(f)
-    val size = f.length.toString
-    val modi = DateTime.get(f.lastModified)
-    val arcFile = m.createResource(uri, OWL2.NamedIndividual)
-      .addProperty(RDF.`type`, CIM.CLASS("CIM_DataFile"))
-      .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
-      .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
-      .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
-    arcFile.addProperty(RDF.`type`, CIM.CLASS("CIM_ConcreteComponent"))
-      .addProperty(CIM.PROP("GroupComponent"), arcFile)
-  }
-}
-
-case class ArcEntryModel(e: ArchiveEntry, checksum: String) {
-  def addTo(m: Model, zip: Resource, prefix: String) = {
-    val path = e.getName
-    val uri = URI.fromString(prefix + path)
-    val size = e.getSize.toString
-    val modi = DateTime.get(e.getLastModifiedDate)
-    val cimClass = CIM.CLASS(if (e.isDirectory) "CIM_Directory" else "CIM_DataFile")
-    val entry = m.createResource(uri, OWL2.NamedIndividual)
-      .addProperty(RDF.`type`, cimClass)
-      .addProperty(CIM.PROP("Name"), path, XSDnormalizedString)
-      .addProperty(CIM.PROP("FileSize"), size, XSDunsignedLong)
-      .addProperty(CIM.PROP("LastModified"), modi, XSDdateTime)
-    if (!e.isDirectory) {
-      entry.addProperty(RDF.`type`, CIM.CLASS("CIM_FileSpecification"))
-        .addProperty(CIM.PROP("MD5Checksum"), checksum, XSDnormalizedString)
-        .addProperty(CIM.PROP("FileName"), path, XSDnormalizedString)
-    }
-    zip.addProperty(CIM.PROP("PartComponent"), entry)
-  }
-}
-
-object Archive extends Modeler with Logging {
+object Archive extends Modeler with helper.Logging {
+  import java.io.{ File, FileOutputStream }
+  import ArchiveModels._
+  import helper.URI
 
   override val key = "arc"
 
