@@ -31,12 +31,12 @@ TriGraM:     $TGMVER
   data:      $loc
   CIM:       $CIMDATA""" + BRIEFING
 
-  private def typeInput = {
+  def typeInput = {
     println("input below, end with Ctrl+E.")
     io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
   }
 
-  private def fileInput(fileName: String) = {
+  def fileInput(fileName: String) = {
     try {
       io.Source.fromFile(fileName).mkString
     } catch {

@@ -4,7 +4,6 @@
  * @name TriGraM Project
  */
 object Trigram {
-  import scala.io.Source
   import console.{ Console, Store }
   import modeler.{ Modelers, CimVocabulary, Merger }
   import util.{ Config, Version }
@@ -46,11 +45,11 @@ usage: Trigram
       case "-i" :: modelList =>
         modelList.foreach(tdb.tdbloader.main(s"--loc=$TGMDATA", _))
       case "-q" :: queryFile :: tail => {
-        val sparql = Source.fromFile(queryFile).mkString
+        val sparql = Console.fileInput(queryFile)
         Store(TGMDATA).doQuery(sparql)
       }
       case "-u" :: updateFile :: tail => {
-        val sparql = Source.fromFile(updateFile).mkString
+        val sparql = Console.fileInput(updateFile)
         Store(TGMDATA).doUpdate(sparql)
       }
       case "-c" :: modelFiles => {
