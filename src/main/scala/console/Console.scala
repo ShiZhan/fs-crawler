@@ -33,6 +33,11 @@ TriGraM:     $TGMVER
   data:      $loc
   CIM:       $CIMDATA""" + BRIEFING
 
+  def readInput = {
+    println("input below, end with Ctrl+E.")
+    io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
+  }
+
   def run: Unit = {
     println(title)
     print(prompt)
@@ -48,8 +53,8 @@ TriGraM:     $TGMVER
         case "tdbinfo" :: Nil =>
           tdb.tdbstats.main("--loc=" + loc); null
 
-        case "query" :: Nil => handler.doQuery
-        case "update" :: Nil => handler.doUpdate
+        case "query" :: Nil => handler.doQuery(readInput)
+        case "update" :: Nil => handler.doUpdate(readInput)
 
         case "" :: Nil => null
 

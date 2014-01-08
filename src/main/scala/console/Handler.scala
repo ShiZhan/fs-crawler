@@ -8,15 +8,7 @@ package console
  * command handlers for reading and executing SPARQL in triple store
  */
 class Handler(store: Store) {
-
-  private def readSPARQL = {
-    println("input SPARQL below, end with Ctrl+E.")
-    io.Source.fromInputStream(System.in).takeWhile(_ != 5.toChar).mkString
-  }
-
-  def doQuery = {
-    val sparql = readSPARQL
-
+  def doQuery(sparql: String) = {
     try {
       val t1 = compat.Platform.currentTime
       val result = store.queryAny(sparql)
@@ -28,9 +20,7 @@ class Handler(store: Store) {
     }
   }
 
-  def doUpdate = {
-    val sparql = readSPARQL
-
+  def doUpdate(sparql: String) = {
     try {
       val t1 = compat.Platform.currentTime
       store.update(sparql)
@@ -40,5 +30,4 @@ class Handler(store: Store) {
       case e: Exception => "Exception:\n" + e.toString
     }
   }
-
 }

@@ -4,10 +4,9 @@
  * @name TriGraM Project
  */
 object Trigram {
+  import scala.io.Source
   import tdb.tdbloader.{ main => loader }
-  import tdb.tdbquery.{ main => query }
-  import tdb.tdbupdate.{ main => update }
-  import console.Console
+  import console.{ Console, Handler, Store }
   import modeler.{ Modelers, CimVocabulary, Merger }
   import util.{ Config, Version }
 
@@ -85,10 +84,14 @@ usage: Trigram
         modelList.foreach(loader(s"--loc=$tgmData", _))
       } else if (options.contains('query)) {
         val queryFile = options('query).toString
-        query(s"--loc=$tgmData", "--query=" + queryFile)
+        val sparql = Source.fromFile(queryFile).mkString
+        val output = new Handler(new Store(tgmData)).doQuery(sparql)
+        println(output)
       } else if (options.contains('update)) {
         val updateFile = options('update).toString
-        update(s"--loc=$tgmData", "--update=" + updateFile)
+        val sparql = Source.fromFile(updateFile).mkString
+        val output = new Handler(new Store(tgmData)).doUpdate(sparql)
+        println(output)
       } else if (options.contains('combine)) {
         val modelFiles = options('combine).asInstanceOf[List[String]]
         if (modelFiles.size > 1) {
