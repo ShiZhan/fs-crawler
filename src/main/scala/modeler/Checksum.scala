@@ -95,7 +95,7 @@ case class ChunkChecksumModel(file: File, chunkSize: Long) {
 object Checksum extends Modeler with Logging {
   override val key = "chk"
 
-  override val usage = "<source> <output> [<chunk size: Bytes>] => [checksum triples]"
+  override val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"
 
   def run(options: Array[String]) = {
     options.toList match {

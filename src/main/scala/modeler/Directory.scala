@@ -129,7 +129,7 @@ object Directory extends Modeler with Logging {
 
   override val key = "dir"
 
-  override val usage = "<directory> <output> [<--text>] => [triples]"
+  override val usage = "<directory> <output.owl> [<--text>] => [output.owl]"
 
   def listAllFiles(f: File): Array[File] = {
     val list = f.listFiles

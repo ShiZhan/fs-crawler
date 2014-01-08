@@ -194,8 +194,8 @@ object Archive extends Modeler with Logging {
 
   override val key = "arc"
 
-  override val usage = "<source> <output> => [triples]," +
-    "\n\t\tnow support [zip, tar.gz, tar.bz2, 7z]."
+  override val usage = "<source> <output.owl> => [output.owl],\n" +
+    "\t\tnow support [zip, tar.gz, tar.bz2, 7z]."
 
   def run(options: Array[String]) = {
     options.toList match {
