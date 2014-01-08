@@ -11,8 +11,8 @@ package util
 object Version {
   def get =
     try {
-      val masterHashFile = getClass.getResourceAsStream("master")
-      io.Source.fromInputStream(masterHashFile).mkString
+      val masterHashFile = getClass.getClassLoader.getResourceAsStream("master")
+      io.Source.fromInputStream(masterHashFile).mkString.trim
     } catch {
       case e: Exception => "version 0.1 beta (source repo not available)"
     }
