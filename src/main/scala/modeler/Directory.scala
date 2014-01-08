@@ -136,6 +136,7 @@ object Directory extends Modeler with helper.Logging {
   import com.hp.hpl.jena.rdf.model.ModelFactory
   import DirectoryModels._
   import helper.URI
+  import helper.FileEx.FileOps
   import helper.Strings._
 
   override val key = "dir"
@@ -155,7 +156,7 @@ object Directory extends Modeler with helper.Logging {
 
     logger.info("reading directory ...")
 
-    val files = listAllFiles(f).zipWithIndex
+    val files = f.flatten.zipWithIndex
     val total = files.size
     val delta = if (total < 100) 1 else total / 100
 
@@ -181,7 +182,7 @@ object Directory extends Modeler with helper.Logging {
 
     logger.info("reading directory ...")
 
-    val files = listAllFiles(f).zipWithIndex
+    val files = f.flatten.zipWithIndex
     val total = files.size
     val delta = if (total < 100) 1 else total / 100
 
