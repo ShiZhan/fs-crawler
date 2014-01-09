@@ -73,67 +73,37 @@ object Checksum extends Modeler with helper.Logging {
   import helper.URI
 
   override val key = "chk"
-
   override val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"
-
   def run(options: Array[String]) = {
     options.toList match {
       case fileName :: output :: Nil => {
-        val source = new File(fileName)
-        if (!source.exists) logger.error("input source does not exist")
-        else if (source.isFile)
-          translateFile(source, output)
-        else
-          translateDir(source, output)
+        val source = new File(fileName).flatten
+        translate(source, output)
       }
       case fileName :: output :: chunkSizeStr :: Nil => {
-        val source = new File(fileName)
         val chunkSize = chunkSizeStr.toLong
-        if (!source.exists) logger.error("input source does not exist")
-        else if (source.isFile)
-          translateFile(source, output, chunkSize)
-        else
-          translateDir(source, output, chunkSize)
+        val source = new File(fileName).flatten
+        translate(source, output, chunkSize)
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
   }
 
-  private def translateFile(file: File, output: String) = {
-    logger.info("Model source [{}]", file.getAbsolutePath)
+  private def translate(files: Array[File], output: String) = {
+    logger.info("Modeling")
 
     val m = ModelFactory.createOntologyModel.set(URI.fromHost, key)
-    file addTo m
+    files.foreach { f => if (f.isFile) f addTo m }
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)
   }
 
-  private def translateFile(file: File, output: String, chunkSize: Long) = {
-    logger.info("Model source [{}]", file.getAbsolutePath)
+  private def translate(files: Array[File], output: String, chunkSize: Long) = {
+    logger.info("Modeling")
 
     val m = ModelFactory.createOntologyModel.set(URI.fromHost, key)
-    ChunkChecksumModel(file, chunkSize) addTo m
-    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-
-    logger.info("[{}] triples generated in [{}]", m.size, output)
-  }
-
-  private def translateDir(dir: File, output: String) = {
-    logger.info("Model source [{}]", dir.getAbsolutePath)
-
-    val m = ModelFactory.createOntologyModel.set(URI.fromHost, key)
-    dir.flatten.filter(_.isFile).foreach(_ addTo m)
-    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-
-    logger.info("[{}] triples generated in [{}]", m.size, output)
-  }
-
-  private def translateDir(dir: File, output: String, chunkSize: Long) = {
-    logger.info("Model source [{}]", dir.getAbsolutePath)
-
-    val m = ModelFactory.createOntologyModel.set(URI.fromHost, key)
-    dir.flatten.filter(_.isFile).foreach(ChunkChecksumModel(_, chunkSize) addTo m)
+    files.foreach { f => if (f.isFile) ChunkChecksumModel(f, chunkSize) addTo m }
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
 
     logger.info("[{}] triples generated in [{}]", m.size, output)

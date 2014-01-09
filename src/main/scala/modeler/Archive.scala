@@ -6,7 +6,6 @@ package modeler
 /**
  * @author ShiZhan
  * translate archive file contents into semantic model
- * can be used with Directory modeler to reveal the detail of a file system
  */
 object ArchiveModels {
   import java.io.File
@@ -185,9 +184,9 @@ object ArchiveCheckers {
     "7z" -> check7Zip)
   private def defaultChecker(f: File) = Iterator[ArcEntryModel]()
   private val exts = arcCheckers map { case (k, c) => k } toSet
-  def extKnown(file: File) = exts contains file.getName.split('.').last
+  def isKnownArchive(file: File) =
+    (exts contains file.getName.split('.').last) & file.isFile
   def checkArc(file: File) = {
-    assert(file.isFile)
     val fileNameExtension = file.getName.split('.').last
     arcCheckers.getOrElse(fileNameExtension, defaultChecker _)(file)
   }
@@ -197,64 +196,33 @@ object Archive extends Modeler with helper.Logging {
   import java.io.{ File, FileOutputStream }
   import ArchiveModels._
   import helper.URI
+  import helper.FileEx.FileOps
 
   override val key = "arc"
-
-  override val usage = "<source> <output.owl> => [output.owl],\n" +
-    "\t\tnow support [zip, tar.gz, tar.bz2, 7z]."
+  override val usage =
+    "<source> <output.owl> => [output.owl], now support [zip, gzip, bzip, 7z]."
 
   def run(options: Array[String]) = {
     options.toList match {
       case fileName :: output :: Nil => {
-        val f = new File(fileName)
-        if (!f.exists)
-          logger.error("input source does not exist")
-        else if (f.isFile)
-          translate(f, output)
-        else if (f.isDirectory)
-          translateAll(f, output)
-        else
-          logger.error("input source is neither file nor directory")
+        val file = new File(fileName)
+        translate(file, output)
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
   }
 
-  private def translate(f: File, output: String) = {
-    val arcPath = f.getAbsolutePath
-    logger.info("Model archive file [{}]", arcPath)
-
-    val m = ArcModel(URI.fromHost, key).create
-    val arcFile = ArcFileModel(f).addTo(m)
-    ArchiveCheckers.checkArc(f) foreach { _.addTo(m, arcFile, arcPath + '/') }
-
-    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-
-    logger.info("[{}] triples generated in [{}]", m.size, output)
-  }
-
-  private def listAllFiles(dir: File): Array[File] = {
-    assert(dir.isDirectory)
-
-    val list = dir.listFiles
-    list ++ list.filter(_.isDirectory).flatMap(listAllFiles)
-  }
-
-  private def translateAll(d: File, output: String) = {
-    val arcPath = d.getAbsolutePath
+  private def translate(file: File, output: String) = {
+    val arcPath = file.getAbsolutePath
     logger.info("Model all supported archive file in [{}]", arcPath)
-
     val m = ArcModel(URI.fromHost, key).create
-    listAllFiles(d).foreach { f =>
-      if (f.isFile & ArchiveCheckers.extKnown(f)) {
-        val knownArcFile = ArcFileModel(f).addTo(m)
-        ArchiveCheckers.checkArc(f) foreach { _.addTo(m, knownArcFile, arcPath + '/') }
+    file.flatten.foreach { f =>
+      if (ArchiveCheckers.isKnownArchive(f)) {
+        val knownArchive = ArcFileModel(f).addTo(m)
+        ArchiveCheckers.checkArc(f) foreach { _.addTo(m, knownArchive, arcPath + '/') }
       }
     }
-
     m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-
     logger.info("[{}] triples generated in [{}]", m.size, output)
   }
-
 }
