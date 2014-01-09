@@ -10,6 +10,7 @@ package helper
 object FileEx {
   import java.io.{ File, FileInputStream, BufferedInputStream }
   import org.apache.commons.codec.digest.DigestUtils.md5Hex
+  import DigestUtilsAddon.md5HexChunk
 
   private def listAllFiles(file: File): Array[File] = {
     val list = file.listFiles
@@ -34,6 +35,26 @@ object FileEx {
         md5
       } catch {
         case e: Exception => ""
+      }
+
+    def checksum(chunkSize: Long) =
+      try {
+        val fileSize = file.length
+        if (fileSize > chunkSize) {
+          val lastChunkIndex = (fileSize / chunkSize).toInt
+          val lastChunkSize = fileSize % chunkSize
+          val fileInputStream = new BufferedInputStream(new FileInputStream(file))
+          val md5Array = (0 to lastChunkIndex).map { i =>
+            val size = if (i == lastChunkIndex) lastChunkSize else chunkSize
+            val md5 = md5HexChunk(fileInputStream, chunkSize)
+            (i, size, md5)
+          }.toArray
+          fileInputStream.close
+          md5Array
+        } else
+          Array[(Int, Long, String)]()
+      } catch {
+        case e: Exception => Array[(Int, Long, String)]()
       }
   }
 }
