@@ -8,7 +8,7 @@ package helper
  * Additional File methods
  */
 object FileEx {
-  import java.io.{ File, FileInputStream, BufferedInputStream }
+  import java.io._
   import org.apache.commons.codec.digest.DigestUtils.md5Hex
   import DigestUtilsAddon.md5HexChunk
 
@@ -56,5 +56,15 @@ object FileEx {
       } catch {
         case e: Exception => Array[(Int, Long, String)]()
       }
+
+    def getWriter(coding: String) =
+      new BufferedWriter(
+        new OutputStreamWriter(
+          new FileOutputStream(file), coding))
+
+    def getReader(coding: String) =
+      new BufferedReader(
+        new InputStreamReader(
+          new FileInputStream(file), coding))
   }
 }

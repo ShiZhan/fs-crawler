@@ -10,7 +10,7 @@ package helper
  * 2. StringWriter: write string to text file by buffered writer
  */
 object Strings {
-  import java.io.{ BufferedWriter, File, FileOutputStream, OutputStreamWriter, PrintWriter }
+  import java.io.{ File, PrintWriter }
 
   def fromFile(fileName: String) = {
     val buf = io.Source.fromFile(new File(fileName))
@@ -25,17 +25,5 @@ object Strings {
       lines.foreach(p.println)
       p.close
     }
-  }
-
-  implicit class GetWriter(fileName: String) {
-    def getWriter(coding: String) =
-      new BufferedWriter(
-        new OutputStreamWriter(
-          new FileOutputStream(
-            new File(fileName)), coding))
-  }
-
-  implicit class StringWriter(s: String) {
-    def writeTo(writer: BufferedWriter) = writer.write(s)
   }
 }

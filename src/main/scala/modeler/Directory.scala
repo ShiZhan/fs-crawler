@@ -137,7 +137,6 @@ object Directory extends Modeler with helper.Logging {
   import DirectoryModels._
   import helper.URI
   import helper.FileEx.FileOps
-  import helper.Strings._
 
   override val key = "dir"
 
@@ -177,24 +176,24 @@ object Directory extends Modeler with helper.Logging {
     logger.info("creating model ...")
 
     val model = DirectoryTreeModel(URI.fromHost, key)
-    val modelFile = output getWriter "UTF-8"
-    (model.header + f.toOWL) writeTo modelFile
+    val modelFile = new File(output) getWriter "UTF-8"
+    modelFile write (model.header + f.toOWL)
 
     logger.info("reading directory ...")
 
     val files = f.flatten.zipWithIndex
-    val total = files.size
+    val total = files.length
     val delta = if (total < 100) 1 else total / 100
 
     logger.info("[{}] files found", total)
 
     for ((file, i) <- files) {
-      file.toOWL writeTo modelFile
+      modelFile write file.toOWL
       if (i % delta == 0) print("translating [%2d%%]\r".format(i * 100 / total))
     }
     println("translating [100%]")
 
-    model.footer writeTo modelFile
+    modelFile write model.footer
     modelFile.close
 
     logger.info("[{}] individuals generated in [{}]", total, output)
