@@ -3,7 +3,6 @@ PREFIX cim: <https://sites.google.com/site/ontology2013/cim/>
 SELECT ?dirname
   WHERE {
     ?dir cim:Name ?dirname.
-    ?dir rdf:type cim:CIM_Directory.
     ?dcf cim:GroupComponent ?dir.
     FILTER NOT EXISTS {?dcf cim:PartComponent ?somefile}
   }
