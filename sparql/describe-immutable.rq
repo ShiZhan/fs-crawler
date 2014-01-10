@@ -1,5 +1,0 @@
-# bring me the definition of "immutable"
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX imm: <http://www.semanticweb.org/ontologies/2013/immutable#>
-DESCRIBE ?x
-WHERE { imm:immutable owl:equivalentClass ?x }
