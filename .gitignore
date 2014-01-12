@@ -33,4 +33,7 @@ project/plugins/project/
 
 # eclipse
 .cache
+.classpath
+utility/.classpath
+utility/.project
 
