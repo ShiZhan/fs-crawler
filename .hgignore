@@ -3,6 +3,8 @@ syntax: glob
 *.log
 *.jar
 
+src/main/resources/master
+
 data/*
 !data/_tdb_
 
@@ -23,4 +25,5 @@ project/plugins/project/
 .scala_dependencies
 
 .cache
-
+.classpath
+.project

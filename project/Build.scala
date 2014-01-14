@@ -26,11 +26,4 @@ object MyBuild extends Build {
       copyDepTask
     )
   )
-
-  lazy val utility = Project(
-    id = "utility",
-    base = file("utility"),
-    settings = Defaults.defaultSettings ++
-    sbtassembly.Plugin.assemblySettings
-  )
 }
