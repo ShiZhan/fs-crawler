@@ -17,6 +17,7 @@ object ModelEx {
   import java.io.{ File, FileOutputStream }
   import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
   import com.hp.hpl.jena.util.FileManager
+  import FileEx.FileOps
 
   def load(fileName: String) = {
     val m = ModelFactory.createDefaultModel
@@ -48,28 +49,28 @@ object ModelEx {
 
   implicit class ModelOps(m: Model) extends Logging {
     def store(fileName: String) = {
-      val fos = new FileOutputStream(new File(fileName))
+      val fos = new File(fileName).getWriter("UTF-8")
       m.write(fos, "RDF/XML-ABBREV")
       fos.close
       logger.info("[{}] triples written to [{}]", m.size, fileName)
     }
 
     def store(file: File) = {
-      val fos = new FileOutputStream(file)
+      val fos = file.getWriter("UTF-8")
       m.write(fos, "RDF/XML-ABBREV")
       fos.close
       logger.info("[{}] triples written to [{}]", m.size, file.getAbsolutePath)
     }
 
     def store(fileName: String, format: String) = {
-      val fos = new FileOutputStream(new File(fileName))
+      val fos = new File(fileName).getWriter("UTF-8")
       m.write(fos, format)
       fos.close
       logger.info("[{}] triples written to [{}]", m.size, fileName)
     }
 
     def store(file: File, format: String) = {
-      val fos = new FileOutputStream(file)
+      val fos = file.getWriter("UTF-8")
       m.write(fos, format)
       fos.close
       logger.info("[{}] triples written to [{}]", m.size, file.getAbsolutePath)
