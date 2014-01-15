@@ -4,11 +4,10 @@
  * @name TriGraM Project
  */
 object Trigram {
-  import console.{ Console, Store, TDBCLI }
+  import kernel.{ Console, Engine }
   import modeler.{ Modelers, Merger }
   import cim.Schema
-  import helper.Version
-  import helper.Config.TGMDATA
+  import helper.{ GetString, Version }
 
   val usage = """
 usage: Trigram
@@ -18,8 +17,8 @@ usage: Trigram
 
  database:
  -i MODEL       import model
- -q SPARQL      http://www.w3.org/TR/sparql11-query/
- -u SPARQL      http://www.w3.org/TR/sparql11-update/
+ -q [SPARQL]    http://www.w3.org/TR/sparql11-query/
+ -u [SPARQL]    http://www.w3.org/TR/sparql11-update/
 
  model operations:
  -c <MODEL...>         Combine multiple models.
@@ -42,15 +41,11 @@ usage: Trigram
       case Nil => Console.run
       case "-h" :: tail => println(usage)
       case "-v" :: tail => println(Version.get)
-      case "-i" :: modelList => modelList.foreach(TDBCLI.loader)
-      case "-q" :: queryFile :: tail => {
-        val sparql = Console.fileInput(queryFile)
-        Store(TGMDATA).doQuery(sparql)
-      }
-      case "-u" :: updateFile :: tail => {
-        val sparql = Console.fileInput(updateFile)
-        Store(TGMDATA).doUpdate(sparql)
-      }
+      case "-i" :: modelList => modelList.foreach(Engine.tdbloader)
+      case "-q" :: queryFile :: tail => Engine.doQuery(GetString.fromFile(queryFile))
+      case "-u" :: updateFile :: tail => Engine.doUpdate(GetString.fromFile(updateFile))
+      case "-q" :: tail => Engine.doQuery(GetString.fromConsole)
+      case "-u" :: tail => Engine.doUpdate(GetString.fromConsole)
       case "-c" :: modelFiles =>
         if (modelFiles.size > 1) {
           Merger.combine(modelFiles)
@@ -60,7 +55,8 @@ usage: Trigram
         Schema.fromXML(cimXML).toModelGroup
         println("CIM Schema & Vocabulary updated.")
       }
-      case "-s1" :: cimXML :: tail => Schema.fromXML(cimXML).toModel
+      case "-s1" :: cimXML :: tail =>
+        Schema.fromXML(cimXML).toModel
       case "-g" :: baseModel :: tail => {
         Merger.gather(baseModel)
         println("All imported CIM classes of [%s] gathered.".format(baseModel))

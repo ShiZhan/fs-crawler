@@ -1,7 +1,7 @@
 /**
  * Apache Jena TDB wrapper class
  */
-package console
+package kernel
 
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.tdb.TDBFactory
@@ -24,7 +24,7 @@ import com.hp.hpl.jena.update.{
  * SPARQL QUERY and UPDATE operations
  * wrapper of Apache Jena TDB, each instance stands for a TDB assembly
  */
-case class Store(val location: String) {
+class TDBAPI(location: String) {
   private val store = TDBFactory.createDataset(location)
 
   def close = store.close()
@@ -90,33 +90,6 @@ case class Store(val location: String) {
       store.commit
     } finally {
       store.end
-    }
-  }
-
-  /**
-   * @author ShiZhan
-   * additional handlers for executing SPARQL in triple store
-   */
-  def doQuery(sparql: String) = {
-    try {
-      val t1 = compat.Platform.currentTime
-      val result = queryAny(sparql)
-      val t2 = compat.Platform.currentTime
-      println(result)
-      println("Query executed in %d milliseconds".format(t2 - t1))
-    } catch {
-      case e: Exception => e.printStackTrace
-    }
-  }
-
-  def doUpdate(sparql: String) = {
-    try {
-      val t1 = compat.Platform.currentTime
-      update(sparql)
-      val t2 = compat.Platform.currentTime
-      println("Update Executed in %d milliseconds".format(t2 - t1))
-    } catch {
-      case e: Exception => e.printStackTrace
     }
   }
 }
