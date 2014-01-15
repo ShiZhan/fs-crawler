@@ -14,12 +14,12 @@ object ArchiveModels {
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
   import helper.ArchiveCheckers.ArcEntryChecksum
   import helper.{ Logging, Version, DateTime, URI }
-  import modeler.{ CimVocabulary => CIM }
+  import cim.{ Vocabulary => CIM }
 
   case class ArcModel(base: String, nsPrefix: String) {
     val m = ModelFactory.createDefaultModel
     m.setNsPrefix(nsPrefix, base + "#")
-    m.setNsPrefix(CimSchema.key, CIM.NS)
+    m.setNsPrefix(CIM.NS_PREFIX, CIM.NS)
     m.createResource(base, OWL.Ontology)
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM Archive model", XSDstring)

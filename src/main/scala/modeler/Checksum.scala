@@ -13,7 +13,7 @@ object ChecksumModels {
   import com.hp.hpl.jena.ontology.OntModel
   import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-  import modeler.{ CimVocabulary => CIM }
+  import cim.{ Vocabulary => CIM }
   import helper.{ DateTime, URI, Version }
   import helper.FileEx.FileOps
 
@@ -32,7 +32,7 @@ object ChecksumModels {
     def set(base: String, nsPrefix: String) = {
       val ns = base + "CHK#"
       model.setNsPrefix(nsPrefix, ns)
-      model.setNsPrefix(CimSchema.key, CIM.NS)
+      model.setNsPrefix(CIM.NS_PREFIX, CIM.NS)
       model.createOntology(base)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM checksum model", XSDstring)

@@ -15,14 +15,14 @@ object DirectoryModels {
   import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
   import helper.{ Logging, Version, DateTime, URI }
-  import modeler.{ CimVocabulary => CIM }
+  import cim.{ Vocabulary => CIM }
 
   case class DirectoryTreeModel(base: String, prefix: String) {
     val modelName = "TriGraM Directory model"
     val dateTime = DateTime.get
     val version = Version.get
     val cimNs = CIM.NS
-    val cimPrefix = CimSchema.key
+    val cimPrefix = CIM.NS_PREFIX
     val imports = Seq("CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
 
     def create(m: Model) = {

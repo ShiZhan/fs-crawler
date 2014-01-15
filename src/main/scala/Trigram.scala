@@ -1,11 +1,12 @@
 /**
  * @author ShiZhan
- * @year 2013
+ * @year 2012~2014
  * @name TriGraM Project
  */
 object Trigram {
   import console.{ Console, Store, TDBWrapper }
-  import modeler.{ Modelers, CimVocabulary, Merger }
+  import modeler.{ Modelers, Merger }
+  import cim.Schema
   import helper.Version
   import helper.Config.TGMDATA
 
@@ -20,11 +21,10 @@ usage: Trigram
  -q SPARQL      http://www.w3.org/TR/sparql11-query/
  -u SPARQL      http://www.w3.org/TR/sparql11-update/
 
- model cookers:
+ model operations:
  -c <MODEL...>         Combine multiple models.
- -V CIM_Schema_XML     Update CIM vocabulary for use in modelers
-                       [CIM Schema XML] can be downloaded from DMTF:
-                       http://dmtf.org/standards/cim
+ -s CIM_Schema_XML     Update CIM schema as TBox for modelers
+                       [CIM Schema XML]: http://dmtf.org/standards/cim
  -g MODEL              Gather CIM imports into given model
                        Based on the <OWL.imports> in [MODEL].
 
@@ -32,12 +32,10 @@ usage: Trigram
  -m MODELER <args...>  Use [modeler] with arguments:
 
 """ + Modelers.help
-
   val incorrectArgs = "Incorrect parameters, see help (trigram -h)."
 
   def main(args: Array[String]) = {
     println("Triple Graph based Metadata storage - TriGraM")
-
     args.toList match {
       case Nil => Console.run
       case "-h" :: tail => println(usage)
@@ -57,9 +55,11 @@ usage: Trigram
           println("[%d] models combined.".format(modelFiles.size))
         } else println("There's only one model out there.")
       }
-      case "-V" :: cimSchema :: tail => {
-        CimVocabulary.generator(cimSchema)
-        println("CIM Vocabulary updated.")
+      case "-s" :: cimXML :: tail => {
+        val cimxml = Schema.fromXML(cimXML)
+        cimxml.saveVocabulary
+        cimxml.toModelGroup
+        println("CIM Schema & Vocabulary updated.")
       }
       case "-g" :: baseModel :: tail => {
         Merger.gather(baseModel)

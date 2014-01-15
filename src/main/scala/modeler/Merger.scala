@@ -6,8 +6,8 @@ package modeler
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.vocabulary.OWL
 import com.hp.hpl.jena.rdf.model.Model
-import CimVocabulary.{ isCimURI, PURL2FN }
-import modeler.ModelManager._
+import cim.Vocabulary.{ isCimURI, PURL2FN }
+import helper.ModelEx._
 import helper.Logging
 
 /**
@@ -48,7 +48,7 @@ object Merger extends Logging {
     clearCimImports(gatheredModel)
 
     val gatheredFile = modelFile + "-gathered.owl"
-    gatheredModel.write(gatheredFile)
+    gatheredModel.store(gatheredFile)
 
     logger.info("wrote [{}] triples to [{}]", gatheredModel.size, gatheredFile)
   }
@@ -59,7 +59,7 @@ object Merger extends Logging {
     val imports = models flatMap { _.listStatements(null, OWL.imports, null) }
     imports.foreach { combinedModel.add(_) }
     val combinedFile = modelFiles.head + "-combined.owl"
-    combinedModel.write(combinedFile)
+    combinedModel.store(combinedFile)
 
     logger.info("wrote [{}] triples to [{}]", combinedModel.size, combinedFile)
   }

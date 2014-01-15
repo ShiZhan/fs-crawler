@@ -23,8 +23,6 @@ trait Modeler {
  */
 object Modelers {
   private val ms = Seq(
-    CimSchema,
-    CimSchemaEx,
     Directory,
     Archive,
     Checksum)
