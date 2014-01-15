@@ -3,19 +3,17 @@
  */
 package modeler
 
-import scala.collection.JavaConversions._
-import com.hp.hpl.jena.vocabulary.OWL
-import com.hp.hpl.jena.rdf.model.Model
-import cim.Vocabulary.{ isCimURI, PURL2FN }
-import helper.ModelEx._
-import helper.Logging
-
 /**
  * @author ShiZhan
  * CIM Model Merger
  * collect CimSchemaEx sub-models dependency from owl:import chain
  */
-object Merger extends Logging {
+object Merger extends helper.Logging {
+  import scala.collection.JavaConversions._
+  import com.hp.hpl.jena.vocabulary.OWL
+  import com.hp.hpl.jena.rdf.model.Model
+  import cim.Vocabulary.{ isCimURI, PURL2FN }
+  import helper.ModelEx._
 
   private def readCimImports(modelFile: String): List[String] = {
     val m = load(modelFile)
@@ -49,8 +47,6 @@ object Merger extends Logging {
 
     val gatheredFile = modelFile + "-gathered.owl"
     gatheredModel.store(gatheredFile)
-
-    logger.info("wrote [{}] triples to [{}]", gatheredModel.size, gatheredFile)
   }
 
   def combine(modelFiles: List[String]) {
@@ -60,8 +56,5 @@ object Merger extends Logging {
     imports.foreach { combinedModel.add(_) }
     val combinedFile = modelFiles.head + "-combined.owl"
     combinedModel.store(combinedFile)
-
-    logger.info("wrote [{}] triples to [{}]", combinedModel.size, combinedFile)
   }
-
 }
