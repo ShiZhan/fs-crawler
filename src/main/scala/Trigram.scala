@@ -10,8 +10,7 @@ object Trigram {
   import helper.Version
   import helper.Config.TGMDATA
 
-  val usage = """
-usage: Trigram
+  val usage = """usage: Trigram
  -h             print this message
  -v             show program version
  <no argument>  enter console
@@ -36,6 +35,7 @@ usage: Trigram
 
   def main(args: Array[String]) = {
     println("Triple Graph based Metadata storage - TriGraM")
+
     args.toList match {
       case Nil => Console.run
       case "-h" :: tail => println(usage)
@@ -49,18 +49,18 @@ usage: Trigram
         val sparql = Console.fileInput(updateFile)
         Store(TGMDATA).doUpdate(sparql)
       }
-      case "-c" :: modelFiles => {
+      case "-c" :: modelFiles =>
         if (modelFiles.size > 1) {
           Merger.combine(modelFiles)
           println("[%d] models combined.".format(modelFiles.size))
         } else println("There's only one model out there.")
-      }
       case "-s" :: cimXML :: tail => {
         val cimxml = Schema.fromXML(cimXML)
         cimxml.saveVocabulary
         cimxml.toModelGroup
         println("CIM Schema & Vocabulary updated.")
       }
+      case "-s1" :: cimXML :: tail => Schema.fromXML(cimXML).toModel
       case "-g" :: baseModel :: tail => {
         Merger.gather(baseModel)
         println("All imported CIM classes of [%s] gathered.".format(baseModel))
