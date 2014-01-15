@@ -19,7 +19,7 @@ object Schema extends helper.Logging {
   import com.hp.hpl.jena.vocabulary.XSD
 
   import helper.ModelEx.ModelOps
-  import helper.Strings.Strings
+  import helper.StringSeqEx.StringSeqOps
   import helper.{ Config, DateTime, Version }
   import cim.{ Vocabulary => CIM }
 

@@ -9,7 +9,7 @@ package helper
  * 1. fromFile, toFile: read/write all lines to/from List from/to text file
  * 2. StringWriter: write string to text file by buffered writer
  */
-object Strings {
+object StringSeqEx {
   import java.io.{ File, PrintWriter }
 
   def fromFile(fileName: String) = {
@@ -19,7 +19,7 @@ object Strings {
     lines
   }
 
-  implicit class Strings[T](lines: Seq[T]) {
+  implicit class StringSeqOps[T](lines: Seq[T]) {
     def toFile(fileName: String) = {
       val p = new PrintWriter(new File(fileName))
       lines.foreach(p.println)
