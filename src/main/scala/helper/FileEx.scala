@@ -57,14 +57,16 @@ object FileEx {
         case e: Exception => Array[(Int, Long, String)]()
       }
 
+    def getWriter =
+      new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
+
+    def getReader =
+      new BufferedReader(new InputStreamReader(new FileInputStream(file)))
+
     def getWriter(coding: String) =
-      new BufferedWriter(
-        new OutputStreamWriter(
-          new FileOutputStream(file), coding))
+      new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), coding))
 
     def getReader(coding: String) =
-      new BufferedReader(
-        new InputStreamReader(
-          new FileInputStream(file), coding))
+      new BufferedReader(new InputStreamReader(new FileInputStream(file), coding))
   }
 }
