@@ -92,35 +92,31 @@ case class Store(val location: String) {
       store.end
     }
   }
-}
 
-object Store {
   /**
    * @author ShiZhan
    * additional handlers for executing SPARQL in triple store
    */
-  implicit class StoreExt(store: Store) {
-    def doQuery(sparql: String) = {
-      try {
-        val t1 = compat.Platform.currentTime
-        val result = store.queryAny(sparql)
-        val t2 = compat.Platform.currentTime
-        println(result)
-        println("Query executed in %d milliseconds".format(t2 - t1))
-      } catch {
-        case e: Exception => e.printStackTrace
-      }
+  def doQuery(sparql: String) = {
+    try {
+      val t1 = compat.Platform.currentTime
+      val result = queryAny(sparql)
+      val t2 = compat.Platform.currentTime
+      println(result)
+      println("Query executed in %d milliseconds".format(t2 - t1))
+    } catch {
+      case e: Exception => e.printStackTrace
     }
+  }
 
-    def doUpdate(sparql: String) = {
-      try {
-        val t1 = compat.Platform.currentTime
-        store.update(sparql)
-        val t2 = compat.Platform.currentTime
-        println("Update Executed in %d milliseconds".format(t2 - t1))
-      } catch {
-        case e: Exception => e.printStackTrace
-      }
+  def doUpdate(sparql: String) = {
+    try {
+      val t1 = compat.Platform.currentTime
+      update(sparql)
+      val t2 = compat.Platform.currentTime
+      println("Update Executed in %d milliseconds".format(t2 - t1))
+    } catch {
+      case e: Exception => e.printStackTrace
     }
   }
 }

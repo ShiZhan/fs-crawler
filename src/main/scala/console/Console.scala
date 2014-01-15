@@ -10,9 +10,7 @@ package console
  */
 object Console {
   import helper.Config.{ TGMROOT, TGMDATA, CIMDATA }
-  import helper.DateTime
-  import helper.Platform.BRIEFING
-  import helper.Version
+  import helper.{ DateTime, Platform, Version }
 
   private val store = Store(TGMDATA)
 
@@ -30,7 +28,7 @@ object Console {
 TriGraM:     $TGMVER
   code:      $TGMROOT
   data:      $TGMDATA
-  CIM:       $CIMDATA""" + BRIEFING
+  CIM:       $CIMDATA""" + Platform.BRIEFING
 
   def typeInput = {
     println("input below, end with Ctrl+E.")
@@ -55,10 +53,10 @@ TriGraM:     $TGMVER
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
         case "time" :: Nil => println(DateTime.get)
-        case "tdbinfo" :: Nil => TDBWrapper.info
-        case "tdbloader" :: modelFile :: Nil => TDBWrapper.loader(modelFile)
-        case "tdbquery" :: sparqlFile :: Nil => TDBWrapper.query(sparqlFile)
-        case "tdbupdate" :: sparqlFile :: Nil => TDBWrapper.update(sparqlFile)
+        case "tdbinfo" :: Nil => TDBCLI.info
+        case "tdbloader" :: modelFile :: Nil => TDBCLI.loader(modelFile)
+        case "tdbquery" :: sparqlFile :: Nil => TDBCLI.query(sparqlFile)
+        case "tdbupdate" :: sparqlFile :: Nil => TDBCLI.update(sparqlFile)
         case "query" :: Nil => store.doQuery(typeInput)
         case "update" :: Nil => store.doUpdate(typeInput)
         case "query" :: sparqlFile :: Nil => store.doQuery(fileInput(sparqlFile))

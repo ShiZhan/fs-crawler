@@ -8,7 +8,7 @@ package helper
  * configuration information
  * TGMROOT: TriGraM program root
  * TGMDATA: TriGraM program data
- * CIMDATA: CIM Schema Vocabulary and Model
+ * CIMDATA: CIM Schema Vocabulary and Models
  *
  * NOTE:
  * if above variables are not defined/exported, current directory will be used.

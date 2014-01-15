@@ -11,7 +11,7 @@ package console
  * through generic console scripts.
  * Wrap these programs into "try ... catch" for encapsulation.
  */
-object TDBWrapper {
+object TDBCLI {
   import helper.Config.TGMDATA
 
   def loader(modelFile: String) =
