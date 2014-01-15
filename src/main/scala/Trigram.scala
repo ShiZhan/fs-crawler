@@ -10,7 +10,8 @@ object Trigram {
   import helper.Version
   import helper.Config.TGMDATA
 
-  val usage = """usage: Trigram
+  val usage = """
+usage: Trigram
  -h             print this message
  -v             show program version
  <no argument>  enter console
@@ -31,6 +32,7 @@ object Trigram {
  -m MODELER <args...>  Use [modeler] with arguments:
 
 """ + Modelers.help
+
   val incorrectArgs = "Incorrect parameters, see help (trigram -h)."
 
   def main(args: Array[String]) = {
@@ -55,9 +57,7 @@ object Trigram {
           println("[%d] models combined.".format(modelFiles.size))
         } else println("There's only one model out there.")
       case "-s" :: cimXML :: tail => {
-        val cimxml = Schema.fromXML(cimXML)
-        cimxml.saveVocabulary
-        cimxml.toModelGroup
+        Schema.fromXML(cimXML).toModelGroup
         println("CIM Schema & Vocabulary updated.")
       }
       case "-s1" :: cimXML :: tail => Schema.fromXML(cimXML).toModel

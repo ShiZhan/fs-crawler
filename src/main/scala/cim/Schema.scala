@@ -13,7 +13,7 @@ package cim
 object Schema extends helper.Logging {
   import java.io.{ File, FileOutputStream }
   import scala.xml.{ XML, Node, NodeSeq }
-  import com.hp.hpl.jena.rdf.model.{ ModelFactory, Resource }
+  import com.hp.hpl.jena.rdf.model.{ Model, ModelFactory, Resource }
   import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
   import com.hp.hpl.jena.vocabulary.XSD
@@ -61,18 +61,7 @@ permissions and limitations under the License.
     val cVersion = readValue(cQualifier, "@NAME", "Version")
     val cImport = if (cSuperName.isEmpty) CIM.BASE else CIM.IMPORT(cSuperName)
 
-    def saveAsModel = {
-      // create & initialize the model
-      val m = ModelFactory.createDefaultModel
-
-      m.setNsPrefix(CIM.NS_PREFIX, CIM.NS)
-      m.createResource(CIM.PURL(cName), OWL.Ontology)
-        .addProperty(DC.date, DateTime.get, XSDdateTime)
-        .addProperty(DC.description, s"TriGraM model of $cName", XSDstring)
-        .addProperty(DT.license, license, XSDstring)
-        .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, cImport)
-
+    def >>(m: Model) = {
       val cClass = m.createResource(CIM.URI(cName), OWL.Class)
       val cSuperRes =
         if (cSuperName.isEmpty)
@@ -131,6 +120,21 @@ permissions and limitations under the License.
           .addProperty(OWL2.annotatedSource, cClass)
           .addProperty(OWL2.annotatedTarget, r)
       }
+    }
+
+    def saveAsModel = {
+      // create & initialize the model
+      val m = ModelFactory.createDefaultModel
+
+      m.setNsPrefix(CIM.NS_PREFIX, CIM.NS)
+      m.createResource(CIM.PURL(cName), OWL.Ontology)
+        .addProperty(DC.date, DateTime.get, XSDdateTime)
+        .addProperty(DC.description, s"TriGraM model of $cName", XSDstring)
+        .addProperty(DT.license, license, XSDstring)
+        .addProperty(OWL.versionInfo, Version.get, XSDstring)
+        .addProperty(OWL.imports, cImport)
+
+      >>(m)
 
       m.store(new File(Config.CIMDATA, CIM.FN(cName)))
     }
@@ -147,13 +151,9 @@ permissions and limitations under the License.
     logger.info("[{}] object properties [{}] data type properties",
       objProps.length, datProps.length)
 
-    /*
-     * generate vocabulary from CIM schema XML
-     */
-    def saveVocabulary = { // beware the tailing blank line
-      classes.map(_ \ "@NAME" text).toFile(CIM.classFileName)
-      (objProps ++ datProps).toFile(CIM.propertyFileName)
-    }
+    // store vocabulary for Vocabulary to load
+    classes.map(_ \ "@NAME" text).toFile(CIM.classFileName)
+    (objProps ++ datProps).toFile(CIM.propertyFileName)
 
     def toModel = {
       val m = ModelFactory.createDefaultModel
@@ -181,70 +181,7 @@ permissions and limitations under the License.
           .addProperty(RDFS.domain, cMeta)
       }
 
-      for (c <- classes) {
-        val cName = (c \ "@NAME").text
-        val cClass = m.createResource(CIM URI cName, OWL.Class)
-
-        val cSuperName = (c \ "@SUPERCLASS").text
-        val cQualifier = c \ "QUALIFIER"
-        val cIsAsso = "true" == readValue(cQualifier, "@NAME", "Association")
-        val cSuperReso =
-          if (cSuperName.isEmpty)
-            if (cIsAsso) cAsso else cMeta
-          else
-            m.getResource(CIM URI cSuperName)
-
-        val cComment = readValue(cQualifier, "@NAME", "Description")
-        val cVersion = readValue(cQualifier, "@NAME", "Version")
-
-        cClass.addProperty(RDFS.subClassOf, cSuperReso)
-          .addLiteral(RDFS.comment, cComment)
-          .addLiteral(OWL.versionInfo, cVersion)
-
-        val cReferences = c \ "PROPERTY.REFERENCE"
-        for (cR <- cReferences) {
-          val cRName = (cR \ "@NAME").text
-          val cRClass = (cR \ "@REFERENCECLASS").text
-          val cObjProp = m.getProperty(CIM URI cRName)
-          val cRefReso = m.getResource(CIM URI cRClass)
-          val r = m.createResource(OWL.Restriction)
-            .addProperty(OWL.onProperty, cObjProp)
-            .addProperty(OWL.allValuesFrom, cRefReso)
-
-          cClass.addProperty(RDFS.subClassOf, r)
-
-          val cRQualifier = cR \ "QUALIFIER"
-          val cRComment = readValue(cRQualifier, "@NAME", "Description")
-
-          m.createResource(OWL2.Axiom)
-            .addLiteral(RDFS.comment, cRComment)
-            .addProperty(OWL2.annotatedProperty, RDFS.subClassOf)
-            .addProperty(OWL2.annotatedSource, cClass)
-            .addProperty(OWL2.annotatedTarget, r)
-        }
-
-        val cProperties = c \ "PROPERTY" ++ c \ "PROPERTY.ARRAY"
-        for (cP <- cProperties) {
-          val cPName = (cP \ "@NAME").text
-          val cPType = (cP \ "@TYPE").text
-          val cDatProp = m.getProperty(CIM URI cPName)
-          val cDatType = readDataType(cPType)
-          val r = m.createResource(OWL.Restriction)
-            .addProperty(OWL.onProperty, cDatProp)
-            .addProperty(OWL.allValuesFrom, cDatType)
-
-          cClass.addProperty(RDFS.subClassOf, r)
-
-          val cPQualifier = cP \ "QUALIFIER"
-          val cPComment = readValue(cPQualifier, "@NAME", "Description")
-
-          m.createResource(OWL2.Axiom)
-            .addLiteral(RDFS.comment, cPComment)
-            .addProperty(OWL2.annotatedProperty, RDFS.subClassOf)
-            .addProperty(OWL2.annotatedSource, cClass)
-            .addProperty(OWL2.annotatedTarget, r)
-        }
-      }
+      for (c <- classes) c >> m
 
       m.store(CIM.PATH_ALL)
     }
