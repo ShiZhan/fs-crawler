@@ -1,7 +1,7 @@
 /**
  * Additional File methods
  */
-package helper
+package common
 
 /**
  * @author ShiZhan

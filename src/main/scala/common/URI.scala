@@ -1,7 +1,10 @@
 /**
  * URI generator
  */
-package helper
+package common
+
+import helper.Platform
+import java.io.File
 
 /**
  * @author ShiZhan

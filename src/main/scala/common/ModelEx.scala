@@ -1,7 +1,7 @@
 /**
  * Model operations DSL
  */
-package helper
+package common
 
 /**
  * @author ShiZhan
@@ -47,7 +47,7 @@ object ModelEx {
     def load(base: String) = fileNames map { ModelEx.load(_, base) }
   }
 
-  implicit class ModelOps(m: Model) extends Logging {
+  implicit class ModelOps(m: Model) extends helper.Logging {
     def store(fileName: String) = {
       val fos = new File(fileName).getWriter("UTF-8")
       m.write(fos, "RDF/XML-ABBREV")

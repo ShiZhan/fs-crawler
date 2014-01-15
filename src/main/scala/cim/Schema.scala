@@ -18,8 +18,8 @@ object Schema extends helper.Logging {
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
   import com.hp.hpl.jena.vocabulary.XSD
 
-  import helper.ModelEx.ModelOps
-  import helper.StringSeqEx.StringSeqOps
+  import common.ModelEx.ModelOps
+  import common.StringSeqEx.StringSeqOps
   import helper.{ Config, DateTime, Version }
   import cim.{ Vocabulary => CIM }
 

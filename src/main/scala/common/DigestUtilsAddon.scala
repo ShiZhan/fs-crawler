@@ -1,7 +1,11 @@
 /**
  * Apache commons-codec DigestUtils Addon
  */
-package helper
+package common
+
+import java.io.InputStream
+import org.apache.commons.codec.binary.Hex.encodeHexString
+import org.apache.commons.codec.digest.DigestUtils.getDigest
 
 /**
  * @author ShiZhan

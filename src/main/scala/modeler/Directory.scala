@@ -14,7 +14,8 @@ object DirectoryModels {
   import com.hp.hpl.jena.rdf.model.Model
   import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-  import helper.{ Logging, Version, DateTime, URI }
+  import helper.{ Logging, Version, DateTime }
+  import common.URI
   import cim.{ Vocabulary => CIM }
 
   case class DirectoryTreeModel(base: String, prefix: String) {
@@ -135,8 +136,8 @@ object Directory extends Modeler with helper.Logging {
   import java.io.{ File, FileOutputStream }
   import com.hp.hpl.jena.rdf.model.ModelFactory
   import DirectoryModels._
-  import helper.URI
-  import helper.FileEx.FileOps
+  import common.URI
+  import common.FileEx.FileOps
 
   override val key = "dir"
 

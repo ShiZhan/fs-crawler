@@ -14,8 +14,9 @@ object ChecksumModels {
   import com.hp.hpl.jena.vocabulary.{ RDF, OWL, DC_11 => DC }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
   import cim.{ Vocabulary => CIM }
-  import helper.{ DateTime, URI, Version }
-  import helper.FileEx.FileOps
+  import helper.{ DateTime, Version }
+  import common.URI
+  import common.FileEx.FileOps
 
   case class BlockModel(path: String, size: Long, md5sum: String) {
     def addTo(model: OntModel) = {
@@ -69,8 +70,8 @@ object Checksum extends Modeler with helper.Logging {
   import java.io.{ File, FileOutputStream }
   import com.hp.hpl.jena.rdf.model.ModelFactory
   import ChecksumModels._
-  import helper.FileEx.FileOps
-  import helper.URI
+  import common.FileEx.FileOps
+  import common.URI
 
   override val key = "chk"
   override val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"

@@ -13,7 +13,7 @@ object Merger extends helper.Logging {
   import com.hp.hpl.jena.vocabulary.OWL
   import com.hp.hpl.jena.rdf.model.Model
   import cim.Vocabulary.{ isCimURI, PURL2FN }
-  import helper.ModelEx._
+  import common.ModelEx._
 
   private def readCimImports(modelFile: String): List[String] = {
     val m = load(modelFile)

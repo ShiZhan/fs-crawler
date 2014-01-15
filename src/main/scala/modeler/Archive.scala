@@ -12,8 +12,9 @@ object ArchiveModels {
   import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model, Resource }
   import com.hp.hpl.jena.vocabulary.{ OWL, OWL2, DC_11 => DC, RDF }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-  import helper.ArchiveCheckers.ArcEntryChecksum
-  import helper.{ Logging, Version, DateTime, URI }
+  import common.ArchiveCheckers.ArcEntryChecksum
+  import common.URI
+  import helper.{ Logging, Version, DateTime }
   import cim.{ Vocabulary => CIM }
 
   case class ArcModel(base: String, nsPrefix: String) {
@@ -73,9 +74,9 @@ object ArchiveModels {
 object Archive extends Modeler with helper.Logging {
   import java.io.{ File, FileOutputStream }
   import ArchiveModels._
-  import helper.ArchiveCheckers._
-  import helper.URI
-  import helper.FileEx.FileOps
+  import common.ArchiveCheckers._
+  import common.URI
+  import common.FileEx.FileOps
 
   override val key = "arc"
 

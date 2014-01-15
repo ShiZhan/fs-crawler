@@ -15,7 +15,7 @@ object Vocabulary {
   import scala.xml.XML
   import com.hp.hpl.jena.rdf.model.ModelFactory
   import helper.Config.CIMDATA
-  import helper.StringSeqEx._
+  import common.StringSeqEx._
   /*
    * prepare vocabulary model
    */
