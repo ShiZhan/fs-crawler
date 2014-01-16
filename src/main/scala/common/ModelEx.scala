@@ -13,8 +13,7 @@ package common
  * 3. load:  load model from given file name list
  *           load model from given file name list with absolute base URI
  * 4. write: encapsulate API for model writing in given format
- *           with given file name or instance
- *           with encoding
+ *           with given file name or instance as "UTF-8"
  */
 object ModelEx {
   import java.io.{ File, FileOutputStream }
