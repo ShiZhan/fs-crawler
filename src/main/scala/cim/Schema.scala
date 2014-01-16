@@ -19,7 +19,7 @@ object Schema extends helper.Logging {
   import com.hp.hpl.jena.vocabulary.XSD
 
   import common.ModelEx.ModelOps
-  import common.StringSeqEx.StringSeqOps
+  import common.StringSeqEx._
   import helper.{ Config, DateTime, Version }
   import cim.{ Vocabulary => CIM }
 
@@ -221,5 +221,19 @@ permissions and limitations under the License.
 
       CIMXML(cim)
     }
+  }
+
+  private def getBaseURI(owlFile: File) = {
+    val txt = io.Source.fromFile(owlFile).getLines.filter { _.contains("<owl:Ontology rdf:about=") }
+    """\".*\"""".r.findFirstIn(txt.mkString)
+  }
+
+  def validate = {
+    val cList = fromFile(CIM.classFileName)
+    val pList = fromFile(CIM.propertyFileName)
+    val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))
+    val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(None ==)
+    "Vocabulary: " + cList.size + " classes " + pList.size + " properties\n" +
+    "CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid\n"
   }
 }

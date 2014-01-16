@@ -12,11 +12,13 @@ object Console {
   import Engine._
 
   private val usage = """ [Console Usage]
-  help           print this message
-  status         show program status
-  query          enter SPARQL to do query
-  update         enter SPARQL to do update
-  exit           exit console"""
+  help       print this message
+  status     show program status
+  cim        validate CIM schema
+  time       show current time
+  query      enter SPARQL/read SPARQL file to do query
+  update     enter SPARQL/read SPARQL file to do update
+  exit       exit console"""
   private val title = "TriGraM Console"
   private val prompt = "# "
 
@@ -28,6 +30,7 @@ object Console {
         case "exit" :: Nil => { shutdown; return }
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
+        case "cim" :: Nil => println(cim.Schema.validate)
         case "time" :: Nil => println(DateTime.get)
         case "tdbinfo" :: Nil => tdbinfo
         case "tdbloader" :: modelFile :: Nil => tdbloader(modelFile)
