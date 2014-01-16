@@ -20,6 +20,7 @@ object ModelEx {
   import java.io.{ File, FileOutputStream }
   import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
   import com.hp.hpl.jena.util.FileManager
+  import com.hp.hpl.jena.vocabulary.OWL
   import FileEx.FileOps
 
   def load(fileName: String) = {
@@ -40,17 +41,17 @@ object ModelEx {
       (baseModel /: models) { (r, m) => r union m }
     }
 
-    def join(baseModel: Model) = {
-      (baseModel /: models) { (r, m) => r union m }
-    }
+    def join(baseModel: Model) = (baseModel /: models) { (r, m) => r union m }
   }
 
   implicit class ModelFileOps(fileNames: Seq[String]) {
-    def load = fileNames map ModelEx.load
-    def load(base: String) = fileNames map { ModelEx.load(_, base) }
+    def asModels = fileNames map load
+    def asModels(base: String) = fileNames map { load(_, base) }
   }
 
   implicit class ModelOps(m: Model) extends helper.Logging {
+    def getOWLImports = m.listStatements(null, OWL.imports, null)
+
     def store(fileName: String) = {
       val fos = new File(fileName).getWriter("UTF-8")
       m.write(fos, "RDF/XML-ABBREV")

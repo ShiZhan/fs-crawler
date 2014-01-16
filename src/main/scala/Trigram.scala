@@ -57,10 +57,7 @@ usage: Trigram
       }
       case "-s1" :: cimXML :: tail =>
         Schema.fromXML(cimXML).toModel
-      case "-g" :: baseModel :: tail => {
-        Merger.gather(baseModel)
-        println("All imported CIM classes of [%s] gathered.".format(baseModel))
-      }
+      case "-g" :: baseModel :: tail => Merger.gather(baseModel)
       case "-m" :: modeler :: margs => {
         println("invoking [%s] modeler with options [%s]"
           .format(modeler, margs.mkString(" ")))
