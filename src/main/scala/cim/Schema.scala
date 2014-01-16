@@ -226,14 +226,14 @@ permissions and limitations under the License.
     val buf = io.Source.fromFile(owlFile)
     val txt = buf.getLines.filter { _.contains("<owl:Ontology rdf:about=") }.mkString
     buf.close
-    """\".*\"""".r.findFirstIn(txt).getOrElse(null)
+    """\".*\"""".r.findFirstIn(txt)
   }
 
   def validate = {
     val cList = fromFile(CIM.classFileName)
     val pList = fromFile(CIM.propertyFileName)
     val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))
-    val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(null ==)
+    val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(None ==)
     "Vocabulary: " + cList.size + " classes " + pList.size + " properties\n" +
       "CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid\n"
   }
