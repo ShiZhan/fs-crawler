@@ -72,23 +72,21 @@ object ArchiveModels {
 }
 
 object Archive extends Modeler with helper.Logging {
-  import java.io.{ File, FileOutputStream }
+  import java.io.File
   import ArchiveModels._
   import common.ArchiveCheckers._
-  import common.URI
   import common.FileEx.FileOps
+  import common.ModelEx.ModelOps
+  import common.URI
 
   override val key = "arc"
 
   override val usage =
-    "<source> <output.owl> => [output.owl], now support [zip, gzip, bzip, 7z]."
+    "<source> <output.owl> => [output.owl], support [zip, gzip, bzip, 7z]."
 
   def run(options: Array[String]) =
     options.toList match {
-      case fileName :: output :: Nil => {
-        val file = new File(fileName)
-        translate(file, output)
-      }
+      case fileName :: output :: Nil => translate(new File(fileName), output)
       case _ => logger.error("parameter error: [{}]", options)
     }
 
@@ -102,7 +100,6 @@ object Archive extends Modeler with helper.Logging {
         checkArc(f) foreach { _.addTo(m, knownArchive) }
       }
     }
-    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-    logger.info("[{}] triples generated in [{}]", m.size, output)
+    m.store(output)
   }
 }

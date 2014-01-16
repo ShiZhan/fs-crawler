@@ -67,15 +67,17 @@ object ChecksumModels {
 }
 
 object Checksum extends Modeler with helper.Logging {
-  import java.io.{ File, FileOutputStream }
+  import java.io.File
   import com.hp.hpl.jena.rdf.model.ModelFactory
   import ChecksumModels._
   import common.FileEx.FileOps
+  import common.ModelEx.ModelOps
   import common.URI
 
   override val key = "chk"
   override val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"
   def run(options: Array[String]) = {
+    logger.info("Modeling")
     options.toList match {
       case fileName :: output :: Nil => {
         val source = new File(fileName).flatten
@@ -91,22 +93,14 @@ object Checksum extends Modeler with helper.Logging {
   }
 
   private def translate(files: Array[File], output: String) = {
-    logger.info("Modeling")
-
     val m = ModelFactory.createOntologyModel.set(URI.fromHost, key)
     files.foreach { f => if (f.isFile) f addTo m }
-    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-
-    logger.info("[{}] triples generated in [{}]", m.size, output)
+    m.store(output)
   }
 
   private def translate(files: Array[File], output: String, chunkSize: Long) = {
-    logger.info("Modeling")
-
     val m = ModelFactory.createOntologyModel.set(URI.fromHost, key)
     files.foreach { f => if (f.isFile) ChunkChecksumModel(f, chunkSize) addTo m }
-    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-
-    logger.info("[{}] triples generated in [{}]", m.size, output)
+    m.store(output)
   }
 }

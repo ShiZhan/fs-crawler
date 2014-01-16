@@ -133,20 +133,16 @@ object DirectoryModels {
 }
 
 object Directory extends Modeler with helper.Logging {
-  import java.io.{ File, FileOutputStream }
+  import java.io.File
   import com.hp.hpl.jena.rdf.model.ModelFactory
   import DirectoryModels._
-  import common.URI
   import common.FileEx.FileOps
+  import common.ModelEx.ModelOps
+  import common.URI
 
   override val key = "dir"
 
   override val usage = "<directory> <output.owl> [<--text>] => [output.owl]"
-
-  def listAllFiles(f: File): Array[File] = {
-    val list = f.listFiles
-    if (list == null) Array[File]() else list ++ list.filter(_.isDirectory).flatMap(listAllFiles)
-  }
 
   private def translate(f: File, output: String) = {
     logger.info("creating model ...")
@@ -168,9 +164,7 @@ object Directory extends Modeler with helper.Logging {
     }
     println("translating [100%]")
 
-    m.write(new FileOutputStream(output), "RDF/XML-ABBREV")
-
-    logger.info("[{}] triples generated in [{}]", m.size, output)
+    m.store(output)
   }
 
   private def translateEx(f: File, output: String) = {
