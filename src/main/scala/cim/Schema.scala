@@ -11,7 +11,7 @@ package cim
  *    according to specific application domain.
  */
 object Schema extends helper.Logging {
-  import java.io.{ File, FileOutputStream }
+  import java.io.File
   import scala.xml.{ XML, Node, NodeSeq }
   import com.hp.hpl.jena.rdf.model.{ Model, ModelFactory, Resource }
   import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
@@ -52,7 +52,6 @@ permissions and limitations under the License.
 """
 
   implicit class CIM_CLASS(c: Node) {
-    // gathering data from input XML model
     val cName = (c \ "@NAME").text
     val cSuperName = (c \ "@SUPERCLASS").text
     val cQualifier = c \ "QUALIFIER"
@@ -125,7 +124,6 @@ permissions and limitations under the License.
     def saveAsModel = {
       // create & initialize the model
       val m = ModelFactory.createDefaultModel
-
       m.setNsPrefix(CIM.NS_PREFIX, CIM.NS)
       m.createResource(CIM.PURL(cName), OWL.Ontology)
         .addProperty(DC.date, DateTime.get, XSDdateTime)
