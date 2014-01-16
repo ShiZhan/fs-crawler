@@ -210,9 +210,8 @@ permissions and limitations under the License.
   def fromXML(cimXML: String) = {
     val xml = XML.loadFile(cimXML)
     val cim = xml \\ "CIM"
-    if (cim.isEmpty) {
-      null
-    } else {
+    if (cim.isEmpty) null
+    else {
       val cimVer = { cim.head \ "@CIMVERSION" text }
       val dtdVer = { cim.head \ "@DTDVERSION" text }
 
@@ -234,6 +233,6 @@ permissions and limitations under the License.
     val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))
     val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(None ==)
     "Vocabulary: " + cList.size + " classes " + pList.size + " properties\n" +
-    "CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid\n"
+      "CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid\n"
   }
 }

@@ -53,7 +53,7 @@ usage: Trigram
         } else println("There's only one model out there.")
       case "-s" :: cimXML :: tail => {
         Schema.fromXML(cimXML).toModelGroup
-        println("CIM Schema & Vocabulary updated.")
+        println("CIM Schema, Vocabulary updated.\n" + Schema.validate)
       }
       case "-s1" :: cimXML :: tail =>
         Schema.fromXML(cimXML).toModel
