@@ -15,18 +15,24 @@ import java.io.PrintWriter
 object StringSeqEx {
   import java.io.{ File, PrintWriter }
 
-  def fromFile(fileName: String) = {
-    val buf = io.Source.fromFile(new File(fileName))
-    val lines = buf.getLines.toList
-    buf.close
-    lines
-  }
+  def fromFile(fileName: String) =
+    try {
+      val buf = io.Source.fromFile(new File(fileName))
+      val lines = buf.getLines.toList
+      buf.close
+      lines
+    } catch {
+      case e: Exception => println(e); List[String]()
+    }
 
   implicit class StringSeqOps[T](lines: Seq[T]) {
-    def toFile(fileName: String) = {
-      val p = new PrintWriter(new File(fileName))
-      lines.foreach(p.println)
-      p.close
-    }
+    def toFile(fileName: String) =
+      try {
+        val p = new PrintWriter(new File(fileName))
+        lines.foreach(p.println)
+        p.close
+      } catch {
+        case e: Exception => println(e)
+      }
   }
 }
