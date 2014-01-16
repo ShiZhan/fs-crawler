@@ -5,13 +5,16 @@ package common
 
 /**
  * @author ShiZhan
- * Model Seq operation
- * 1. join:  combine all models in Seq
+ * Model extended operation
+ * 1. load:  use file input stream API for better compatibility
+ *           load with base
+ * 2. join:  combine all models in Seq
  *           combine all models in Seq to base model
- * 2. load:  load model from given file
- *           load model from given file with absolute base URI
- *    NOTE:  use file input stream API for better compatibility
- * 3. write: encapsulate API for model writing in given format
+ * 3. load:  load model from given file name list
+ *           load model from given file name list with absolute base URI
+ * 4. write: encapsulate API for model writing in given format
+ *           with given file name or instance
+ *           with encoding
  */
 object ModelEx {
   import java.io.{ File, FileOutputStream }
