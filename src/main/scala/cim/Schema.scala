@@ -223,15 +223,17 @@ permissions and limitations under the License.
   }
 
   private def getBaseURI(owlFile: File) = {
-    val txt = io.Source.fromFile(owlFile).getLines.filter { _.contains("<owl:Ontology rdf:about=") }
-    """\".*\"""".r.findFirstIn(txt.mkString)
+    val buf = io.Source.fromFile(owlFile)
+    val txt = buf.getLines.filter { _.contains("<owl:Ontology rdf:about=") }.mkString
+    buf.close
+    """\".*\"""".r.findFirstIn(txt).getOrElse(null)
   }
 
   def validate = {
     val cList = fromFile(CIM.classFileName)
     val pList = fromFile(CIM.propertyFileName)
     val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))
-    val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(None ==)
+    val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(null ==)
     "Vocabulary: " + cList.size + " classes " + pList.size + " properties\n" +
       "CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid\n"
   }
