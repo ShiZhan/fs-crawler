@@ -3,13 +3,10 @@
  */
 package modeler
 
-import helper.Logging
-
 /**
  * @author ShiZhan
- * providing empty core model and translated model,
- * also function as default object for modeler map
+ * Modeler for unknown resources, modeler map default.
  */
-object Unknown extends Modeler with Logging {
+object Unknown extends Modeler with helper.Logging {
   def run(o: Array[String]) = logger.info("Modeler type unkown")
 }
