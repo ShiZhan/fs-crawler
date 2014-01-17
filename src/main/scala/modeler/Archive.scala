@@ -14,7 +14,7 @@ object ArchiveModels {
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
   import common.ArchiveCheckers.ArcEntryChecksum
   import common.URI
-  import helper.{ Logging, Version, DateTime }
+  import helper.{ Version, DateTime }
   import cim.{ Vocabulary => CIM }
 
   case class ArcModel(base: String, nsPrefix: String) {
