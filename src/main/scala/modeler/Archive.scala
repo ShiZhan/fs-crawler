@@ -25,10 +25,6 @@ object ArchiveModels {
       .addProperty(DC.date, DateTime.get, XSDdateTime)
       .addProperty(DC.description, "TriGraM Archive model", XSDstring)
       .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_Directory"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_ConcreteComponent"))
-      .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
     def create = m
   }
 
@@ -79,10 +75,12 @@ object Archive extends Modeler with helper.Logging {
   import common.ModelEx.ModelOps
   import common.URI
 
-  override val key = "arc"
+  val key = "arc"
 
-  override val usage =
-    "<source> <output.owl> => [output.owl], support [zip, gzip, bzip, 7z]."
+  val usage = "<source> <output.owl> => [output.owl], support [zip, gzip, bzip, 7z]."
+
+  val tbox =
+    Seq("CIM_Directory", "CIM_DataFile", "CIM_ConcreteComponent", "CIM_FileSpecification")
 
   def run(options: Array[String]) =
     options.toList match {

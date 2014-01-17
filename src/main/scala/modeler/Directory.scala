@@ -24,7 +24,6 @@ object DirectoryModels {
     val version = Version.get
     val cimNs = CIM.NS
     val cimPrefix = CIM.NS_PREFIX
-    val imports = Seq("CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
 
     def create(m: Model) = {
       m.setNsPrefix(prefix, base + "#")
@@ -33,22 +32,17 @@ object DirectoryModels {
         .addProperty(DC.date, dateTime, XSDdateTime)
         .addProperty(DC.description, modelName, XSDstring)
         .addProperty(OWL.versionInfo, version, XSDstring)
-      imports foreach { i => ont.addProperty(OWL.imports, CIM.IMPORT(i)) }
       m
     }
 
     val header = {
-      val importStatments =
-        ("" /: imports) { (r, i) =>
-          r + "\n    <owl:imports rdf:resource=\"%s\"/>".format(CIM.PURL(i))
-        }
       s"""<rdf:RDF
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xmlns:owl="http://www.w3.org/2002/07/owl#"
       xmlns:dc="http://purl.org/dc/elements/1.1/"
       xmlns:$cimPrefix="$cimNs"
       xmlns:$prefix="$base#">
-    <owl:Ontology rdf:about="$base">$importStatments
+    <owl:Ontology rdf:about="$base">
       <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
       >$version</owl:versionInfo>
       <dc:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -140,9 +134,11 @@ object Directory extends Modeler with helper.Logging {
   import common.ModelEx.ModelOps
   import common.URI
 
-  override val key = "dir"
+  val key = "dir"
 
-  override val usage = "<directory> <output.owl> [<--text>] => [output.owl]"
+  val usage = "<directory> <output.owl> [<--text>] => [output.owl]"
+
+  val tbox = Seq("CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
 
   private def translate(f: File, output: String) = {
     logger.info("creating model ...")

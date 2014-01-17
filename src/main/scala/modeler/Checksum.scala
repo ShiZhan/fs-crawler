@@ -38,9 +38,6 @@ object ChecksumModels {
         .addProperty(DC.date, DateTime.get, XSDdateTime)
         .addProperty(DC.description, "TriGraM checksum model", XSDstring)
         .addProperty(OWL.versionInfo, Version.get, XSDstring)
-        .addProperty(OWL.imports, CIM.IMPORT("CIM_DataFile"))
-        .addProperty(OWL.imports, CIM.IMPORT("CIM_OrderedComponent"))
-        .addProperty(OWL.imports, CIM.IMPORT("CIM_FileSpecification"))
       model
     }
   }
@@ -74,8 +71,12 @@ object Checksum extends Modeler with helper.Logging {
   import common.ModelEx.ModelOps
   import common.URI
 
-  override val key = "chk"
-  override val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"
+  val key = "chk"
+
+  val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"
+
+  val tbox = Seq("CIM_DataFile", "CIM_OrderedComponent", "CIM_FileSpecification")
+
   def run(options: Array[String]) = {
     logger.info("Modeling")
     options.toList match {

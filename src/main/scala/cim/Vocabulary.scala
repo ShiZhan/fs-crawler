@@ -27,6 +27,7 @@ object Vocabulary {
   val NS_PREFIX = "cim"
   val NS = "https://sites.google.com/site/ontology2013/cim/"
   def FN(n: String) = n + ".owl"
+  def FFN(n: String) = CIMDATA + '/' + FN(n)
   def PURL(n: String) = NS + FN(n)
   def URI(n: String) = NS + n
   def isCimURI(uri: String) = uri.startsWith(NS)
