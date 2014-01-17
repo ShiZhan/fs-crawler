@@ -136,7 +136,7 @@ object Directory extends Modeler with helper.Logging {
 
   val key = "dir"
 
-  val usage = "<directory> <output.owl> [<--text>] => [output.owl]"
+  val usage = "[directory] [output.owl] <--text> => output.owl"
 
   val tbox = Seq("CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
 

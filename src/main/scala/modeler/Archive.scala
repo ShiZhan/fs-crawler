@@ -77,7 +77,7 @@ object Archive extends Modeler with helper.Logging {
 
   val key = "arc"
 
-  val usage = "<source> <output.owl> => [output.owl], support [zip, gzip, bzip, 7z]."
+  val usage = "[source] [output.ow] => output.owl, support 'zip, gzip, bzip, 7z'."
 
   val tbox =
     Seq("CIM_Directory", "CIM_DataFile", "CIM_ConcreteComponent", "CIM_FileSpecification")

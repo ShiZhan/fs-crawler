@@ -73,7 +73,7 @@ object Checksum extends Modeler with helper.Logging {
 
   val key = "chk"
 
-  val usage = "<source> <output.owl> [<chunk size: Bytes>] => [output.owl]"
+  val usage = "[source] [output.owl] <chunk size: Bytes> => output.owl"
 
   val tbox = Seq("CIM_DataFile", "CIM_OrderedComponent", "CIM_FileSpecification")
 

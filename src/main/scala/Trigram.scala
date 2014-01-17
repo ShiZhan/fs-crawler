@@ -16,7 +16,7 @@ usage: Trigram
  <no argument>  enter console
 
  database:
- -i MODEL       import model
+ -i [MODEL...]  import model
  -q [SPARQL]    http://www.w3.org/TR/sparql11-query/
  -u [SPARQL]    http://www.w3.org/TR/sparql11-update/
 
