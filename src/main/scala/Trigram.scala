@@ -21,8 +21,8 @@ usage: Trigram
  -u [SPARQL]    http://www.w3.org/TR/sparql11-update/
 
  model operations:
- -s [CIM Schema XML]       Update CIM schema as TBox for modelers
-                           [CIM Schema XML]: http://dmtf.org/standards/cim
+ -s <CIM Schema XML>       Update CIM schema as TBox for modelers
+                           default CIM Schema is packaged within
  -C                        Check CIM models
  -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
                            Based on the OWL.imports in <CIM classes>
