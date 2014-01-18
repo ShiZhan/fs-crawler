@@ -93,9 +93,14 @@ object Archive extends Modeler with helper.Logging {
     logger.info("Model all supported archive file in [{}]", arcPath)
     val m = ArcModel(URI.fromHost, key).create
     file.flatten.foreach { f =>
-      if (isKnownArchive(f)) {
-        val knownArchive = ArcFileModel(f).addTo(m)
-        checkArc(f) foreach { _.addTo(m, knownArchive) }
+      if (f.isFile) {
+        getChecker(f) match {
+          case checker: arcChecker => {
+            val arc = ArcFileModel(f).addTo(m)
+            for (e <- checker(f)) e.addTo(m, arc)
+          }
+          case _ => {}
+        }
       }
     }
     m.store(output)
