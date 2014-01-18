@@ -23,7 +23,7 @@ usage: Trigram
  model operations:
  -s <CIM Schema XML>       Update CIM schema as TBox for modelers
                            default CIM Schema is packaged within
- -C                        Check CIM models
+ -C                        Check CIM Schema and vocabulary
  -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
                            Based on the OWL.imports in <CIM classes>
  -c [MODEL...]             Combine multiple models
