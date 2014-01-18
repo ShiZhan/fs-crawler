@@ -12,7 +12,7 @@ object ArchiveModels {
   import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model, Resource }
   import com.hp.hpl.jena.vocabulary.{ OWL, OWL2, DC_11 => DC, RDF }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
-  import common.ArchiveCheckers.ArcEntryChecksum
+  import common.ArchiveEx.ArcEntryChecksum
   import common.URI
   import helper.{ Version, DateTime }
   import cim.{ Vocabulary => CIM }
@@ -70,7 +70,7 @@ object ArchiveModels {
 object Archive extends Modeler with helper.Logging {
   import java.io.File
   import ArchiveModels._
-  import common.ArchiveCheckers._
+  import common.ArchiveEx._
   import common.FileEx.FileOps
   import common.ModelEx.ModelOps
   import common.URI
