@@ -30,7 +30,7 @@ object Console {
         case "exit" :: Nil => { shutdown; return }
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
-        case "cim" :: Nil => println(cim.Schema.validate)
+        case "cim" :: Nil => println(cim.Schema.check)
         case "time" :: Nil => println(DateTime.get)
         case "tdbinfo" :: Nil => tdbinfo
         case "tdbloader" :: modelFile :: Nil => tdbloader(modelFile)

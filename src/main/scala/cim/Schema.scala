@@ -12,7 +12,7 @@ package cim
  */
 object Schema extends helper.Logging {
   import java.io.File
-  import scala.xml.{ XML, Node, NodeSeq }
+  import scala.xml.{ Elem, Node, NodeSeq, XML }
   import com.hp.hpl.jena.rdf.model.{ Model, ModelFactory, Resource }
   import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
@@ -205,19 +205,30 @@ permissions and limitations under the License.
     }
   }
 
-  def fromXML(cimXML: String) = {
-    val xml = XML.loadFile(cimXML)
+  def validateSchema(xml: Elem) = {
     val cim = xml \\ "CIM"
     if (cim.isEmpty) null
     else {
       val cimVer = { cim.head \ "@CIMVERSION" text }
       val dtdVer = { cim.head \ "@DTDVERSION" text }
-
       logger.info("CIM version: [{}]", cimVer)
       logger.info("DTD version: [{}]", dtdVer)
-
       CIMXML(cim)
     }
+  }
+
+  def fromXML(cimXML: String) = {
+    val xml = XML.loadFile(cimXML)
+    validateSchema(xml)
+  }
+
+  def fromXML = {
+    logger.info("Loading default DMTF CIM Schema")
+    val is = getClass.getClassLoader.getResourceAsStream("all_classes.xml.bz2")
+    val bzis =
+      new org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream(is)
+    val xml = XML.load(bzis)
+    validateSchema(xml)
   }
 
   private def getBaseURI(owlFile: File) = {
@@ -227,7 +238,7 @@ permissions and limitations under the License.
     """\".*\"""".r.findFirstIn(txt)
   }
 
-  def validate = {
+  def check = {
     val cList = fromFile(CIM.classFileName)
     val pList = fromFile(CIM.propertyFileName)
     val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))

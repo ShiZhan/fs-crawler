@@ -23,6 +23,7 @@ usage: Trigram
  model operations:
  -s [CIM Schema XML]       Update CIM schema as TBox for modelers
                            [CIM Schema XML]: http://dmtf.org/standards/cim
+ -C                        Check CIM models
  -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
                            Based on the OWL.imports in <CIM classes>
  -c [MODEL...]             Combine multiple models
@@ -46,11 +47,11 @@ usage: Trigram
       case "-u" :: updateFile :: Nil => Engine.doUpdate(GetString.fromFile(updateFile))
       case "-q" :: Nil => Engine.doQuery(GetString.fromConsole)
       case "-u" :: Nil => Engine.doUpdate(GetString.fromConsole)
-      case "-s" :: cimXML :: Nil => {
-        Schema.fromXML(cimXML).toModelGroup
-        println("CIM Schema, Vocabulary updated.\n" + Schema.validate)
-      }
+      case "-s" :: Nil => Schema.fromXML.toModelGroup
+      case "-s1" :: Nil => Schema.fromXML.toModel
+      case "-s" :: cimXML :: Nil => Schema.fromXML(cimXML).toModelGroup
       case "-s1" :: cimXML :: Nil => Schema.fromXML(cimXML).toModel
+      case "-C" :: Nil => println(Schema.check)
       case "-g" :: output :: Nil => Merger.gather(output, Modelers.tbox.toList)
       case "-g" :: output :: selected => Merger.gather(output, selected)
       case "-c" :: modelFiles =>
