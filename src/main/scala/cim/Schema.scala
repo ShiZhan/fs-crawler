@@ -7,8 +7,7 @@ package cim
  * @author ShiZhan
  * translate DMTF CIM schema [http://dmtf.org/standards/cim] into TriGraM model
  * 1. local model file: CIM.FN_ALL, contains all concepts and properties.
- * 2. dependent model group: in directory CIM.BASE, the model group can be sized
- *    according to specific application domain.
+ * 2. dependent model group: in directory CIM.BASE, can be flexible.
  */
 object Schema extends helper.Logging {
   import java.io.File
@@ -17,11 +16,11 @@ object Schema extends helper.Logging {
   import com.hp.hpl.jena.vocabulary.{ RDF, RDFS, OWL, OWL2, DC_11 => DC, DCTerms => DT }
   import com.hp.hpl.jena.datatypes.xsd.XSDDatatype._
   import com.hp.hpl.jena.vocabulary.XSD
-
+  import cim.{ Vocabulary => CIM }
+  import common.ArchiveEx.InputStreamAsArchiveStream
   import common.ModelEx.ModelOps
   import common.StringSeqEx._
   import helper.{ Config, DateTime, Version }
-  import cim.{ Vocabulary => CIM }
 
   private val dataType: Map[String, Resource] = Map(
     "string" -> XSD.xstring,
@@ -225,8 +224,7 @@ permissions and limitations under the License.
   def fromXML = {
     logger.info("Loading default DMTF CIM Schema")
     val is = getClass.getClassLoader.getResourceAsStream("all_classes.xml.bz2")
-    val bzis =
-      new org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream(is)
+    val bzis = is.asBzip
     val xml = XML.load(bzis)
     validateSchema(xml)
   }
