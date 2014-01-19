@@ -22,9 +22,8 @@ usage: Trigram
  model operations:
  -s <CIM Schema XML>       Update CIM schema as TBox for modelers
                            default CIM Schema is packaged within
- -C                        Check CIM Schema and vocabulary
+ -C <CIM classes>          Check CIM Schema & vocabulary availability
  -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
-                           Based on the OWL.imports in <CIM classes>
  -c [MODEL...]             Combine multiple models
  -R [DATA] <Rule> [output] Infer over [DATA] using <Rule>
 
@@ -48,7 +47,6 @@ usage: Trigram
       case "-s" :: sArgs => Schema.fromXML(sArgs).toModelGroup
       case "-s1" :: sArgs => Schema.fromXML(sArgs).toModel
       case "-C" :: cArgs => Schema.check(cArgs)
-      case "-g" :: output :: Nil => Merger.gather(output, Modelers.tbox.toList)
       case "-g" :: output :: selected => Merger.gather(output, selected)
       case "-c" :: modelFiles =>
         if (modelFiles.size > 1) {

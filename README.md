@@ -67,7 +67,7 @@ How to use
     Use scripts in project root to run the program, `trigram` for \*NIX platform and
     `trigram.cmd` for Windows.
 
-    Online help: `trigram -h|--help`
+    Online help: `trigram -h`
 
 3.  CIM base model
 
@@ -171,15 +171,17 @@ Design
 
     5. '-u' update local storage
 
-    6. '-c' combine multiple models
+    6. '-s/s1' generate CIM schema and vocabulary
 
-    7. '-s/s1' generate CIM schema and vocabulary
+    7. '-C' check CIM schema and vocabulary
 
-    8. '-C' check CIM schema and vocabulary
+    8. '-g' gather imported CIM class models into designated model
 
-    9. '-g' gather imported CIM class models into designated model
+    9. '-c' combine multiple models
 
-    10. '-m' invoke modeler 'MODELER' to translate specified source
+    10. '-R' do rule-based reasoning on given model
+
+    11. '-m' invoke modeler 'MODELER' to translate specified source
 
 Related Work
 ------------

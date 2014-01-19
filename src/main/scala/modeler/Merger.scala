@@ -25,7 +25,8 @@ object Merger {
   }
 
   def gather(output: String, selected: List[String]) = {
-    val fullPaths = selected.map(CIM.FFN)
+    val fullPaths =
+      { if (Nil == selected) Modelers.tbox.toList else selected }.map(CIM.FFN)
     val all = { fullPaths.flatMap(readCimImports) ++ fullPaths }.distinct
     println("[%d] CIM classes to gather:".format(all.length))
     all foreach println
