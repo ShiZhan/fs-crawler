@@ -13,7 +13,7 @@ object Console {
   private val usage = """ [Console Usage]
   help       print this message
   status     show program status
-  cim        validate CIM schema
+  cim        validate (individual) CIM schema model(s)
   time       show current time
   query      enter SPARQL/read SPARQL file to do query
   update     enter SPARQL/read SPARQL file to do update
@@ -29,7 +29,7 @@ object Console {
         case "exit" :: Nil => { shutdown; return }
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
-        case "cim" :: Nil => println(cim.Schema.check)
+        case "cim" :: cArgs => cim.Schema.check(cArgs)
         case "time" :: Nil => println(helper.DateTime.get)
         case "tdbinfo" :: Nil => tdbinfo
         case "tdbloader" :: modelFile :: Nil => tdbloader(modelFile)

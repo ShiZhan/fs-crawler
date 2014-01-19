@@ -18,7 +18,7 @@ object Schema extends helper.Logging {
   import com.hp.hpl.jena.vocabulary.XSD
   import cim.{ Vocabulary => CIM }
   import common.ArchiveEx.InputStreamAsArchiveStream
-  import common.ModelEx.ModelOps
+  import common.ModelEx._
   import common.StringSeqEx._
   import helper.{ Config, DateTime, Version }
 
@@ -216,16 +216,15 @@ permissions and limitations under the License.
     }
   }
 
-  def fromXML(cimXML: String) = {
-    val xml = XML.loadFile(cimXML)
-    validateSchema(xml)
-  }
-
-  def fromXML = {
-    logger.info("Loading default DMTF CIM Schema")
-    val is = getClass.getClassLoader.getResourceAsStream("all_classes.xml.bz2")
-    val bzis = is.asBzip
-    val xml = XML.load(bzis)
+  def fromXML(sArgs: List[String]) = {
+    val xml = if(sArgs == Nil) {
+      logger.info("Loading default DMTF CIM Schema")
+      val is = getClass.getClassLoader.getResourceAsStream("all_classes.xml.bz2")
+      val bzis = is.asBzip
+      XML.load(bzis)
+    } else {
+      XML.loadFile(sArgs.head)
+    }
     validateSchema(xml)
   }
 
@@ -236,12 +235,19 @@ permissions and limitations under the License.
     """\".*\"""".r.findFirstIn(txt)
   }
 
-  def check = {
+  def check(cArgs: List[String]) = if (cArgs == Nil) {
     val cList = fromFile(CIM.classFileName)
     val pList = fromFile(CIM.propertyFileName)
     val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))
     val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(None ==)
-    "Vocabulary: " + cList.size + " classes " + pList.size + " properties\n" +
-      "CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid\n"
+    println("Vocabulary: " + cList.size + " classes " + pList.size + " properties")
+    println("CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid")
+  } else {
+    println("Checking CIM class model(s): " + cArgs.mkString(", "))
+    for (c <- cArgs) {
+      val ffn = CIM.FFN(c)
+      val size = load(ffn).size
+      println(ffn + "; " + size + " triples")
+    }
   }
 }
