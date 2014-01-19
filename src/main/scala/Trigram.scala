@@ -56,7 +56,7 @@ usage: Trigram
           Merger.combine(modelFiles)
           println(modelFiles.size + " models combined.")
         } else println("There's only one model out there.")
-      case "-I" :: iArgs => Engine.inferWithOWL(iArgs)
+      case "-I" :: iArgs => Engine.inferWithSchema(iArgs)
       case "-R" :: rArgs => Engine.inferWithRule(rArgs)
       case "-m" :: modeler :: mArgs => {
         println("invoking [%s] modeler with options [%s]"
