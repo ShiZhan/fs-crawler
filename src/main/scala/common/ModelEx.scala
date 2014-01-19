@@ -15,7 +15,7 @@ package common
  * 4. write: encapsulate API for model writing in given format
  *           with given file name or instance as "UTF-8"
  */
-object ModelEx {
+object ModelEx extends helper.Logging {
   import scala.collection.JavaConversions._
   import java.io.{ File, FileOutputStream }
   import com.hp.hpl.jena.rdf.model.{ ModelFactory, Model }
@@ -31,7 +31,7 @@ object ModelEx {
       val is = FileManager.get.open(fileName)
       m.read(is, "")
     } catch {
-      case e: Exception => println(e); m
+      case e: Exception => logger.error(fileName + ": " + e.toString); m
     }
   }
 
@@ -41,7 +41,7 @@ object ModelEx {
       val is = FileManager.get.open(fileName)
       m.read(is, base)
     } catch {
-      case e: Exception => println(e); m
+      case e: Exception => logger.error(fileName + ": " + e.toString); m
     }
   }
 
@@ -50,7 +50,7 @@ object ModelEx {
     def asModels(base: String) = fileNames map { load(_, base) }
   }
 
-  implicit class ModelOps(m: Model) extends helper.Logging {
+  implicit class ModelOps(m: Model) {
     def getImports = m.listStatements(null, OWL.imports, null)
 
     def rebase = {
