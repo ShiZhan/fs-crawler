@@ -35,6 +35,11 @@ TriGraM:     $TGMVER
     try { tdb.tdbupdate.main("--loc=" + TGMDATA, "--update=" + updateFile) }
     catch { case e: Exception => println(e) }
 
+  // Jena ARQ CLI
+  def infer(tbox: String, abox: String) =
+    try { riotcmd.infer.main("--rdfs=" + tbox, abox) }
+    catch { case e: Exception => println(e) }
+
   // Jena TDB API
   private val store = new TDBAPI(TGMDATA)
 
