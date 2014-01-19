@@ -15,8 +15,19 @@ object Infer extends helper.Logging {
   import common.ModelEx._
   import helper.BuildIn
 
+  val rEmpty = Rule.parseRules("")
+
   val rClassification =
     Rule.parseRules(BuildIn.getString("rules/classification.rule"))
+
+  val defaultRules = rClassification
+
+  def parseRules(ruleString: String) =
+    try {
+      Rule.parseRules(ruleString)
+    } catch {
+      case e: Exception => logger.error(e.toString); rEmpty
+    }
 
   implicit class InferAsOntology(m: Model) {
     def infer = {
@@ -26,17 +37,8 @@ object Infer extends helper.Logging {
       ModelFactory.createOntologyModel(ontModelSpec, m)
     }
 
-    def inferWithRule = {
-      val rule = rClassification
-      val reasoner = new GenericRuleReasoner(rule)
-      val ontModelSpec = OntModelSpec.OWL_MEM
-      ontModelSpec.setReasoner(reasoner)
-      ModelFactory.createOntologyModel(ontModelSpec, m)
-    }
-
-    def inferWithRule(rules: String) = {
-      val rule = Rule.parseRules(rules)
-      val reasoner = new GenericRuleReasoner(rule)
+    def inferWithRule(rules: java.util.List[Rule]) = {
+      val reasoner = new GenericRuleReasoner(rules)
       val ontModelSpec = OntModelSpec.OWL_MEM
       ontModelSpec.setReasoner(reasoner)
       ModelFactory.createOntologyModel(ontModelSpec, m)

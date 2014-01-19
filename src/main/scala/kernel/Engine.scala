@@ -69,28 +69,26 @@ TriGraM:     $TGMVER
     }
   }
 
-  def inferWithSchema(iArgs: List[String]) = {
-    iArgs.tail match {
-      case dataFN :: schemaFN :: output :: Nil => {
-        val data = load(dataFN)
-        val schema = load(schemaFN)
-        data.inferWithOWL(schema).validateAndSave(output)
-      }
-      case dataFN :: output :: Nil => load(dataFN).infer.validateAndSave(output)
-      case _ => println("parameter error " + iArgs.mkString(" "))
+  def inferWithSchema(modelFN: String, schemaFNs: List[String]) = {
+    val data = load(modelFN)
+    val output = modelFN + "-infered.owl"
+    if (Nil == schemaFNs)
+      data.infer.validateAndSave(output)
+    else {
+      val schema = load(schemaFNs.head) // chaining ...
+      data.inferWithOWL(schema).validateAndSave(output)
     }
   }
 
-  def inferWithRule(rArgs: List[String]) = {
-    rArgs match {
-      case dataFN :: ruleFN :: output :: Nil => {
-        val data = load(dataFN)
-        val rule = GetString.fromFile(ruleFN)
-        data.inferWithRule(rule).validateAndSave(output)
-      }
-      case dataFN :: output :: Nil =>
-        load(dataFN).inferWithRule.validateAndSave(output)
-      case _ => println("parameter error " + rArgs.mkString(" "))
+  def inferWithRule(modelFN: String, ruleFNs: List[String]) = {
+    val data = load(modelFN)
+    val output = modelFN + "-infered.owl"
+    if (Nil == ruleFNs) {
+      data.inferWithRule(defaultRules).validateAndSave(output)
+    } else {
+      val rules = ruleFNs.map(GetString.fromFile).map(parseRules)
+      for (r <- rules) // chaining ...
+        data.inferWithRule(r).validateAndSave(output)
     }
   }
 }

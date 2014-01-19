@@ -44,16 +44,16 @@ usage: Trigram
       case "-i" :: modelFiles => modelFiles.foreach(Engine.tdbloader)
       case "-q" :: qArgs => Engine.doQuery(qArgs)
       case "-u" :: uArgs => Engine.doUpdate(uArgs)
-      case "-s" :: sArgs => Schema.fromXML(sArgs).toModelGroup
-      case "-s1" :: sArgs => Schema.fromXML(sArgs).toModel
-      case "-C" :: cArgs => Schema.check(cArgs)
+      case "-s" :: cimXML => Schema.fromXML(cimXML).toModelGroup
+      case "-s1" :: cimXML => Schema.fromXML(cimXML).toModel
+      case "-C" :: cimClasses => Schema.check(cimClasses)
       case "-g" :: output :: selected => Merger.gather(output, selected)
-      case "-c" :: modelFiles =>
-        if (modelFiles.size > 1) {
-          Merger.combine(modelFiles)
-          println(modelFiles.size + " models combined.")
+      case "-c" :: modelFNs =>
+        if (modelFNs.size > 1) {
+          Merger.combine(modelFNs)
+          println(modelFNs.size + " models combined.")
         } else println("There's only one model out there.")
-      case "-R" :: rArgs => Engine.inferWithRule(rArgs)
+      case "-R" :: modelFN :: ruleFNs => Engine.inferWithRule(modelFN, ruleFNs)
       case "-m" :: modeler :: mArgs => {
         println("invoking [%s] modeler with options [%s]"
           .format(modeler, mArgs.mkString(" ")))
