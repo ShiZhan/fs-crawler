@@ -35,7 +35,7 @@ TriGraM:     $TGMVER
     try { tdb.tdbupdate.main("--loc=" + TGMDATA, "--update=" + updateFile) }
     catch { case e: Exception => println(e) }
 
-  // Jena ARQ CLI
+  // Jena infer CLI
   def infer(tbox: String, abox: String) =
     try { riotcmd.infer.main("--rdfs=" + tbox, abox) }
     catch { case e: Exception => println(e) }
@@ -45,7 +45,7 @@ TriGraM:     $TGMVER
 
   def shutdown = store.close
 
-  // additional handlers for executing SPARQL in triple store
+  // handlers for TriGraM
   def doQuery(sparql: String) = {
     try {
       val t1 = compat.Platform.currentTime
@@ -67,5 +67,13 @@ TriGraM:     $TGMVER
     } catch {
       case e: Exception => e.printStackTrace
     }
+  }
+
+  def doInferWithOWL(owlFN: String) = {
+    
+  }
+
+  def doInferWithRule(ruleFN: String) = {
+    
   }
 }
