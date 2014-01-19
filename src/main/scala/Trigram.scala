@@ -41,7 +41,7 @@ usage: Trigram
       case Nil => Console.run
       case "-h" :: Nil => println(usage)
       case "-v" :: Nil => println(helper.Version.get)
-      case "-i" :: modelFiles => modelFiles.foreach(Engine.tdbloader)
+      case "-i" :: modelFNs => modelFNs.foreach(Engine.tdbloader)
       case "-q" :: qArgs => Engine.doQuery(qArgs)
       case "-u" :: uArgs => Engine.doUpdate(uArgs)
       case "-s" :: cimXML => Schema.fromXML(cimXML).toModelGroup

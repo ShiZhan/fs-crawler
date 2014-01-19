@@ -44,8 +44,7 @@ TriGraM:     $TGMVER
 
   def shutdown = store.close
 
-  def doQuery(qArgs: List[String]) = {
-    val sparql = if (qArgs == Nil) GetString.fromConsole else GetString.fromFile(qArgs.head)
+  def timedQuery(sparql: String) = {
     try {
       val t1 = compat.Platform.currentTime
       val result = store.queryAny(sparql)
@@ -56,9 +55,12 @@ TriGraM:     $TGMVER
       case e: Exception => e.printStackTrace
     }
   }
+  def doQueryFromConsole = timedQuery(GetString.fromConsole)
+  def doQueryFromFile(fileName: String) = timedQuery(GetString.fromFile(fileName))
+  def doQuery(qArgs: List[String]) =
+    if (Nil == qArgs) doQueryFromConsole else qArgs.foreach(doQueryFromFile)
 
-  def doUpdate(uArgs: List[String]) = {
-    val sparql = if (uArgs == Nil) GetString.fromConsole else GetString.fromFile(uArgs.head)
+  def timedUpdate(sparql: String) = {
     try {
       val t1 = compat.Platform.currentTime
       store.update(sparql)
@@ -68,6 +70,10 @@ TriGraM:     $TGMVER
       case e: Exception => e.printStackTrace
     }
   }
+  def doUpdateFromConsole = timedUpdate(GetString.fromConsole)
+  def doUpdateFromFile(fileName: String) = timedUpdate(GetString.fromFile(fileName))
+  def doUpdate(uArgs: List[String]) =
+    if (Nil == uArgs) doUpdateFromConsole else uArgs.foreach(doUpdateFromFile)
 
   def inferWithSchema(modelFN: String, schemaFNs: List[String]) = {
     val data = load(modelFN)
