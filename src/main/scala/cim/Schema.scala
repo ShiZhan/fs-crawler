@@ -217,7 +217,7 @@ permissions and limitations under the License.
   }
 
   def fromXML(sArgs: List[String]) = {
-    val xml = if(sArgs == Nil) {
+    val xml = if (sArgs == Nil) {
       logger.info("Loading default DMTF CIM Schema")
       val is = getClass.getClassLoader.getResourceAsStream("all_classes.xml.bz2")
       val bzis = is.asBzip
