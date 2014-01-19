@@ -20,7 +20,7 @@ object Schema extends helper.Logging {
   import common.ArchiveEx.InputStreamAsArchiveStream
   import common.ModelEx._
   import common.StringSeqEx._
-  import helper.{ Config, DateTime, Version }
+  import helper.{ BuildIn, Config, DateTime, Version }
 
   private val dataType: Map[String, Resource] = Map(
     "string" -> XSD.xstring,
@@ -219,7 +219,7 @@ permissions and limitations under the License.
   def fromXML(sArgs: List[String]) = {
     val xml = if (sArgs == Nil) {
       logger.info("Loading default DMTF CIM Schema")
-      val is = getClass.getClassLoader.getResourceAsStream("all_classes.xml.bz2")
+      val is = BuildIn.get("all_classes.xml.bz2")
       val bzis = is.asBzip
       XML.load(bzis)
     } else {
