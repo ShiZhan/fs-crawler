@@ -30,13 +30,13 @@ object Infer extends helper.Logging {
       ModelFactory.createOntologyModel(ontModelSpec, m)
     }
 
-    def inferWithRDFS(s: Model) = {
-      val reasoner = ReasonerRegistry.getRDFSReasoner.bindSchema(s)
+    def infer(s: Model) = {
+      val reasoner = ReasonerRegistry.getOWLReasoner.bindSchema(s)
       ModelFactory.createInfModel(reasoner, m)
     }
 
-    def inferWithOWL(s: Model) = {
-      val reasoner = ReasonerRegistry.getOWLReasoner.bindSchema(s)
+    def inferWithRDFS(s: Model) = {
+      val reasoner = ReasonerRegistry.getRDFSReasoner.bindSchema(s)
       ModelFactory.createInfModel(reasoner, m)
     }
   }

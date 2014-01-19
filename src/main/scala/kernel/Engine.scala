@@ -9,7 +9,9 @@ package kernel
  */
 object Engine {
   import helper.Config.{ TGMROOT, TGMDATA, CIMDATA }
-  import helper.{ Platform, Version }
+  import helper.{ GetString, Platform, Version }
+  import common.ModelEx._
+  import Infer._
 
   private val TGMVER = Version.get
   val status = s"""
@@ -18,7 +20,6 @@ TriGraM:     $TGMVER
   data:      $TGMDATA
   CIM:       $CIMDATA""" + Platform.BRIEFING
 
-  // Jena TDB CLI
   def tdbloader(modelFile: String) =
     try { tdb.tdbloader.main("--loc=" + TGMDATA, modelFile) }
     catch { case e: Exception => println(e) }
@@ -35,18 +36,16 @@ TriGraM:     $TGMVER
     try { tdb.tdbupdate.main("--loc=" + TGMDATA, "--update=" + updateFile) }
     catch { case e: Exception => println(e) }
 
-  // Jena infer CLI
-  def infer(tbox: String, abox: String) =
-    try { riotcmd.infer.main("--rdfs=" + tbox, abox) }
+  def infer(rdfs: String, data: String) =
+    try { riotcmd.infer.main("--rdfs=" + rdfs, data) }
     catch { case e: Exception => println(e) }
 
-  // Jena TDB API
   private val store = new Store(TGMDATA)
 
   def shutdown = store.close
 
-  // handlers for TriGraM
-  def doQuery(sparql: String) = {
+  def doQuery(qArgs: List[String]) = {
+    val sparql = if (qArgs == Nil) GetString.fromConsole else GetString.fromFile(qArgs.head)
     try {
       val t1 = compat.Platform.currentTime
       val result = store.queryAny(sparql)
@@ -58,7 +57,8 @@ TriGraM:     $TGMVER
     }
   }
 
-  def doUpdate(sparql: String) = {
+  def doUpdate(uArgs: List[String]) = {
+    val sparql = if (uArgs == Nil) GetString.fromConsole else GetString.fromFile(uArgs.head)
     try {
       val t1 = compat.Platform.currentTime
       store.update(sparql)
@@ -69,11 +69,17 @@ TriGraM:     $TGMVER
     }
   }
 
-  def doInferWithOWL(owlFN: String) = {
-    
+  def doInferWithOWL(dataFN: String, owlFN: String, output: String) = {
+    val data = load(dataFN)
+    val schema = load(owlFN)
+    val deductions = data.infer(schema)
+    deductions.validateAndSave(output)
   }
 
-  def doInferWithRule(ruleFN: String) = {
-    
+  def doInferWithRule(dataFN: String, ruleFN: String, output: String) = {
+    val data = load(dataFN)
+    val rule = GetString.fromFile(ruleFN)
+    val deductions = data.infer(rule)
+    deductions.validateAndSave(output)
   }
 }

@@ -8,7 +8,6 @@ package kernel
  * Console command loop
  */
 object Console {
-  import helper.{ DateTime, GetString }
   import Engine._
 
   private val usage = """ [Console Usage]
@@ -31,16 +30,14 @@ object Console {
         case "help" :: Nil => println(usage)
         case "status" :: Nil => println(status)
         case "cim" :: Nil => println(cim.Schema.check)
-        case "time" :: Nil => println(DateTime.get)
+        case "time" :: Nil => println(helper.DateTime.get)
         case "tdbinfo" :: Nil => tdbinfo
         case "tdbloader" :: modelFile :: Nil => tdbloader(modelFile)
         case "tdbquery" :: sparqlFile :: Nil => tdbquery(sparqlFile)
         case "tdbupdate" :: sparqlFile :: Nil => tdbupdate(sparqlFile)
-        case "query" :: Nil => doQuery(GetString.fromConsole)
-        case "update" :: Nil => doUpdate(GetString.fromConsole)
-        case "query" :: sparqlFile :: Nil => doQuery(GetString.fromFile(sparqlFile))
-        case "update" :: sparqlFile :: Nil => doUpdate(GetString.fromFile(sparqlFile))
-        case "" :: Nil => {}
+        case "query" :: qArgs => doQuery(qArgs)
+        case "update" :: uArgs => doUpdate(uArgs)
+        case "" :: Nil =>
         case _ => println(s"Unrecognized command: [$line]")
       }
       print(prompt)

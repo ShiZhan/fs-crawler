@@ -7,7 +7,6 @@ object Trigram {
   import kernel.{ Console, Engine }
   import modeler.{ Modelers, Merger }
   import cim.Schema
-  import helper.{ GetString, Version }
 
   val usage = """
 usage: Trigram
@@ -41,12 +40,10 @@ usage: Trigram
     args.toList match {
       case Nil => Console.run
       case "-h" :: Nil => println(usage)
-      case "-v" :: Nil => println(Version.get)
+      case "-v" :: Nil => println(helper.Version.get)
       case "-i" :: modelFiles => modelFiles.foreach(Engine.tdbloader)
-      case "-q" :: queryFile :: Nil => Engine.doQuery(GetString.fromFile(queryFile))
-      case "-u" :: updateFile :: Nil => Engine.doUpdate(GetString.fromFile(updateFile))
-      case "-q" :: Nil => Engine.doQuery(GetString.fromConsole)
-      case "-u" :: Nil => Engine.doUpdate(GetString.fromConsole)
+      case "-q" :: qArgs => Engine.doQuery(qArgs)
+      case "-u" :: uArgs => Engine.doUpdate(uArgs)
       case "-s" :: Nil => Schema.fromXML.toModelGroup
       case "-s1" :: Nil => Schema.fromXML.toModel
       case "-s" :: cimXML :: Nil => Schema.fromXML(cimXML).toModelGroup
@@ -59,10 +56,10 @@ usage: Trigram
           Merger.combine(modelFiles)
           println(modelFiles.size + " models combined.")
         } else println("There's only one model out there.")
-      case "-m" :: modeler :: margs => {
+      case "-m" :: modeler :: mArgs => {
         println("invoking [%s] modeler with options [%s]"
-          .format(modeler, margs.mkString(" ")))
-        Modelers.run(modeler, margs.toArray)
+          .format(modeler, mArgs.mkString(" ")))
+        Modelers.run(modeler, mArgs.toArray)
       }
       case _ => println(incorrectArgs)
     }
