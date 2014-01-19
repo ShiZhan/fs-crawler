@@ -10,21 +10,9 @@ package helper
 object BuildIn extends Logging {
   def get(name: String) = getClass.getClassLoader.getResourceAsStream(name)
 
-  def getString(name: String) = {
-    try {
-      val is = get(name)
-      io.Source.fromInputStream(is).mkString
-    } catch {
-      case e: Exception => logger.error(e.toString); null
-    }
-  }
+  def getString(name: String) = io.Source.fromInputStream(get(name)).mkString
 
-  def getStringOrElse(name: String, default: String) = {
-    try {
-      val is = get(name)
-      io.Source.fromInputStream(is).mkString
-    } catch {
-      case e: Exception => logger.error(e.toString); default
-    }
-  }
+  def getStringOrElse(name: String, default: String) =
+    try { getString(name) }
+    catch { case e: Exception => logger.error(e.toString); default }
 }
