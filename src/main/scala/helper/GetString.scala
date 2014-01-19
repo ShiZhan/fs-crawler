@@ -15,6 +15,6 @@ object GetString {
 
   def fromFile(fileName: String) = {
     try { io.Source.fromFile(fileName).mkString }
-    catch { case e: Exception => e.printStackTrace; "" }
+    catch { case e: Exception => println(fileName + " exception: " + e.toString); "" }
   }
 }
