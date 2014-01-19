@@ -24,7 +24,7 @@ import com.hp.hpl.jena.update.{
  * SPARQL QUERY and UPDATE operations
  * wrapper of Apache Jena TDB, each instance stands for a TDB assembly
  */
-class TDBAPI(location: String) {
+class Store(location: String) {
   private val store = TDBFactory.createDataset(location)
 
   def close = store.close()

@@ -41,7 +41,7 @@ TriGraM:     $TGMVER
     catch { case e: Exception => println(e) }
 
   // Jena TDB API
-  private val store = new TDBAPI(TGMDATA)
+  private val store = new Store(TGMDATA)
 
   def shutdown = store.close
 
