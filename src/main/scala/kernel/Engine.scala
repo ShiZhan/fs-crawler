@@ -69,17 +69,20 @@ TriGraM:     $TGMVER
     }
   }
 
-  def doInferWithOWL(dataFN: String, owlFN: String, output: String) = {
-    val data = load(dataFN)
-    val schema = load(owlFN)
-    val deductions = data.infer(schema)
-    deductions.validateAndSave(output)
+  def inferWithOWL(iArgs: List[String]) = {
+    val data = load(iArgs.head)
+    iArgs.tail match {
+      case owlFN :: output :: Nil => data.infer(load(owlFN)).validateAndSave(output)
+      case output :: Nil => data.infer.validateAndSave(output)
+      case _ => println("parameter error " + iArgs.mkString(" "))
+    }
   }
 
-  def doInferWithRule(dataFN: String, ruleFN: String, output: String) = {
-    val data = load(dataFN)
-    val rule = GetString.fromFile(ruleFN)
-    val deductions = data.infer(rule)
-    deductions.validateAndSave(output)
+  def inferWithRule(rArgs: List[String]) = {
+    rArgs match {
+      case dataFN :: ruleFN :: output :: Nil =>
+        load(dataFN).infer(GetString.fromFile(ruleFN)).validateAndSave(output)
+      case _ => println("parameter error " + rArgs.mkString(" "))
+    }
   }
 }

@@ -1,11 +1,11 @@
 /**
- * Apache Jena ARQ wrapper class
+ * Apache Jena infer operations
  */
 package kernel
 
 /**
  * @author ShiZhan
- * Apache Jena ARQ infer operations
+ * Apache Jena infer operations
  */
 object Infer extends helper.Logging {
   import com.hp.hpl.jena.rdf.model.{ Model, ModelFactory, InfModel }

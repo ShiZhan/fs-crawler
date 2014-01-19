@@ -26,6 +26,8 @@ usage: Trigram
  -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
                            Based on the OWL.imports in <CIM classes>
  -c [MODEL...]             Combine multiple models
+ -I [DATA] [CIM] [output]  Infer over [DATA] using [CIM] as schema
+ -R [DATA] [Rule] [output] Infer over [DATA] using [Rule]
 
  modeler:
  -m MODELER <args...>      Use [modeler] with arguments:
@@ -54,6 +56,8 @@ usage: Trigram
           Merger.combine(modelFiles)
           println(modelFiles.size + " models combined.")
         } else println("There's only one model out there.")
+      case "-I" :: iArgs => Engine.inferWithOWL(iArgs)
+      case "-R" :: rArgs => Engine.inferWithRule(rArgs)
       case "-m" :: modeler :: mArgs => {
         println("invoking [%s] modeler with options [%s]"
           .format(modeler, mArgs.mkString(" ")))
