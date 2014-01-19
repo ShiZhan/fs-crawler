@@ -26,7 +26,7 @@ usage: Trigram
  -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
                            Based on the OWL.imports in <CIM classes>
  -c [MODEL...]             Combine multiple models
- -R [DATA] [Rule] [output] Infer over [DATA] using [Rule]
+ -R [DATA] <Rule> [output] Infer over [DATA] using <Rule>
 
  modeler:
  -m MODELER <args...>      Use [modeler] with arguments:

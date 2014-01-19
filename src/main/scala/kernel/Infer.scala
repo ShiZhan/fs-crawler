@@ -13,6 +13,10 @@ object Infer extends helper.Logging {
   import com.hp.hpl.jena.reasoner.ReasonerRegistry
   import com.hp.hpl.jena.reasoner.rulesys.{ GenericRuleReasoner, Rule }
   import common.ModelEx._
+  import helper.BuildIn
+
+  val rClassification =
+    Rule.parseRules(BuildIn.getString("rules/classification.rule"))
 
   implicit class InferAsOntology(m: Model) {
     def infer = {
@@ -22,7 +26,15 @@ object Infer extends helper.Logging {
       ModelFactory.createOntologyModel(ontModelSpec, m)
     }
 
-    def infer(rules: String) = {
+    def inferWithRule = {
+      val rule = rClassification
+      val reasoner = new GenericRuleReasoner(rule)
+      val ontModelSpec = OntModelSpec.OWL_MEM
+      ontModelSpec.setReasoner(reasoner)
+      ModelFactory.createOntologyModel(ontModelSpec, m)
+    }
+
+    def inferWithRule(rules: String) = {
       val rule = Rule.parseRules(rules)
       val reasoner = new GenericRuleReasoner(rule)
       val ontModelSpec = OntModelSpec.OWL_MEM

@@ -70,13 +70,13 @@ TriGraM:     $TGMVER
   }
 
   def inferWithSchema(iArgs: List[String]) = {
-    val data = load(iArgs.head)
     iArgs.tail match {
-      case schemaFN :: output :: Nil => {
+      case dataFN :: schemaFN :: output :: Nil => {
+        val data = load(dataFN)
         val schema = load(schemaFN)
         data.inferWithOWL(schema).validateAndSave(output)
       }
-      case output :: Nil => data.infer.validateAndSave(output)
+      case dataFN :: output :: Nil => load(dataFN).infer.validateAndSave(output)
       case _ => println("parameter error " + iArgs.mkString(" "))
     }
   }
@@ -84,9 +84,12 @@ TriGraM:     $TGMVER
   def inferWithRule(rArgs: List[String]) = {
     rArgs match {
       case dataFN :: ruleFN :: output :: Nil => {
+        val data = load(dataFN)
         val rule = GetString.fromFile(ruleFN)
-        load(dataFN).infer(rule).validateAndSave(output)
+        data.inferWithRule(rule).validateAndSave(output)
       }
+      case dataFN :: output :: Nil =>
+        load(dataFN).inferWithRule.validateAndSave(output)
       case _ => println("parameter error " + rArgs.mkString(" "))
     }
   }
