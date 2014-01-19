@@ -121,7 +121,6 @@ permissions and limitations under the License.
     }
 
     def saveAsModel = {
-      // create & initialize the model
       val m = ModelFactory.createDefaultModel
       m.setNsPrefix(CIM.NS_PREFIX, CIM.NS)
       m.createResource(CIM.PURL(cName), OWL.Ontology)
@@ -219,9 +218,7 @@ permissions and limitations under the License.
   def fromXML(sArgs: List[String]) = {
     val xml = if (sArgs == Nil) {
       logger.info("Loading default DMTF CIM Schema")
-      val is = BuildIn.get("all_classes.xml.bz2")
-      val bzis = is.asBzip
-      XML.load(bzis)
+      XML.load(BuildIn.get("all_classes.xml.bz2").asBzip)
     } else {
       XML.loadFile(sArgs.head)
     }
