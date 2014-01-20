@@ -17,7 +17,7 @@ trait Modeler {
   val key: String
   val usage: String
   val tbox: Seq[String]
-  def run(options: Array[String]): Unit
+  def run(options: List[String]): Unit
 }
 
 /**
@@ -32,5 +32,5 @@ object Modelers {
   val help = ms.map { m => "  %s:  \t%s".format(m.key, m.usage) }.mkString("\n")
   val tbox = ms.flatMap(_.tbox).distinct
 
-  def run(k: String, o: Array[String]) = ms.find(_.key == k).getOrElse(Unknown).run(o)
+  def run(k: String, o: List[String]) = ms.find(_.key == k).getOrElse(Unknown).run(o)
 }

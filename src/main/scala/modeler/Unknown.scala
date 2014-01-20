@@ -11,5 +11,5 @@ object Unknown extends Modeler with helper.Logging {
   val key = "unknown"
   val usage = null
   val tbox = Seq("CIM_Base")
-  def run(o: Array[String]) = logger.info("Modeler type unkown")
+  def run(o: List[String]) = logger.info("Modeler type unkown")
 }

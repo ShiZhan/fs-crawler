@@ -136,13 +136,22 @@ object Directory extends Modeler with helper.Logging {
 
   val key = "dir"
 
-  val usage = "[directory] [output.owl] <--text> => output.owl"
+  val usage = "[input] [output.owl] <--text> => output.owl"
 
   val tbox = Seq("CIM_Directory", "CIM_DataFile", "CIM_DirectoryContainsFile")
 
-  private def translate(f: File, output: String) = {
+  def run(options: List[String]) = {
+    options match {
+      case input :: output :: Nil => translate(input, output)
+      case input :: output :: "--text" :: Nil => translateEx(input, output)
+      case _ => logger.error("incorrect options: [{}]", options)
+    }
+  }
+
+  private def translate(input: String, output: String) = {
     logger.info("creating model ...")
 
+    val f = new File(input)
     val m = ModelFactory.createDefaultModel.set(URI.fromHost, key)
     m += f
 
@@ -163,9 +172,10 @@ object Directory extends Modeler with helper.Logging {
     m.store(output)
   }
 
-  private def translateEx(f: File, output: String) = {
+  private def translateEx(input: String, output: String) = {
     logger.info("creating model ...")
 
+    val f = new File(input)
     val model = DirectoryTreeModel(URI.fromHost, key)
     val modelFile = new File(output) getWriter "UTF-8"
     modelFile write (model.header + f.toOWL)
@@ -188,15 +198,5 @@ object Directory extends Modeler with helper.Logging {
     modelFile.close
 
     logger.info("[{}] individuals generated in [{}]", total, output)
-  }
-
-  def run(options: Array[String]) = {
-    options.toList match {
-      case file :: output :: Nil =>
-        translate(new File(file), output)
-      case file :: output :: "--text" :: Nil =>
-        translateEx(new File(file), output)
-      case _ => logger.error("incorrect options: [{}]", options)
-    }
   }
 }

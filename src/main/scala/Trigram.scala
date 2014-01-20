@@ -55,9 +55,8 @@ usage: Trigram
         } else println("There's only one model out there.")
       case "-R" :: modelFN :: ruleFNs => Engine.inferWithRule(modelFN, ruleFNs)
       case "-m" :: modeler :: mArgs => {
-        println("invoking [%s] modeler with options [%s]"
-          .format(modeler, mArgs.mkString(" ")))
-        Modelers.run(modeler, mArgs.toArray)
+        println("run modeler [%s] with options [%s]".format(modeler, mArgs))
+        Modelers.run(modeler, mArgs)
       }
       case _ => println(incorrectArgs)
     }

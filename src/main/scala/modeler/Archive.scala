@@ -77,29 +77,28 @@ object Archive extends Modeler with helper.Logging {
 
   val key = "arc"
 
-  val usage = "[source] [output.owl] => output.owl, support zip, gzip, bzip & 7z."
+  val usage = "[input] [output.owl] => output.owl, support zip, gzip, bzip & 7z."
 
   val tbox =
     Seq("CIM_Directory", "CIM_DataFile", "CIM_ConcreteComponent", "CIM_FileSpecification")
 
-  def run(options: Array[String]) =
-    options.toList match {
-      case fileName :: output :: Nil => translate(new File(fileName), output)
+  def run(options: List[String]) =
+    options match {
+      case input :: output :: Nil => translate(input, output)
       case _ => logger.error("parameter error: [{}]", options)
     }
 
-  private def translate(file: File, output: String) = {
-    val arcPath = file.getAbsolutePath
-    logger.info("Model all supported archive file in [{}]", arcPath)
+  private def translate(input: String, output: String) = {
+    logger.info("Model all supported archive file in [{}]", input)
     val m = ArcModel(URI.fromHost, key).create
-    file.flatten.foreach { f =>
+    for(f <- new File(input).flatten) {
       if (f.isFile) {
         getChecker(f) match {
           case checker: arcChecker => {
             val arc = ArcFileModel(f).addTo(m)
             for (e <- checker(f)) e.addTo(m, arc)
           }
-          case _ => {}
+          case _ =>
         }
       }
     }

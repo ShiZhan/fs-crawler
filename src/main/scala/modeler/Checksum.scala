@@ -73,21 +73,21 @@ object Checksum extends Modeler with helper.Logging {
 
   val key = "chk"
 
-  val usage = "[source] [output.owl] <chunk size: Bytes> => output.owl"
+  val usage = "[input] [output.owl] <chunk size: Bytes> => output.owl"
 
   val tbox = Seq("CIM_DataFile", "CIM_OrderedComponent", "CIM_FileSpecification")
 
-  def run(options: Array[String]) = {
+  def run(options: List[String]) = {
     logger.info("Modeling")
-    options.toList match {
-      case fileName :: output :: Nil => {
-        val source = new File(fileName).flatten
-        translate(source, output)
+    options match {
+      case input :: output :: Nil => {
+        val files = new File(input).flatten
+        translate(files, output)
       }
-      case fileName :: output :: chunkSizeStr :: Nil => {
+      case input :: output :: chunkSizeStr :: Nil => {
         val chunkSize = chunkSizeStr.toLong
-        val source = new File(fileName).flatten
-        translate(source, output, chunkSize)
+        val files = new File(input).flatten
+        translate(files, output, chunkSize)
       }
       case _ => logger.error("parameter error: [{}]", options)
     }
