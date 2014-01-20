@@ -16,11 +16,11 @@ object Merger {
 
   private def readCimImports(modelFile: String): List[String] = {
     val m = load(modelFile)
-    val importFiles = m.getImports
-      .map { _.getObject.toString }.filter(isCimURI).map(PURL2FN).toList
+    val importCimFiles = m.getImports
+      .map(_.getObject.toString).filter(isCimURI).map(PURL2FN).toList
     m.close
-    if (importFiles.isEmpty) List()
-    else importFiles ::: importFiles.flatMap(readCimImports)
+    if (importCimFiles.isEmpty) List[String]()
+    else importCimFiles ::: importCimFiles.flatMap(readCimImports)
   }
 
   def gather(output: String, selected: List[String]) = {
