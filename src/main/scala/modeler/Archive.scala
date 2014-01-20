@@ -91,7 +91,7 @@ object Archive extends Modeler with helper.Logging {
   private def translate(input: String, output: String) = {
     logger.info("Model all supported archive file in [{}]", input)
     val m = ArcModel(URI.fromHost, key).create
-    for(f <- new File(input).flatten) {
+    for (f <- new File(input).flatten) {
       if (f.isFile) {
         getChecker(f) match {
           case checker: arcChecker => {
