@@ -88,18 +88,20 @@ TriGraM:     $TGMVER
 
   def inferWithRule(modelFN: String, ruleFNs: List[String]) = {
     val data = load(modelFN)
-    def output(suffix: String) = s"$modelFN$suffix.owl"
+    def output(suffix: String) = s"$modelFN-$suffix.owl"
     if (Nil == ruleFNs) {
-      data.inferWithRule(defaultRules).validateAndSave(output("-default"))
+      data.inferWithRule(defaultRules).validateAndSave(output("deduction"))
     } else {
       (data /: ruleFNs) { (baseModel, ruleFN) =>
-        val rName = new java.io.File(ruleFN).getName
-        val rString = GetString.fromFile(ruleFN)
-        val rules = parseRules(rString)
+        val ruleString = GetString.fromFile(ruleFN)
+        val rules = parseRules(ruleString)
+        val t1 = compat.Platform.currentTime
         val result = baseModel.inferWithRule(rules)
-        result.validateAndSave(output(rName))
+        val t2 = compat.Platform.currentTime
+        println("Inferring Executed in %d milliseconds".format(t2 - t1))
+        result.validateAndSave(output(new java.io.File(ruleFN).getName))
         baseModel union result.getDeductionsModel
-      } store (output("-final"))
+      } store (output("final"))
     }
   }
 }
