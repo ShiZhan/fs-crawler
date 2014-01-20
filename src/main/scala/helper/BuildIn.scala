@@ -8,9 +8,11 @@ package helper
  * API for getting build-in resources
  */
 object BuildIn extends Logging {
-  def get(name: String) = getClass.getClassLoader.getResourceAsStream(name)
+  def getInputStream(name: String) =
+    getClass.getClassLoader.getResourceAsStream(name)
 
-  def getString(name: String) = io.Source.fromInputStream(get(name)).mkString
+  def getString(name: String) =
+    io.Source.fromInputStream(getInputStream(name)).mkString
 
   def getStringOrElse(name: String, default: String) =
     try { getString(name) }
