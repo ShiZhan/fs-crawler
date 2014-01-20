@@ -88,13 +88,18 @@ TriGraM:     $TGMVER
 
   def inferWithRule(modelFN: String, ruleFNs: List[String]) = {
     val data = load(modelFN)
-    val output = modelFN + "-infered.owl"
+    def output(suffix: String) = s"$modelFN$suffix.owl"
     if (Nil == ruleFNs) {
-      data.inferWithRule(defaultRules).validateAndSave(output)
+      data.inferWithRule(defaultRules).validateAndSave(output("-default"))
     } else {
-      val rules = ruleFNs.map(GetString.fromFile).map(parseRules)
-      for (r <- rules) // chaining ...
-        data.inferWithRule(r).validateAndSave(output)
+      (data /: ruleFNs) { (baseModel, ruleFN) =>
+        val rName = new java.io.File(ruleFN).getName
+        val rString = GetString.fromFile(ruleFN)
+        val rules = parseRules(rString)
+        val result = baseModel.inferWithRule(rules)
+        result.validateAndSave(output(rName))
+        baseModel union result.getDeductionsModel
+      } store (output("-final"))
     }
   }
 }
