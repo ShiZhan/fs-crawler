@@ -24,7 +24,7 @@ trait Modeler {
  * modeler hub
  */
 object Modelers {
-  private val ms = Seq(
+  private val ms = Seq[Modeler](
     Directory,
     Archive,
     Checksum)
