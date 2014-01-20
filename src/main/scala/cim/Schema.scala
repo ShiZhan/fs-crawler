@@ -232,19 +232,24 @@ permissions and limitations under the License.
     """\".*\"""".r.findFirstIn(txt)
   }
 
-  def check(cArgs: List[String]) = if (cArgs == Nil) {
+  def check(cArgs: List[String]) = {
     val cList = fromFile(CIM.classFileName)
     val pList = fromFile(CIM.propertyFileName)
-    val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))
-    val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(None ==)
-    println("Vocabulary: " + cList.size + " classes " + pList.size + " properties")
-    println("CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid")
-  } else {
-    println("Checking CIM class model(s): " + cArgs.mkString(", "))
-    for (c <- cArgs) {
-      val ffn = CIM.FFN(c)
-      val size = load(ffn).size
-      println(ffn + "; " + size + " triples")
+    if (cArgs == Nil) {
+      val owls = new File(Config.CIMDATA).listFiles.filter(_.getName.endsWith(".owl"))
+      val (invalidURIs, validURIs) = owls.map(getBaseURI).partition(None ==)
+      println("Vocabulary: " + cList.size + " classes " + pList.size + " properties")
+      println("CIM Models: " + validURIs.length + " valid " + invalidURIs.length + " invalid")
+    } else {
+      println("Checking CIM class model(s): " + cArgs.mkString(", "))
+      for (c <- cArgs) {
+        if (cList.contains(c)) {
+          val ffn = CIM.FFN(c)
+          val size = load(ffn).size
+          if (0 == size) println(ffn + " isn't generated (use '-s').")
+          else println(ffn + " has " + size + " triples.")
+        } else println(c + " isn't in current CIM vocabulary.")
+      }
     }
   }
 }

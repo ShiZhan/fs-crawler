@@ -46,7 +46,7 @@ usage: Trigram
       case "-u" :: uArgs => Engine.doUpdate(uArgs)
       case "-s" :: cimXML => Schema.fromXML(cimXML).toModelGroup
       case "-s1" :: cimXML => Schema.fromXML(cimXML).toModel
-      case "-C" :: cimClasses => Schema.check(cimClasses)
+      case "-C" :: cArgs => Schema.check(cArgs)
       case "-g" :: output :: selected => Merger.gather(output, selected)
       case "-c" :: modelFNs =>
         if (modelFNs.size > 1) {
