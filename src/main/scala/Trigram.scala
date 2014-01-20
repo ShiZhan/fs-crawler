@@ -4,8 +4,8 @@
  * @name TriGraM Project
  */
 object Trigram {
-  import kernel.{ Console, Engine }
-  import modeler.{ Modelers, Merger }
+  import kernel.{ Console, Engine, Merger }
+  import modeler.Modelers
   import cim.Schema
 
   val usage = """

@@ -1,7 +1,15 @@
 /**
  * Model Merger
  */
-package modeler
+package kernel
+
+import cim.{Vocabulary => CIM}
+import common.ModelEx.ModelFileOps
+import common.ModelEx.ModelOps
+import common.ModelEx.ModelSeqOps
+import common.ModelEx.load
+import modeler.Modelers
+import scala.collection.JavaConversions.asScalaIterator
 
 /**
  * @author ShiZhan
