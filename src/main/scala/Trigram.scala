@@ -10,22 +10,22 @@ object Trigram {
 
   val usage = """
 usage: Trigram
- -h             print this message
- -v             show program version
- <no argument>  enter console
+ -h              print this message
+ -v              show program version
+ <no argument>   enter console
 
  database:
- -i [MODEL...]  import model
- -q [SPARQL]    http://www.w3.org/TR/sparql11-query/
- -u [SPARQL]    http://www.w3.org/TR/sparql11-update/
+ -i [MODEL ...]  import model
+ -q [SPARQL ...] http://www.w3.org/TR/sparql11-query/
+ -u [SPARQL ...] http://www.w3.org/TR/sparql11-update/
 
  model operations:
  -s <CIM Schema XML>       Update CIM schema as TBox for modelers
                            default CIM Schema is packaged within
  -C <CIM classes>          Check CIM Schema & vocabulary availability
  -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
- -c [MODEL...]             Combine multiple models
- -R [DATA] <Rule> [output] Infer over [DATA] using <Rule>
+ -c [MODEL ...]            Combine multiple models
+ -R [MODEL] <Rules ...>    Infer over [MODEL] using <Rules ...>
 
  modeler:
  -m MODELER <args...>      Use [modeler] with arguments:
