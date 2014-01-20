@@ -5,9 +5,10 @@ package helper
 
 /**
  * @author ShiZhan
- * get program version from GIT repository
- * use build-in string if not available
+ * get program version from GIT repository or use build-in string
  */
 object Version {
-  def get = BuildIn.getStringOrElse("master", "internal version").trim
+  def get =
+    try { BuildIn.getString("master").trim }
+    catch { case e: Exception => "internal version" }
 }
