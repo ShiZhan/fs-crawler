@@ -23,12 +23,12 @@ usage: Trigram
  -s <CIM Schema XML>       Update CIM schema as TBox for modelers
                            default CIM Schema is packaged within
  -C <CIM classes>          Check CIM Schema & vocabulary availability
- -g [output] <CIM classes> Gather selected CIM classes into [output] as TBox
+ -g [output] <CIM classes> Gather selected CIM classes into [output]
  -c [MODEL ...]            Combine multiple models
  -R [MODEL] <Rules ...>    Infer over [MODEL] using <Rules ...>
 
  modeler:
- -m MODELER <args...>      Use [modeler] with arguments:
+ -m MODELER <args ...>     Use [modeler] with arguments:
 
 """ + Modelers.help
 
