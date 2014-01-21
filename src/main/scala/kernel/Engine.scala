@@ -77,12 +77,19 @@ TriGraM:     $TGMVER
 
   def inferWithSchema(modelFN: String, schemaFNs: List[String]) = {
     val data = load(modelFN)
-    val output = modelFN + "-infered.owl"
+    def output(suffix: String) = s"$modelFN-$suffix.owl"
     if (Nil == schemaFNs)
-      data.infer.validateAndSave(output)
+      data.infer.validateAndSave(output("deduction"))
     else {
-      val schema = load(schemaFNs.head) // chaining ...
-      data.inferWithOWL(schema).validateAndSave(output)
+      (data /: schemaFNs) { (baseModel, schemaFN) =>
+        val schema = load(schemaFN)
+        val t1 = compat.Platform.currentTime
+        val result = baseModel.inferWithOWL(schema)
+        val t2 = compat.Platform.currentTime
+        println("Inferring Executed in %d milliseconds".format(t2 - t1))
+        result.validateAndSave(output(new java.io.File(schemaFN).getName))
+        baseModel union result.getDeductionsModel
+      } store (output("final"))
     }
   }
 
