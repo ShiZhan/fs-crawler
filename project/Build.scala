@@ -8,7 +8,7 @@ object MyBuild extends Build {
     scalaVersion := "2.10.3"
   )
 
-  lazy val copyDependencies = TaskKey[Unit]("copy-dep")
+  lazy val copyDependencies = TaskKey[Unit]("copyDep")
 
   def copyDepTask = copyDependencies <<= (update, crossTarget, scalaVersion) map {
     (updateReport, out, scalaVer) =>
