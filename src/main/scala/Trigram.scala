@@ -4,7 +4,7 @@
  * @name TriGraM Project
  */
 object Trigram {
-  import kernel.Engine
+  import kernel.{ Console, Engine }
   import modeler.Modelers
 
   val usage = """
@@ -23,6 +23,7 @@ usage: Trigram
     println("Triple Graph based Metadata storage - TriGraM")
 
     args.toList match {
+      case Nil => Console.run
       case "-h" :: Nil => println(usage)
       case "-v" :: Nil => println(helper.Version.get)
       case "-i" :: modelFNs => modelFNs.foreach(Engine.tdbloader)
