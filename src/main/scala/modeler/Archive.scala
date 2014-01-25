@@ -60,7 +60,7 @@ object Archive extends Modeler with helper.Logging {
 
   val key = "arc"
 
-  val usage = "[input] [output] => output.n3, support zip, gzip, bzip & 7z."
+  val usage = "[input] [output.n3] => output.n3, support zip, gzip, bzip & 7z."
 
   def run(options: List[String]) =
     options match {

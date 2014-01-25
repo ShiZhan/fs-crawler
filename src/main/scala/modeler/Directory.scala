@@ -49,7 +49,7 @@ object Directory extends Modeler with helper.Logging {
 
   val key = "dir"
 
-  val usage = "[input] [output] => output.n3"
+  val usage = "[input] [output.n3] => output.n3"
 
   def run(options: List[String]) =
     options match {

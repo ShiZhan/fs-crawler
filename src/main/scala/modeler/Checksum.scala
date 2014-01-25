@@ -51,7 +51,7 @@ object Checksum extends Modeler with helper.Logging {
 
   val key = "chk"
 
-  val usage = "[input] [output] <chunk size: Bytes> => output.n3"
+  val usage = "[input] [output.n3] <chunk size: Bytes> => output.n3"
 
   def run(options: List[String]) = {
     logger.info("Modeling")

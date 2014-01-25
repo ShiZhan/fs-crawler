@@ -27,7 +27,7 @@ object Modelers {
     Archive,
     Checksum)
 
-  val help = ms.map { m => "  %s:  %s".format(m.key, m.usage) } mkString("\n")
+  val help = ms.map { m => "    %s: %s".format(m.key, m.usage) } mkString("\n")
 
   def run(k: String, o: List[String]) = ms.find(_.key == k).getOrElse(Unknown).run(o)
 }

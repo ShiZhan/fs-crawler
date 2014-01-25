@@ -7,13 +7,13 @@ object Trigram {
   import kernel.{ Console, Engine }
   import modeler.Modelers
 
-  val usage = """
-usage: Trigram
+  val usage = """usage: Trigram
+ no argument     enter console
  -h              print this message
  -v              show program version
- -i [MODEL ...]  import model
- -q [SPARQL ...] http://www.w3.org/TR/sparql11-query/
- -u [SPARQL ...] http://www.w3.org/TR/sparql11-update/
+ -i [MODEL ...]            import model
+ -q [SPARQL ...]           http://www.w3.org/TR/sparql11-query/
+ -u [SPARQL ...]           http://www.w3.org/TR/sparql11-update/
  -R [MODEL] <Rules ...>    Infer over [MODEL] using <Rules ...>
  -m [modeler] <args ...>   Use [modeler] with arguments:
 """ + Modelers.help
