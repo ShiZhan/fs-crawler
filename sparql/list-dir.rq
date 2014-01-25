@@ -1,10 +1,9 @@
 # List all the items in the directory with given name
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX cim: <https://sites.google.com/site/ontology2013/cim/>
-SELECT ?fname
+PREFIX tgm: <https://sites.google.com/site/trigram/>
+SELECT ?fileName
   WHERE {
-    ?file cim:Name ?fname.
-    ?dcf cim:PartComponent ?file.
-    ?dcf cim:GroupComponent ?folder.
-    ?folder cim:Name "r:"^^xsd:normalizedString
+    ?file tgm:name ?fileName .
+    ?dir tgm:contains ?file .
+    ?dir tgm:name "e:\\download\\autoit"^^xsd:normalizedString
   }

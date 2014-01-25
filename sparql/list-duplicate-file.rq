@@ -1,12 +1,11 @@
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX cim: <https://sites.google.com/site/ontology2013/cim/>
+PREFIX tgm: <https://sites.google.com/site/trigram/>
 SELECT ?filename ?checksum
 WHERE {
   {
     SELECT ?checksum
-    WHERE {?file cim:MD5Checksum ?checksum}
+    WHERE {?file tgm:md5 ?checksum}
     GROUP BY ?checksum HAVING (COUNT(*) > 1)
   }
-  ?file cim:MD5Checksum ?checksum.
-  ?file cim:Name ?filename
+  ?file tgm:md5 ?checksum .
+  ?file tgm:name ?filename
 }
