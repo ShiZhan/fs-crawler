@@ -53,17 +53,6 @@ object ModelEx extends helper.Logging {
   }
 
   implicit class ModelOps(m: Model) {
-    def getImports = m.listStatements(null, OWL.imports, null)
-
-    def rebase = {
-      val bases = m.listSubjectsWithProperty(RDF.`type`, OWL.Ontology)
-      for (b <- bases) m.remove(m.listStatements(b, null, null))
-      m.createResource(URI.fromHost, OWL.Ontology)
-        .addProperty(DC.date, DateTime.get, XSDdateTime)
-        .addProperty(OWL.versionInfo, Version.get, XSDstring)
-      m
-    }
-
     def store(fileName: String) = {
       val fos = new File(fileName).getWriter("UTF-8")
       m.write(fos)
@@ -100,11 +89,5 @@ object ModelEx extends helper.Logging {
     }
 
     def join(baseModel: Model) = (baseModel /: models) { (r, m) => r union m }
-
-    def combine = {
-      val all = models.join
-      val imports = all.getImports.toArray
-      all.rebase.add(imports)
-    }
   }
 }

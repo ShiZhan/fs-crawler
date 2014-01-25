@@ -92,4 +92,7 @@ TriGraM:     $TGMVER
       } store (output("final"))
     }
   }
+
+  def combine(files: List[String]) =
+    files.asModels.join.store(files.head + "-combined.n3", "N3")
 }
