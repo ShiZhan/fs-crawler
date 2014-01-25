@@ -64,14 +64,14 @@ object ModelEx extends helper.Logging {
 
     def store(fileName: String) = {
       val fos = new File(fileName).getWriter("UTF-8")
-      m.write(fos, "RDF/XML-ABBREV")
+      m.write(fos)
       fos.close
       logger.info("[{}] triples written to [{}]", m.size, fileName)
     }
 
     def store(file: File) = {
       val fos = file.getWriter("UTF-8")
-      m.write(fos, "RDF/XML-ABBREV")
+      m.write(fos)
       fos.close
       logger.info("[{}] triples written to [{}]", m.size, file.getAbsolutePath)
     }

@@ -75,35 +75,17 @@ TriGraM:     $TGMVER
   def doUpdate(uArgs: List[String]) =
     if (Nil == uArgs) doUpdateFromConsole else uArgs.foreach(doUpdateFromFile)
 
-  def inferWithSchema(modelFN: String, schemaFNs: List[String]) = {
-    val data = load(modelFN)
-    def output(suffix: String) = s"$modelFN-$suffix.owl"
-    if (Nil == schemaFNs)
-      data.infer.validateAndSave(output("deduction"))
-    else {
-      (data /: schemaFNs) { (baseModel, schemaFN) =>
-        val schema = load(schemaFN)
-        val t1 = compat.Platform.currentTime
-        val result = baseModel.inferWithOWL(schema)
-        val t2 = compat.Platform.currentTime
-        println("Inferring Executed in %d milliseconds".format(t2 - t1))
-        result.validateAndSave(output(new java.io.File(schemaFN).getName))
-        baseModel union result.getDeductionsModel
-      } store (output("final"))
-    }
-  }
-
-  def inferWithRule(modelFN: String, ruleFNs: List[String]) = {
+  def infer(modelFN: String, ruleFNs: List[String]) = {
     val data = load(modelFN)
     def output(suffix: String) = s"$modelFN-$suffix.owl"
     if (Nil == ruleFNs) {
-      data.inferWithRule(defaultRules).validateAndSave(output("deduction"))
+      data.infer(defaultRules).validateAndSave(output("deduction"))
     } else {
       (data /: ruleFNs) { (baseModel, ruleFN) =>
         val ruleString = GetString.fromFile(ruleFN)
         val rules = parseRules(ruleString)
         val t1 = compat.Platform.currentTime
-        val result = baseModel.inferWithRule(rules)
+        val result = baseModel.infer(rules)
         val t2 = compat.Platform.currentTime
         println("Inferring Executed in %d milliseconds".format(t2 - t1))
         result.validateAndSave(output(new java.io.File(ruleFN).getName))

@@ -30,44 +30,15 @@ object Infer extends helper.Logging {
     }
 
   implicit class InferAsOntology(m: Model) {
-    def infer = {
-      val reasoner = ReasonerRegistry.getOWLReasoner
-      val ontModelSpec = OntModelSpec.OWL_DL_MEM
-      ontModelSpec.setReasoner(reasoner)
-      ModelFactory.createOntologyModel(ontModelSpec, m)
-    }
-
-    def inferWithRule(rules: java.util.List[Rule]) = {
+    def infer(rules: java.util.List[Rule]) = {
       val reasoner = new GenericRuleReasoner(rules)
       val ontModelSpec = OntModelSpec.OWL_MEM
       ontModelSpec.setReasoner(reasoner)
       ModelFactory.createOntologyModel(ontModelSpec, m)
     }
-
-    def inferWithOWL(s: Model) = {
-      val reasoner = ReasonerRegistry.getOWLReasoner.bindSchema(s)
-      ModelFactory.createInfModel(reasoner, m)
-    }
-
-    def inferWithRDFS(s: Model) = {
-      val reasoner = ReasonerRegistry.getRDFSReasoner.bindSchema(s)
-      ModelFactory.createInfModel(reasoner, m)
-    }
   }
 
   implicit class InfModelValidate(infModel: InfModel) {
-    def validateAndSave(output: String) = {
-      val validity = infModel.validate
-      if (validity.isValid)
-        infModel.getDeductionsModel.store(output)
-      else {
-        val reports = Iterator.continually { validity.getReports }.takeWhile(_.hasNext)
-        for (r <- reports) logger.info(r.toString)
-      }
-    }
-  }
-
-  implicit class OntModelValidate(infModel: OntModel) {
     def validateAndSave(output: String) = {
       val validity = infModel.validate
       if (validity.isValid)
