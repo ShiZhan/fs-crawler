@@ -8,7 +8,7 @@ package kernel
  * TriGraM engine
  */
 object Engine {
-  import helper.Config.{ TGMROOT, TGMDATA, CIMDATA }
+  import helper.Config.{ TGMROOT, TGMDATA }
   import helper.{ GetString, Platform, Version }
   import common.ModelEx._
   import Infer._
@@ -17,8 +17,7 @@ object Engine {
   val status = s"""
 TriGraM:     $TGMVER
   code:      $TGMROOT
-  data:      $TGMDATA
-  CIM:       $CIMDATA""" + Platform.BRIEFING
+  data:      $TGMDATA""" + Platform.BRIEFING
 
   def tdbloader(modelFile: String) =
     try { tdb.tdbloader.main("--loc=" + TGMDATA, modelFile) }

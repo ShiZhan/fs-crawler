@@ -22,9 +22,6 @@ object Config {
   val TGMROOT = tgmRoot.getAbsolutePath
   val tgmData = new File(envOrElse("TGM_DATA", _PWD) + "/.trigram")
   val TGMDATA = tgmData.getAbsolutePath
-  val cimData = new File(envOrElse("CIM_DATA", _PWD) + "/cim")
-  val CIMDATA = cimData.getAbsolutePath
 
   if (!tgmData.exists) tgmData.mkdir
-  if (!cimData.exists) cimData.mkdir
 }
