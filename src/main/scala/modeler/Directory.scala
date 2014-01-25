@@ -5,7 +5,7 @@ package modeler
 
 /**
  * @author ShiZhan
- * translate directory structure into semantic model with CIM vocabularies
+ * translate directory structure into N-Triples
  */
 object DirectoryModels {
   import java.io.File
@@ -41,11 +41,9 @@ object DirectoryModels {
 }
 
 object Directory extends Modeler with helper.Logging {
-  import java.io.File
-  import com.hp.hpl.jena.rdf.model.ModelFactory
   import DirectoryModels._
-  import common.FileEx.FileOps
-  import common.ModelEx.ModelOps
+  import common.FileEx._
+  import common.ModelEx._
 
   val key = "dir"
 
@@ -60,8 +58,8 @@ object Directory extends Modeler with helper.Logging {
   private def translate(input: String, output: String) = {
     logger.info("creating model ...")
 
-    val f = new File(input)
-    val m = ModelFactory.createDefaultModel
+    val f = input.toFile
+    val m = createDefaultModel
     f --> m
 
     logger.info("reading directory ...")
@@ -78,6 +76,6 @@ object Directory extends Modeler with helper.Logging {
     }
     println("translating [100%]")
 
-    m.store(output, "N3")
+    m.store(output.setExt("n3"), "N3")
   }
 }

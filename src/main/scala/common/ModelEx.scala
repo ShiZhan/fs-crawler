@@ -25,6 +25,8 @@ object ModelEx extends helper.Logging {
   import FileEx.FileOps
   import helper.{ Version, DateTime }
 
+  def createDefaultModel = ModelFactory.createDefaultModel
+
   def load(fileName: String) = {
     val m = ModelFactory.createDefaultModel
     try {

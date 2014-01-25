@@ -44,19 +44,17 @@ object ArchiveModels {
         .addProperty(PROP("lastMod"), lastMod, XSDdateTime)
         .addProperty(PROP("isDirectory"), isDirectory.toString, XSDboolean)
       if (!isDirectory)
-         entry.addProperty(PROP("md5"), checksum, XSDnormalizedString)
+        entry.addProperty(PROP("md5"), checksum, XSDnormalizedString)
       archive.addProperty(PROP("contains"), entry)
     }
   }
 }
 
 object Archive extends Modeler with helper.Logging {
-  import java.io.File
-  import com.hp.hpl.jena.rdf.model.ModelFactory
   import ArchiveModels._
   import common.ArchiveEx._
-  import common.FileEx.FileOps
-  import common.ModelEx.ModelOps
+  import common.FileEx._
+  import common.ModelEx._
 
   val key = "arc"
 
@@ -70,18 +68,18 @@ object Archive extends Modeler with helper.Logging {
 
   private def translate(input: String, output: String) = {
     logger.info("Model all supported archive file in [{}]", input)
-    val m = ModelFactory.createDefaultModel
-    for (f <- new File(input).flatten) {
+    val m = createDefaultModel
+    for (f <- input.toFile.flatten) {
       if (f.isFile) {
         getChecker(f) match {
           case checker: arcChecker => {
-            f-->m
-            for (e <- checker(f)) e-->m
+            f --> m
+            for (e <- checker(f)) e --> m
           }
           case _ =>
         }
       }
     }
-    m.store(output, "N3")
+    m.store(output.setExt("n3"), "N3")
   }
 }

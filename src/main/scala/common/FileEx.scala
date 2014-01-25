@@ -12,6 +12,12 @@ object FileEx {
   import org.apache.commons.codec.digest.DigestUtils.md5Hex
   import DigestUtilsAddon.md5HexChunk
 
+  implicit class FileName(name: String) {
+    def toFile = new File(name)
+    def setExt(ext: String) =
+      if (name.split('.').last == ext) name else name + '.' + ext
+  }
+
   private def listAllFiles(file: File): Array[File] = {
     val list = file.listFiles
     if (list == null)

@@ -1,12 +1,11 @@
 /**
- * Modeler to translate directory content checksum into tree-structural model
+ * Modeler to translate directory content checksum into N-Triples
  */
 package modeler
 
 /**
  * @author ShiZhan
- * Translate content characteristics of recognized data source into
- * tree-structural model [(checksum, id(path)), [(, ), ...]] for comparison
+ * Translate content characteristics of data source into tree-structural model
  */
 object ChecksumModels {
   import java.io.File
@@ -37,17 +36,15 @@ object ChecksumModels {
       val chunked = file --> m
       for ((i, s, c) <- file.checksum(chunkSize))
         chunked.addProperty(PROP("contains"),
-          BlockModel(file.getAbsolutePath + "." + i, s, c)-->m)
+          BlockModel(file.getAbsolutePath + "." + i, s, c) --> m)
     }
   }
 }
 
 object Checksum extends Modeler with helper.Logging {
-  import java.io.File
-  import com.hp.hpl.jena.rdf.model.ModelFactory
   import ChecksumModels._
-  import common.FileEx.FileOps
-  import common.ModelEx.ModelOps
+  import common.FileEx._
+  import common.ModelEx._
 
   val key = "chk"
 
@@ -56,28 +53,23 @@ object Checksum extends Modeler with helper.Logging {
   def run(options: List[String]) = {
     logger.info("Modeling")
     options match {
-      case input :: output :: Nil => {
-        val files = new File(input).flatten
-        translate(files, output)
-      }
-      case input :: output :: chunkSizeStr :: Nil => {
-        val chunkSize = chunkSizeStr.toLong
-        val files = new File(input).flatten
-        translate(files, output, chunkSize)
-      }
+      case input :: output :: Nil =>
+        translate(input, output)
+      case input :: output :: chunkSizeStr :: Nil =>
+        translate(input, output, chunkSizeStr.toLong)
       case _ => logger.error("parameter error: [{}]", options)
     }
   }
 
-  private def translate(files: Array[File], output: String) = {
-    val m = ModelFactory.createDefaultModel
-    for (f <- files) { if (f.isFile) f --> m }
-    m.store(output, "N3")
+  private def translate(input: String, output: String) = {
+    val m = createDefaultModel
+    for (f <- input.toFile.flatten) if (f.isFile) f --> m
+    m.store(output.setExt("n3"), "N3")
   }
 
-  private def translate(files: Array[File], output: String, chunkSize: Long) = {
-    val m = ModelFactory.createDefaultModel
-    for (f <- files)  { if (f.isFile) ChunkChecksumModel(f, chunkSize) --> m }
-    m.store(output, "N3")
+  private def translate(input: String, output: String, chunkSize: Long) = {
+    val m = createDefaultModel
+    for (f <- input.toFile.flatten) if (f.isFile) ChunkChecksumModel(f, chunkSize) --> m
+    m.store(output.setExt("n3"), "N3")
   }
 }
