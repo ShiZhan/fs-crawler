@@ -42,7 +42,7 @@ object ArchiveModels {
         .addProperty(PROP("name"), path, XSDnormalizedString)
         .addProperty(PROP("fileSize"), fileSize, XSDunsignedLong)
         .addProperty(PROP("lastMod"), lastMod, XSDdateTime)
-        .addProperty(PROP("isDirectory"), isDirectory.toString, XSDdateTime)
+        .addProperty(PROP("isDirectory"), isDirectory.toString, XSDboolean)
       if (!isDirectory)
          entry.addProperty(PROP("md5"), checksum, XSDnormalizedString)
       archive.addProperty(PROP("contains"), entry)
@@ -60,7 +60,7 @@ object Archive extends Modeler with helper.Logging {
 
   val key = "arc"
 
-  val usage = "[input] [output.nt] => output.nt, support zip, gzip, bzip & 7z."
+  val usage = "[input] [output] => output.n3, support zip, gzip, bzip & 7z."
 
   def run(options: List[String]) =
     options match {
