@@ -22,7 +22,6 @@ object Trigram {
 
   def main(args: Array[String]) = {
     println("Triple Graph based Metadata storage - TriGraM")
-
     args.toList match {
       case Nil => Console.run
       case "-h" :: Nil => println(usage)
@@ -32,10 +31,9 @@ object Trigram {
       case "-q" :: qArgs => Engine.doQuery(qArgs)
       case "-u" :: uArgs => Engine.doUpdate(uArgs)
       case "-R" :: modelFN :: ruleFNs => Engine.infer(modelFN, ruleFNs)
-      case "-m" :: modeler :: mArgs => {
-        println("run modeler [%s] with options [%s]".format(modeler, mArgs))
+      case "-m" :: modeler :: mArgs =>
+        println(s"run modeler [$modeler] with options [$mArgs]")
         Modelers.run(modeler, mArgs)
-      }
       case _ => println(incorrectArgs)
     }
   }
