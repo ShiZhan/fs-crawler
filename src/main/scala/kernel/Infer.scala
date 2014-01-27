@@ -35,10 +35,10 @@ object Infer extends helper.Logging {
   }
 
   implicit class InfModelValidate(infModel: InfModel) {
-    def validateAndSave(output: String) = {
+    def validateAndSave(output: String, format: String) = {
       val validity = infModel.validate
       if (validity.isValid)
-        infModel.getDeductionsModel.store(output, "N3")
+        infModel.getDeductionsModel.store(output, format)
       else {
         val reports = Iterator.continually { validity.getReports }.takeWhile(_.hasNext)
         for (r <- reports) logger.info(r.toString)

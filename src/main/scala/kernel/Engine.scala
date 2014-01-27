@@ -78,7 +78,7 @@ TriGraM:     $TGMVER
     val data = load(modelFN)
     def output(suffix: String) = s"$modelFN-$suffix.n3"
     if (Nil == ruleFNs) {
-      data.infer(defaultRules).validateAndSave(output("deduction"))
+      data.infer(defaultRules).validateAndSave(output("deduction"), "N3")
     } else {
       (data /: ruleFNs) { (baseModel, ruleFN) =>
         val ruleString = GetString.fromFile(ruleFN)
@@ -87,7 +87,7 @@ TriGraM:     $TGMVER
         val result = baseModel.infer(rules)
         val t2 = compat.Platform.currentTime
         println("Inferring Executed in %d milliseconds".format(t2 - t1))
-        result.validateAndSave(output(new java.io.File(ruleFN).getName))
+        result.validateAndSave(output(new java.io.File(ruleFN).getName), "N3")
         baseModel union result.getDeductionsModel
       } store (output("final"), "N3")
     }
