@@ -8,13 +8,6 @@ src/main/resources/master
 data/*
 !data/_tdb_
 
-cim/*
-!cim/get-cim
-!cim/CIM-CLASS
-!cim/CIM-PROPERTY
-
-catalog-v001.xml
-
 dist/*
 target/
 lib_managed/

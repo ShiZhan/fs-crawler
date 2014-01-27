@@ -10,16 +10,6 @@ src/main/resources/master
 # except place holder
 !.trigram/_tdb_
 
-# CIM schema
-cim/*
-# CIM schema downloader and Vocabulary
-!cim/get-cim
-!cim/CIM-CLASS
-!cim/CIM-PROPERTY
-
-# protege catalog
-catalog-v001.xml
-
 # sbt specific
 dist/*
 target/
