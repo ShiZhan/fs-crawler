@@ -43,7 +43,7 @@ TriGraM:     $TGMVER
 
   def shutdown = store.close
 
-  def timedQuery(sparql: String) = {
+  def timedQuery(sparql: String) = if ("" != sparql) {
     try {
       val t1 = compat.Platform.currentTime
       val result = store.queryAny(sparql)

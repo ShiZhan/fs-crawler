@@ -13,7 +13,6 @@ object Console {
   private val usage = """ [Console Usage]
   help       print this message
   status     show program status
-  cim        validate (individual) CIM schema model(s)
   time       show current time
   query      enter SPARQL/read SPARQL file to do query
   update     enter SPARQL/read SPARQL file to do update
