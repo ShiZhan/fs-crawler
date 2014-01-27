@@ -76,7 +76,7 @@ TriGraM:     $TGMVER
 
   def infer(modelFN: String, ruleFNs: List[String]) = {
     val data = load(modelFN)
-    def output(suffix: String) = s"$modelFN-$suffix.owl"
+    def output(suffix: String) = s"$modelFN-$suffix.n3"
     if (Nil == ruleFNs) {
       data.infer(defaultRules).validateAndSave(output("deduction"))
     } else {
@@ -89,7 +89,7 @@ TriGraM:     $TGMVER
         println("Inferring Executed in %d milliseconds".format(t2 - t1))
         result.validateAndSave(output(new java.io.File(ruleFN).getName))
         baseModel union result.getDeductionsModel
-      } store (output("final"))
+      } store (output("final"), "N3")
     }
   }
 

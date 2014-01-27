@@ -30,19 +30,15 @@ object Infer extends helper.Logging {
     }
 
   implicit class InferAsOntology(m: Model) {
-    def infer(rules: java.util.List[Rule]) = {
-      val reasoner = new GenericRuleReasoner(rules)
-      val ontModelSpec = OntModelSpec.OWL_MEM
-      ontModelSpec.setReasoner(reasoner)
-      ModelFactory.createOntologyModel(ontModelSpec, m)
-    }
+    def infer(rules: java.util.List[Rule]) =
+      ModelFactory.createInfModel(new GenericRuleReasoner(rules), m)
   }
 
   implicit class InfModelValidate(infModel: InfModel) {
     def validateAndSave(output: String) = {
       val validity = infModel.validate
       if (validity.isValid)
-        infModel.getDeductionsModel.store(output)
+        infModel.getDeductionsModel.store(output, "N3")
       else {
         val reports = Iterator.continually { validity.getReports }.takeWhile(_.hasNext)
         for (r <- reports) logger.info(r.toString)
