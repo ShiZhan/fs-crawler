@@ -1,0 +1,2 @@
+@prefix tgm: <https://sites.google.com/site/trigram/>.
+(?x tgm:md5 ?checksum) (?y tgm:md5 ?checksum) -> (?x tgm:isDuplicateOf ?y).

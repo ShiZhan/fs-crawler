@@ -22,9 +22,9 @@ object Infer extends helper.Logging {
 
   val defaultRules = rClassification
 
-  def parseRules(ruleString: String) =
+  def parseRules(ruleFN: String) =
     try {
-      Rule.parseRules(ruleString)
+      Rule.rulesFromURL(ruleFN)
     } catch {
       case e: Exception => logger.error(e.toString); rEmpty
     }

@@ -81,8 +81,7 @@ TriGraM:     $TGMVER
       data.infer(defaultRules).validateAndSave(output("deduction"), "N3")
     } else {
       (data /: ruleFNs) { (baseModel, ruleFN) =>
-        val ruleString = GetString.fromFile(ruleFN)
-        val rules = parseRules(ruleString)
+        val rules = parseRules(ruleFN)
         val t1 = compat.Platform.currentTime
         val result = baseModel.infer(rules)
         val t2 = compat.Platform.currentTime
