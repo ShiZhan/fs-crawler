@@ -17,10 +17,7 @@ object Infer extends helper.Logging {
 
   val rEmpty = Rule.parseRules("")
 
-  val rClassification =
-    Rule.parseRules(BuildIn.getString("rules/classification.rule"))
-
-  val defaultRules = rClassification
+  val defaultRules = Rule.parseRules(BuildIn.getString("rules/rdfs.rules"))
 
   def parseRules(ruleFN: String) =
     try {
