@@ -1,2 +1,2 @@
 @prefix tgm: <https://sites.google.com/site/trigram/>.
-(?x tgm:md5 ?checksum) (?y tgm:md5 ?checksum) -> (?x tgm:isDuplicateOf ?y).
+(?a tgm:md5 ?checksum), (?b tgm:md5 ?checksum), notEqual(?a,?b) -> (?a tgm:isDuplicateOf ?b).
