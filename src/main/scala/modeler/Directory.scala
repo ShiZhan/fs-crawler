@@ -44,6 +44,7 @@ object Directory extends Modeler with helper.Logging {
   import DirectoryModels._
   import common.FileEx._
   import common.ModelEx._
+  import common.Batch._
 
   val key = "dir"
 
@@ -58,24 +59,10 @@ object Directory extends Modeler with helper.Logging {
   private def translate(input: String, output: String) = {
     logger.info("creating model ...")
 
-    val f = input.toFile
     val m = createDefaultModel
-    f --> m
-
-    logger.info("reading directory ...")
-
-    val files = f.flatten.zipWithIndex
-    val total = files.size
-    val delta = if (total < 100) 1 else total / 100
-
-    logger.info("[{}] files found", total)
-
-    for ((file, i) <- files) {
-      file --> m
-      if (i % delta == 0) print("translating [%2d%%]\r".format(i * 100 / total))
-    }
-    println("translating [100%]")
-
+    val root = input.toFile
+    root --> m
+    root.flatten.forAllDo(_ --> m)
     m.store(output.setExt("n3"), "N3")
   }
 }

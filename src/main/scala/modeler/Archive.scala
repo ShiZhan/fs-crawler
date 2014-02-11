@@ -55,6 +55,7 @@ object Archive extends Modeler with helper.Logging {
   import common.ArchiveEx._
   import common.FileEx._
   import common.ModelEx._
+  import common.Batch._
 
   val key = "arc"
 
@@ -69,7 +70,7 @@ object Archive extends Modeler with helper.Logging {
   private def translate(input: String, output: String) = {
     logger.info("Model all supported archive file in [{}]", input)
     val m = createDefaultModel
-    for (f <- input.toFile.flatten) {
+    input.toFile.flatten.forAllDo { f =>
       if (f.isFile) {
         getChecker(f) match {
           case checker: arcChecker => {
