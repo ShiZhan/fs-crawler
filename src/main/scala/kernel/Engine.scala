@@ -11,6 +11,7 @@ object Engine {
   import helper.Config.{ TGMROOT, TGMDATA }
   import helper.{ GetString, Platform, Version }
   import common.ModelEx._
+  import common.Gauge.timedOp
   import Infer._
 
   private val TGMVER = Version.get
@@ -45,11 +46,9 @@ TriGraM:     $TGMVER
 
   def timedQuery(sparql: String) = if ("" != sparql) {
     try {
-      val t1 = compat.Platform.currentTime
-      val result = store.queryAny(sparql)
-      val t2 = compat.Platform.currentTime
+      val (result, t) = timedOp { () => store.queryAny(sparql) }
       println(result)
-      println("Query executed in %d milliseconds".format(t2 - t1))
+      println("Query executed in %d milliseconds".format(t))
     } catch {
       case e: Exception => e.printStackTrace
     }
@@ -61,10 +60,8 @@ TriGraM:     $TGMVER
 
   def timedUpdate(sparql: String) = {
     try {
-      val t1 = compat.Platform.currentTime
-      store.update(sparql)
-      val t2 = compat.Platform.currentTime
-      println("Update Executed in %d milliseconds".format(t2 - t1))
+      val (result, t) = timedOp { () => store.update(sparql) }
+      println("Update Executed in %d milliseconds".format(t))
     } catch {
       case e: Exception => e.printStackTrace
     }
@@ -82,10 +79,8 @@ TriGraM:     $TGMVER
     } else {
       (data /: ruleFNs) { (baseModel, ruleFN) =>
         val rules = parseRules(ruleFN)
-        val t1 = compat.Platform.currentTime
-        val result = baseModel.infer(rules)
-        val t2 = compat.Platform.currentTime
-        println("Inferring Executed in %d milliseconds".format(t2 - t1))
+        val (result, t) = timedOp { () => baseModel.infer(rules) }
+        println("Inferring Executed in %d milliseconds".format(t))
         result.validateAndSave(output(new java.io.File(ruleFN).getName), "N3")
         baseModel union result.getDeductionsModel
       } store (output("final"), "N3")

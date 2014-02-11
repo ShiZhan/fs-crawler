@@ -45,7 +45,7 @@ object Checksum extends Modeler with helper.Logging {
   import ChecksumModels._
   import common.FileEx._
   import common.ModelEx._
-  import common.Batch._
+  import common.Gauge.ArrayOperations
 
   val key = "chk"
 

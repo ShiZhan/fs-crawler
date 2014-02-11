@@ -55,7 +55,7 @@ object Archive extends Modeler with helper.Logging {
   import common.ArchiveEx._
   import common.FileEx._
   import common.ModelEx._
-  import common.Batch._
+  import common.Gauge.ArrayOperations
 
   val key = "arc"
 

@@ -1,14 +1,14 @@
 /**
- * Batch operations with console feedback
+ * Gauge operations with console feedback
  */
 package common
 
 /**
  * @author ShiZhan
- * Batch operations with console feedback
+ * Gauge operations with console feedback
  * E.g.: to process a large amount of files
  */
-object Batch {
+object Gauge {
   implicit class ArrayOperations[T](items: Array[T]) {
     def forAllDo(op: T => Any) = {
       var i = 0
@@ -22,5 +22,12 @@ object Batch {
       }
       println("processing [100%]")
     }
+  }
+
+  def timedOp[T](op: () => T) = {
+    val t1 = compat.Platform.currentTime
+    val result = op()
+    val t2 = compat.Platform.currentTime
+    (result, t2 - t1)
   }
 }

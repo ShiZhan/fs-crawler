@@ -44,7 +44,7 @@ object Directory extends Modeler with helper.Logging {
   import DirectoryModels._
   import common.FileEx._
   import common.ModelEx._
-  import common.Batch._
+  import common.Gauge.ArrayOperations
 
   val key = "dir"
 
