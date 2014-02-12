@@ -15,17 +15,16 @@ object DirectoryModels {
   import Vocabulary._
   import helper.DateTime
 
-  implicit class FileModel(f: File) {
-    val name = f.getAbsolutePath
-    val size = f.length.toString
-    val lastMod = DateTime.get(f.lastModified)
-    val canRead = f.canRead.toString
-    val canWrite = f.canWrite.toString
-    val canExecute = f.canExecute.toString
-    val isDirectory = f.isDirectory
-    val uri = URI.fromFile(f)
-
-    def -->(m: Model) = {
+  implicit class DirectoryModel(m: Model) {
+    def addFile(f: File) = {
+      val name = f.getAbsolutePath
+      val size = f.length.toString
+      val lastMod = DateTime.get(f.lastModified)
+      val canRead = f.canRead.toString
+      val canWrite = f.canWrite.toString
+      val canExecute = f.canExecute.toString
+      val isDirectory = f.isDirectory
+      val uri = URI.fromFile(f)
       val res = m.createResource(uri)
         .addProperty(PROP("name"), name, XSDnormalizedString)
         .addProperty(PROP("fileSize"), size, XSDunsignedLong)
@@ -61,8 +60,8 @@ object Directory extends Modeler with helper.Logging {
 
     val m = createDefaultModel
     val root = input.toFile
-    root --> m
-    root.flatten.foreachDo(_ --> m)
+    m.addFile(root)
+    root.flatten.foreachDo(m.addFile)
     m.store(output.setExt("n3"), "N3")
   }
 }

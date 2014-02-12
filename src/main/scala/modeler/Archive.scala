@@ -16,8 +16,8 @@ object ArchiveModels {
   import Vocabulary._
   import helper.DateTime
 
-  implicit class ArcFileModel(f: File) {
-    def -->(m: Model) = {
+  implicit class ArchiveModel(m: Model) {
+    def addArcFile(f: File) = {
       val path = f.getAbsolutePath
       val uri = URI.fromFile(f)
       val size = f.length.toString
@@ -27,11 +27,9 @@ object ArchiveModels {
         .addProperty(PROP("fileSize"), size, XSDunsignedLong)
         .addProperty(PROP("lastMod"), modi, XSDdateTime)
     }
-  }
 
-  implicit class ArcEntryModel(archiveEntryChecksum: ArcEntryChecksum) {
-    val ArcEntryChecksum(e, arcivePath, checksum) = archiveEntryChecksum
-    def -->(m: Model) = {
+    def addArcEntry(archiveEntryChecksum: ArcEntryChecksum) = {
+      val ArcEntryChecksum(e, arcivePath, checksum) = archiveEntryChecksum
       val path = e.getName
       val uri = URI.fromString(arcivePath + '/' + path)
       val fileSize = e.getSize.toString
@@ -71,15 +69,14 @@ object Archive extends Modeler with helper.Logging {
     logger.info("Model all supported archive file in [{}]", input)
     val m = createDefaultModel
     input.toFile.flatten.foreachDo { f =>
-      if (f.isFile) {
+      if (f.isFile)
         getChecker(f) match {
           case checker: arcChecker => {
-            f --> m
-            for (e <- checker(f)) e --> m
+            m.addArcFile(f)
+            checker(f).foreach(m.addArcEntry)
           }
           case _ =>
         }
-      }
     }
     m.store(output.setExt("n3"), "N3")
   }

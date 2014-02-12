@@ -15,28 +15,23 @@ object ChecksumModels {
   import common.URI
   import common.FileEx.FileOps
 
-  case class BlockModel(path: String, size: Long, md5sum: String) {
-    def -->(m: Model) = {
+  implicit class ChecksumModel(m: Model) {
+    private def addBlock(path: String, size: Long, md5sum: String) = {
       m.createResource(URI.fromString(path))
         .addProperty(PROP("name"), path, XSDnormalizedString)
         .addProperty(PROP("fileSize"), size.toString, XSDunsignedLong)
         .addProperty(PROP("md5"), md5sum, XSDnormalizedString)
     }
-  }
 
-  implicit class FileChecksumModel(file: File) {
-    val md5sum = file.checksum
-    val path = file.getAbsolutePath
-    val size = file.length
-    def -->(model: Model) = BlockModel(path, size, md5sum) --> model
-  }
+    def addFile(file: File) =
+      addBlock(file.getAbsolutePath, file.length, file.checksum)
 
-  case class ChunkChecksumModel(file: File, chunkSize: Long) {
-    def -->(m: Model) = {
-      val chunked = file --> m
-      for ((i, s, c) <- file.checksum(chunkSize))
-        chunked.addProperty(PROP("contains"),
-          BlockModel(file.getAbsolutePath + "." + i, s, c) --> m)
+    def addFileChunks(file: File, chunkSize: Long) = {
+      val chunked = addFile(file)
+      for ((i, s, c) <- file.checksum(chunkSize)) {
+        val chunk = addBlock(file.getAbsolutePath + "." + i, s, c)
+        chunked.addProperty(PROP("contains"), chunk)
+      }
     }
   }
 }
@@ -64,13 +59,13 @@ object Checksum extends Modeler with helper.Logging {
 
   private def translate(input: String, output: String) = {
     val m = createDefaultModel
-    input.toFile.flatten.foreachDo(f => if (f.isFile) f --> m)
+    input.toFile.flatten.foreachDo(f => if (f.isFile) m.addFile(f))
     m.store(output.setExt("n3"), "N3")
   }
 
   private def translate(input: String, output: String, chunkSize: Long) = {
     val m = createDefaultModel
-    input.toFile.flatten.foreachDo(f => if (f.isFile) ChunkChecksumModel(f, chunkSize) --> m)
+    input.toFile.flatten.foreachDo(f => if (f.isFile) m.addFileChunks(f, chunkSize))
     m.store(output.setExt("n3"), "N3")
   }
 }
