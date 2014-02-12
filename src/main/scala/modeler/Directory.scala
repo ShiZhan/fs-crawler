@@ -62,7 +62,7 @@ object Directory extends Modeler with helper.Logging {
     val m = createDefaultModel
     val root = input.toFile
     root --> m
-    root.flatten.forAllDo(_ --> m)
+    root.flatten.foreachDo(_ --> m)
     m.store(output.setExt("n3"), "N3")
   }
 }

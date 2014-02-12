@@ -64,13 +64,13 @@ object Checksum extends Modeler with helper.Logging {
 
   private def translate(input: String, output: String) = {
     val m = createDefaultModel
-    input.toFile.flatten.forAllDo(_ --> m)
+    input.toFile.flatten.foreachDo(_ --> m)
     m.store(output.setExt("n3"), "N3")
   }
 
   private def translate(input: String, output: String, chunkSize: Long) = {
     val m = createDefaultModel
-    input.toFile.flatten.forAllDo(f => if (f.isFile) ChunkChecksumModel(f, chunkSize) --> m)
+    input.toFile.flatten.foreachDo(f => if (f.isFile) ChunkChecksumModel(f, chunkSize) --> m)
     m.store(output.setExt("n3"), "N3")
   }
 }

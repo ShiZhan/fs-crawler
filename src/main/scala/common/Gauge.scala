@@ -10,11 +10,11 @@ package common
  */
 object Gauge {
   implicit class ArrayOperations[T](items: Array[T]) {
-    def forAllDo(op: T => Any) = {
+    def foreachDo(op: T => Any) = {
       var i = 0
       val total = items.size
       val delta = if (total < 100) 1 else total / 100
-      println(total + " objects found")
+      println(total + " objects to process")
       for (item <- items) {
         op(item)
         if (i % delta == 0) print("processing [%2d%%]\r".format(i * 100 / total))
