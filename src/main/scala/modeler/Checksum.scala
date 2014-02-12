@@ -64,7 +64,7 @@ object Checksum extends Modeler with helper.Logging {
 
   private def translate(input: String, output: String) = {
     val m = createDefaultModel
-    input.toFile.flatten.foreachDo(_ --> m)
+    input.toFile.flatten.foreachDo(f => if (f.isFile) f --> m)
     m.store(output.setExt("n3"), "N3")
   }
 
