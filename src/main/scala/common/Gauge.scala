@@ -12,7 +12,7 @@ object Gauge {
   implicit class ArrayOperations[T](items: Array[T]) {
     def foreachDo(op: T => Any) = {
       var i = 0
-      val total = items.size
+      val total = items.length
       val delta = if (total < 100) 1 else total / 100
       println(total + " objects to process")
       for (item <- items) {
