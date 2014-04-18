@@ -6,9 +6,9 @@ Introduction
 
 Triple Graph based Meta-data storage - TriGraM
 
-At current stage, TriGraM act as a console to Jena, and provide a few crawlers for capturing file system
-metadata, with example SPARQL scripts to do management tasks such as querying duplicated files, searching
-empty directories etc.
+At current stage, TriGraM act as a portable console to Jena. It can be deployed as a single jar,
+and provide a few crawlers for capturing file system meta-data, with example SPARQL scripts to do
+management tasks such as querying duplicated files, searching empty directories etc.
 
 How to use
 ----------
