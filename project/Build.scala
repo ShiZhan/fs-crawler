@@ -18,8 +18,8 @@ object MyBuild extends Build {
     }
   }
 
-  lazy val trigram = Project(
-    id = "trigram",
+  lazy val FSCrawler = Project(
+    id = "FSCrawler",
     base = file("."),
     settings = Defaults.defaultSettings ++
     sbtassembly.Plugin.assemblySettings ++ Seq(

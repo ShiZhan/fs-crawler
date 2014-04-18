@@ -5,11 +5,6 @@
 # master version
 src/main/resources/master
 
-# tdb storage
-.trigram/*
-# except place holder
-!.trigram/_tdb_
-
 # sbt specific
 dist/*
 target/

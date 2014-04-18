@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+cygwin=false
+
+case "`uname`" in
+  CYGWIN*) cygwin=true;;
+  Darwin) darwin=true;;
+esac
+
+export FSC_ROOT=$(dirname `which $0`)
+# export FSC_DATA=$FSC_ROOT/.data
+LIB=$FSC_ROOT/target/scala-2.10/lib/
+CP=`ls -1 $LIB | awk -v lib=$LIB 'BEGIN { FS = "*" }; {printf lib$1":"}'`
+CP=$CP$FSC_ROOT:$FSC_ROOT/target/scala-2.10/classes
+
+if $cygwin; then
+  CP=`cygpath -alpm $CP`
+  TGM_ROOT=`cygpath -alm $FSC_ROOT`
+fi
+
+scala -J-Xmx2g -cp "$CP" FSCrawler "$@" 

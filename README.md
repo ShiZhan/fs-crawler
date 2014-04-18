@@ -1,14 +1,10 @@
-TriGraM
-=======
+File System Crawler
+===================
 
 Introduction
 ------------
 
-Triple Graph based Meta-data storage - TriGraM
-
-At current stage, TriGraM act as a portable console to Jena. It can be deployed as a single jar,
-and provide a few crawlers for capturing file system meta-data, with example SPARQL scripts to do
-management tasks such as querying duplicated files, searching empty directories etc.
+Crawler for gathering File System Metadata as triples.
 
 How to use
 ----------

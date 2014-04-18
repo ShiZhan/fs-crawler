@@ -5,9 +5,6 @@ syntax: glob
 
 src/main/resources/master
 
-data/*
-!data/_tdb_
-
 dist/*
 target/
 lib_managed/

@@ -6,13 +6,13 @@
 @echo off
 setlocal
 
-set JAVA_OPTS=%JAVA_OPTS% -Xmx3g
+set JAVA_OPTS=%JAVA_OPTS% -Xmx2g
 set CP=
-set TGM_ROOT=%~dp0
-@REM set TGM_DATA=r:/data
-set LIB=%TGM_ROOT%target\scala-2.10\lib\
+set FSC_ROOT=%~dp0
+@REM set FSC_DATA=r:/data
+set LIB=%FSC_ROOT%target\scala-2.10\lib\
 for /f %%i in ('dir /b %LIB%') do call :concat %%i
-scala -cp "%CP%;%TGM_ROOT%;%TGM_ROOT%target/scala-2.10/classes" Trigram %1 %2 %3 %4 %5 %6 %7 %8 %9
+scala -cp "%CP%;%FSC_ROOT%;%FSC_ROOT%target/scala-2.10/classes" FSCrawler %1 %2 %3 %4 %5 %6 %7 %8 %9
 endlocal
 goto :eof
 
