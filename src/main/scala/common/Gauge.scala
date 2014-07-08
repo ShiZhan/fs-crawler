@@ -5,7 +5,7 @@ package common
 
 /**
  * @author ShiZhan
- * Gauge operations with console feedback
+ * Sequential operations with console feedback
  * E.g.: to process a large amount of files
  */
 object Gauge {
