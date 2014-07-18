@@ -35,7 +35,7 @@ object ArchiveEx {
       val entries = zf.getEntries
       val files = Iterator.continually {
         if (entries.hasMoreElements) entries.nextElement else null
-      }.takeWhile(null !=).filter(!_.isDirectory)
+      }.takeWhile(_ != null).filter(!_.isDirectory)
       files map { e =>
         val is = zf.getInputStream(e)
         val md5 = md5Hex(is)
@@ -52,8 +52,7 @@ object ArchiveEx {
     val gzis = new GzipCompressorInputStream(fis)
     val tis = new TarArchiveInputStream(gzis)
     try {
-      val files = Iterator.continually(tis.getNextTarEntry)
-        .takeWhile(null !=).filter(_.isFile)
+      val files = Iterator.continually(tis.getNextTarEntry).takeWhile(_ != null).filter(_.isFile)
       files map { e =>
         val size = e.getSize
         val md5 = md5HexChunk(tis, size)
@@ -69,8 +68,7 @@ object ArchiveEx {
     val bzis = new BZip2CompressorInputStream(fis)
     val tis = new TarArchiveInputStream(bzis)
     try {
-      val files = Iterator.continually(tis.getNextTarEntry)
-        .takeWhile(null !=).filter(_.isFile)
+      val files = Iterator.continually(tis.getNextTarEntry).takeWhile(_ != null).filter(_.isFile)
       files map { e =>
         val size = e.getSize
         val md5 = md5HexChunk(tis, size)
@@ -103,7 +101,7 @@ object ArchiveEx {
     val zf = new SevenZFile(file)
     try {
       val entries = Iterator.continually { zf.getNextEntry }
-        .takeWhile(null !=).filter(!_.isDirectory)
+        .takeWhile(_ != null).filter(!_.isDirectory)
       entries map { e =>
         val size = e.getSize
         val md5 = md5Hex7Zip(zf, size)
