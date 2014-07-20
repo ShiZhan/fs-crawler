@@ -46,15 +46,12 @@ object Checksum extends Modeler with helper.Logging {
 
   val usage = "[input] [output.n3] <chunk size: Bytes> => output.n3"
 
-  def run(options: List[String]) = {
-    logger.info("Modeling")
-    options match {
-      case input :: output :: Nil =>
-        translate(input, output)
-      case input :: output :: chunkSizeStr :: Nil =>
-        translate(input, output, chunkSizeStr.toLong)
-      case _ => logger.error("parameter error: [{}]", options)
-    }
+  def run(options: List[String]) = options match {
+    case input :: output :: Nil =>
+      translate(input, output)
+    case input :: output :: chunkSizeStr :: Nil if (chunkSizeStr.forall(_.isDigit)) =>
+      translate(input, output, chunkSizeStr.toLong)
+    case _ => logger.error("parameter error: [{}]", options)
   }
 
   private def translate(input: String, output: String) = {

@@ -3,8 +3,6 @@
  */
 package modeler
 
-import com.hp.hpl.jena.rdf.model.ModelFactory
-
 /**
  * @author ShiZhan
  * TriGraM vocabulary

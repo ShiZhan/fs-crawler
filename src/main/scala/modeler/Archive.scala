@@ -59,14 +59,12 @@ object Archive extends Modeler with helper.Logging {
 
   val usage = "[input] [output.n3] => output.n3, support zip, gzip, bzip & 7z."
 
-  def run(options: List[String]) =
-    options match {
-      case input :: output :: Nil => translate(input, output)
-      case _ => logger.error("parameter error: [{}]", options)
-    }
+  def run(options: List[String]) = options match {
+    case input :: output :: Nil => translate(input, output)
+    case _ => logger.error("parameter error: [{}]", options)
+  }
 
   private def translate(input: String, output: String) = {
-    logger.info("Model all supported archive file in [{}]", input)
     val m = createDefaultModel
     input.toFile.flatten.foreachDo { f =>
       if (f.isFile)

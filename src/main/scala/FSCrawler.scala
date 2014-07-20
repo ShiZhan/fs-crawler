@@ -3,7 +3,7 @@
  * @year 2012~2014
  * @name TriGraM Project
  */
-object FSCrawler {
+object FSCrawler extends App {
   import modeler.Modelers
 
   val usage = """usage: FSCrawler
@@ -13,15 +13,11 @@ object FSCrawler {
 """ + Modelers.help
   val incorrectArgs = "Incorrect parameters, see help (FSCrawler -h)."
 
-  def main(args: Array[String]) = {
-    println("File System Crawler")
-    args.toList match {
-      case "-h" :: Nil => println(usage)
-      case "-v" :: Nil => println(helper.Version.get)
-      case "-m" :: modeler :: mArgs =>
-        println(s"run modeler [$modeler] with options [$mArgs]")
-        Modelers.run(modeler, mArgs)
-      case _ => println(incorrectArgs)
-    }
+  println("File System Crawler")
+  args.toList match {
+    case "-h" :: Nil => println(usage)
+    case "-v" :: Nil => println(helper.Version.get)
+    case "-m" :: modeler :: mArgs => Modelers.run(modeler, mArgs)
+    case _ => println(incorrectArgs)
   }
 }

@@ -49,11 +49,10 @@ object Directory extends Modeler with helper.Logging {
 
   val usage = "[input] [output.n3] => output.n3"
 
-  def run(options: List[String]) =
-    options match {
-      case input :: output :: Nil => translate(input, output)
-      case _ => logger.error("incorrect options: [{}]", options)
-    }
+  def run(options: List[String]) = options match {
+    case input :: output :: Nil => translate(input, output)
+    case _ => logger.error("incorrect options: [{}]", options)
+  }
 
   private def translate(input: String, output: String) = {
     logger.info("creating model ...")
