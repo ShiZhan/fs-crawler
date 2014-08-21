@@ -1,0 +1,7 @@
+PREFIX tgm: <https://sites.google.com/site/trigram/>
+SELECT ?filename ?checksum
+WHERE {
+  ?file tgm:isDuplicateOf ?another .
+  ?file tgm:md5 ?checksum .
+  ?file tgm:name ?filename
+}
