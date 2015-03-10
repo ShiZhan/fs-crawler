@@ -2,10 +2,10 @@ name := "FSCrawler"
 
 version := "1.0"
 
-scalaVersion := Option(System.getProperty("scala.version")).getOrElse("2.10.4")
+scalaVersion := Option(System.getProperty("scala.version")).getOrElse("2.11.6")
 
 libraryDependencies ++= {
-  val jenaV  = "2.12.0"
+  val jenaV  = "2.12.1"
   Seq(
     "org.apache.jena" % "jena-core" % jenaV excludeAll(ExclusionRule(organization = "org.slf4j")), 
     "org.slf4j" % "slf4j-api"     % "1.7.5",

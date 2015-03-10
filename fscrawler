@@ -9,7 +9,7 @@ esac
 
 export FSC_ROOT=$(dirname `which $0`)
 # export FSC_DATA=$FSC_ROOT/.data
-LIB=$FSC_ROOT/target/scala-2.10/lib/
+LIB=$FSC_ROOT/target/scala-2.11/lib/
 CP=`ls -1 $LIB | awk -v lib=$LIB 'BEGIN { FS = "*" }; {printf lib$1":"}'`
 CP=$CP$FSC_ROOT/target/scala-2.10/fscrawler_2.10-1.0.jar
 
